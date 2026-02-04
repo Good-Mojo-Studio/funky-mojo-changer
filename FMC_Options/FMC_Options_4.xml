@@ -1,0 +1,55 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ https://raw.githubusercontent.com/Gethe/wow-ui-source/live/Interface/AddOns/Blizzard_SharedXML/UI.xsd">
+	<Frame name="fmcOptions4" inherits="vdwOptionsPanel" parent="UIParent">
+		<Frames>
+<!-- Options Box 1 saving profiles -->
+			<Frame name="$parentBox1" inherits="vdwOptionsBox">
+				<Anchors>
+					<Anchor point="TOP" relativePoint="TOP" x ="0" y="-64"/>
+				</Anchors>
+				<Frames>
+<!--Edit Box 1 naming profile -->
+					<Frame name="$parentEditBox1" inherits="vdwEditBox">
+						<Anchors>
+							<Anchor point="TOP" relativeKey="$parent.Title" relativePoint="BOTTOM" x="0" y="-8"/>
+						</Anchors>
+					</Frame>
+				</Frames>
+			</Frame>
+<!-- Options Box 2 loading profiles -->
+			<Frame name="$parentBox2" inherits="vdwOptionsBox">
+				<Frames>
+<!-- Pop Out 1 loading choose -->
+					<Button name="$parentPopOut1" inherits="vdwPopOut">
+						<Anchors>
+							<Anchor point="TOP" relativeKey="$parent.Title" relativePoint="BOTTOM" x="0" y="-8"/>
+						</Anchors>
+					</Button>
+				</Frames>
+			</Frame>
+<!-- Options Box 3 deleting profiles -->
+			<Frame name="$parentBox3" inherits="vdwOptionsBox">
+				<Frames>
+<!-- Pop Out 1 deleting choose -->
+					<Button name="$parentPopOut1" inherits="vdwPopOut">
+						<Anchors>
+							<Anchor point="TOP" relativeKey="$parent.Title" relativePoint="BOTTOM" x="0" y="-8"/>
+						</Anchors>
+					</Button>
+				</Frames>
+			</Frame>
+<!-- Options Box 4 Note box -->
+			<Frame name="$parentBox4" inherits="vdwOptionsBox">
+				<Layers>
+					<Layer level="OVERLAY">
+						<FontString parentKey="Notes" font="vdw_NFshadow_13" justifyV="MIDDLE" justifyH="CENTER">
+							<Anchors>
+								<Anchor point="CENTER" relativePoint="CENTER" x="0" y="-8"/>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+		</Frames>
+	</Frame>
+	<Script file="FMC_Options_4.lua"/>
+</Ui>

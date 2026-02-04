@@ -1,0 +1,69 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ https://raw.githubusercontent.com/Gethe/wow-ui-source/live/Interface/AddOns/Blizzard_SharedXML/UI.xsd">
+	<Frame name="fmcOptions3" inherits="vdwOptionsPanel" parent="UIParent">
+		<Frames>
+<!-- Options Box 1 hide, show anim buttons -->
+			<Frame name="$parentBox1" inherits="vdwOptionsBox">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" x ="8" y="-64"/>
+				</Anchors>
+				<Frames>
+<!-- Check Button 1, hide and show buttons -->
+					<CheckButton name="$parentCheckButton1" inherits="vdwCheckButton">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="8" y="-32"/>
+						</Anchors>
+					</CheckButton>
+<!-- Pop Out 1, direction -->	
+					<Button name="$parentPopOut1" inherits="vdwPopOut">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentCheckButton1" relativePoint="BOTTOMLEFT" x="0" y="-16"/>
+						</Anchors>
+					</Button>
+<!-- Check Button 2, hide and show animation -->	
+					<CheckButton name="$parentCheckButton2" inherits="vdwCheckButton">
+						<Anchors>
+							<Anchor point="LEFT" relativeTo="$parentPopOut1" relativePoint="RIGHT" x="0" y="0"/>
+						</Anchors>
+					</CheckButton>
+				</Frames>
+			</Frame>
+<!-- Options Box 2 animation options -->
+			<Frame name="$parentBox2" inherits="vdwOptionsBox">
+				<Size x="320" y="208"/>
+				<Frames>
+<!-- Popout 1, animation style -->
+					<Button name="$parentPopOut1" inherits="vdwPopOut">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="8" y="-40"/>
+						</Anchors>
+					</Button>
+<!-- Popout 2, banner background -->
+					<Button name="$parentPopOut2" inherits="vdwPopOut">
+						<Anchors>
+							<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-8" y="-40"/>
+						</Anchors>
+					</Button>
+<!-- Check Button 1, animation to cast bar -->	
+					<CheckButton name="$parentCheckButton1" inherits="vdwCheckButton">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeTo="$parentPopOut1" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
+						</Anchors>
+					</CheckButton>
+<!--Slider 1, animation width -->	
+					<Frame name="$parentSlider1" inherits="vdwSlider">
+						<Anchors>
+							<Anchor point="TOP" relativeKey="$parent.Title" relativePoint="BOTTOM" x="0" y="-80"/>
+						</Anchors>
+					</Frame>
+<!--Slider 2, animation height -->	
+					<Frame name="$parentSlider2" inherits="vdwSlider">
+						<Anchors>
+							<Anchor point="TOP" relativeTo="$parentSlider1" relativePoint="BOTTOM" x="0" y="-8"/>
+						</Anchors>
+					</Frame>
+				</Frames>
+			</Frame>
+		</Frames>
+	</Frame>
+	<Script file="FMC_Options_3.lua"/>
+</Ui>

@@ -1,0 +1,520 @@
+-- some variables --
+local G = VDW.Local.Override
+local L = VDW.FMC.Local
+local C = VDW.GetAddonColors("FMC")
+local prefixTip = VDW.Prefix("FMC")
+local maxW = 160
+local finalW = 0
+local counter = 0
+local popoutDirection = {G.OPTIONS_D_UPWARD, G.OPTIONS_D_DOWNWARD,}
+local animationStyle = {G.OPTIONS_S_BANNER, G.OPTIONS_S_RUNES,}
+local animationBackgroung = {G.OPTIONS_C_CLASS,}
+-- Taking care of the option panel --
+fmcOptions3:ClearAllPoints()
+fmcOptions3:SetPoint("TOPLEFT", fmcOptions00, "TOPLEFT", 0, 0)
+-- Background of the option panel --
+fmcOptions3.BGtexture:SetTexture("Interface\\BankFrame\\Bank-Background.blp", "CLAMP", "CLAMP", "NEAREST")
+fmcOptions3.BGtexture:SetVertexColor(C.High:GetRGB())
+fmcOptions3.BGtexture:SetDesaturation(0.3)
+-- Title of the option panel --
+fmcOptions3.Title:SetTextColor(C.Main:GetRGB())
+fmcOptions3.Title:SetText(prefixTip.."|nVersion: "..C.High:WrapTextInColorCode(C_AddOns.GetAddOnMetadata("FMC", "Version")))
+-- Top text of the option panel --
+fmcOptions3.TopTxt:SetTextColor(C.Main:GetRGB())
+fmcOptions3.TopTxt:SetText(string.format(L.T_TIP, L.T_T_BUTTONS))
+-- Bottom right text of the option panel --
+fmcOptions3.BottomRightTxt:SetTextColor(C.Main:GetRGB())
+fmcOptions3.BottomRightTxt:SetText("May the Good "..C.High:WrapTextInColorCode("Mojo").." be with you!")
+-- taking care of the boxes --
+fmcOptions3Box1:SetHeight(128)
+fmcOptions3Box1.Title:SetText("Visibility and direction")
+fmcOptions3Box2.Title:SetText("Animation")
+fmcOptions3Box2:SetPoint("TOPLEFT", fmcOptions3Box1, "BOTTOMLEFT", 0, 0)
+for i = 1, 2, 1 do
+	local tW = _G["fmcOptions3Box"..i].Title:GetStringWidth()+16
+	local W = _G["fmcOptions3Box"..i]:GetWidth()
+	if tW >= W then
+		_G["fmcOptions3Box"..i]:SetWidth(tW)
+	end
+-- Coloring the boxes --
+	_G["fmcOptions3Box"..i].Title:SetTextColor(C.Main:GetRGB())
+	_G["fmcOptions3Box"..i].BorderTop:SetVertexColor(C.High:GetRGB())
+	_G["fmcOptions3Box"..i].BorderBottom:SetVertexColor(C.High:GetRGB())
+	_G["fmcOptions3Box"..i].BorderLeft:SetVertexColor(C.High:GetRGB())
+	_G["fmcOptions3Box"..i].BorderRight:SetVertexColor(C.High:GetRGB())
+end
+-- Coloring the pop out buttons --
+local function ColoringPopOutButtons(k, var1)
+	_G["fmcOptions3Box"..k.."PopOut"..var1].Text:SetTextColor(C.Main:GetRGB())
+	_G["fmcOptions3Box"..k.."PopOut"..var1].Title:SetTextColor(C.High:GetRGB())
+	_G["fmcOptions3Box"..k.."PopOut"..var1].NormalTexture:SetVertexColor(C.High:GetRGB())
+	_G["fmcOptions3Box"..k.."PopOut"..var1].HighlightTexture:SetVertexColor(C.Main:GetRGB())
+	_G["fmcOptions3Box"..k.."PopOut"..var1].PushedTexture:SetVertexColor(C.High:GetRGB())
+end
+-- Mouse Wheel on Sliders --
+local function MouseWheelSlider(self, delta)
+	if delta == 1 then
+		self:SetValue(self:GetValue() + 1)
+	elseif delta == -1 then
+		self:SetValue(self:GetValue() - 1)
+	end
+end
+-- check button enable - disable --
+local function checkButtonEnable(self)
+	self:EnableMouse(true)
+	self.Text:SetTextColor(C.Main:GetRGB())
+end
+local function checkButtonDisable(self)
+	self:SetChecked(false)
+	self:EnableMouse(false)
+	self.Text:SetTextColor(0.35, 0.35, 0.35, 0.8)
+end
+-- pop out button enable - disable --
+local function popEnable(self)
+	self:EnableMouse(true)
+	self:SetAlpha(1)
+end
+local function popDisable(self)
+	self:EnableMouse(false)
+	self:SetAlpha(0.35)
+end
+-- slider enable - disable --
+local function sliderEnable(self)
+	self.Slider:EnableMouse(true)
+	self.Back:EnableMouse(true)
+	self.Forward:EnableMouse(true)
+	self:SetAlpha(1)
+end
+local function sliderDisable(self)
+	self.Slider:EnableMouse(false)
+	self.Back:EnableMouse(false)
+	self.Forward:EnableMouse(false)
+	self:SetAlpha(0.35)
+end
+-- Moving the Frame --
+local function MoveFrame()
+	fmcFrameFX1:EnableMouse(true)
+	fmcFrameFX1:RegisterForDrag("LeftButton")
+	local function StopMoving(self)
+		FMCsettings["Animation"]["Position"]["X"] = Round(self:GetLeft())
+		FMCsettings["Animation"]["Position"]["Y"] = Round(self:GetBottom())
+		self:StopMovingOrSizing()
+	end
+	fmcFrameFX1:SetScript("OnDragStart", fmcFrameFX1.StartMoving)
+	fmcFrameFX1:SetScript("OnDragStop", function(self) StopMoving(self) end)
+end
+-- animation enable - disable --
+local function animationEnable()
+	popEnable(fmcOptions3Box2PopOut1)
+	popEnable(fmcOptions3Box2PopOut2)
+	checkButtonEnable(fmcOptions3Box2CheckButton1)
+	sliderEnable(fmcOptions3Box2Slider1)
+	sliderEnable(fmcOptions3Box2Slider2)
+end
+local function animationDisable()
+	popDisable(fmcOptions3Box2PopOut1)
+	popDisable(fmcOptions3Box2PopOut2)
+	checkButtonDisable(fmcOptions3Box2CheckButton1)
+	sliderDisable(fmcOptions3Box2Slider1)
+	sliderDisable(fmcOptions3Box2Slider2)
+end
+-- banner enable - disable --
+local function bannerEnable()
+	popEnable(fmcOptions3Box2PopOut2)
+	checkButtonEnable(fmcOptions3Box2CheckButton1)
+	sliderEnable(fmcOptions3Box2Slider1)
+	sliderEnable(fmcOptions3Box2Slider2)
+	fmcFrameFX1:SetAlpha(1)
+end
+local function bannerDisable()
+	popDisable(fmcOptions3Box2PopOut2)
+	checkButtonDisable(fmcOptions3Box2CheckButton1)
+	sliderDisable(fmcOptions3Box2Slider1)
+	sliderDisable(fmcOptions3Box2Slider2)
+	fmcFrameFX1:SetAlpha(0)
+	fmcFrameFX1:EnableMouse(false)
+end
+-- runes enable - disable --
+local function runesEnable()
+	fmcFrameFX2RuneTopLeft:SetAlpha(1)
+	fmcFrameFX2RuneBottomRight:SetAlpha(1)
+	fmcFrameFX2RuneBottomLeft:SetAlpha(1)
+	fmcFrameFX2RuneTopRight:SetAlpha(1)
+	fmcFrameFX2RuneTop:SetAlpha(1)
+	fmcFrameFX2RuneTopLeftLight:SetAlpha(1)
+	fmcFrameFX2RuneBottomRightLight:SetAlpha(1)
+	fmcFrameFX2RuneBottomLeftLight:SetAlpha(1)
+	fmcFrameFX2RuneTopRightLight:SetAlpha(1)
+	fmcFrameFX2RuneTopLight:SetAlpha(1)
+end
+local function runesDisable()
+	fmcFrameFX2RuneTopLeft:SetAlpha(0)
+	fmcFrameFX2RuneBottomRight:SetAlpha(0)
+	fmcFrameFX2RuneBottomLeft:SetAlpha(0)
+	fmcFrameFX2RuneTopRight:SetAlpha(0)
+	fmcFrameFX2RuneTop:SetAlpha(0)
+	fmcFrameFX2RuneTopLeftLight:SetAlpha(0)
+	fmcFrameFX2RuneBottomRightLight:SetAlpha(0)
+	fmcFrameFX2RuneBottomLeftLight:SetAlpha(0)
+	fmcFrameFX2RuneTopRightLight:SetAlpha(0)
+	fmcFrameFX2RuneTopLight:SetAlpha(0)
+end
+-- animation check --
+local function animationCheck()
+	if FMCsettings["Animation"]["Style"] == G.OPTIONS_S_BANNER then
+		bannerEnable()
+		runesDisable()
+		if FMCsettings["Animation"]["AttachedToCastbar"] then
+			fmcOptions3Box2CheckButton1:SetChecked(true)
+			fmcOptions3Box2CheckButton1.Text:SetTextColor(C.Main:GetRGB())
+			fmcFrameFX1:EnableMouse(false)
+		else
+			fmcOptions3Box2CheckButton1:SetChecked(false)
+			fmcOptions3Box2CheckButton1.Text:SetTextColor(0.35, 0.35, 0.35, 0.8)
+			MoveFrame()
+		end
+	elseif FMCsettings["Animation"]["Style"] == G.OPTIONS_S_RUNES then
+		bannerDisable()
+		runesEnable()
+	end
+end
+-- check button hide and show buttons --
+fmcOptions3Box1CheckButton1.Text:SetText(L.T_T_BUTTONS)
+fmcOptions3Box1CheckButton1:SetScript("OnEnter", function(self)
+	local word = self.Text:GetText()
+	VDW.Tooltip_Show(self, prefixTip, string.format(L.W_CHECKBOX_TIP, word), C.Main)
+end)
+fmcOptions3Box1CheckButton1:HookScript("OnLeave", function(self) VDW.Tooltip_Hide() end)
+fmcOptions3Box1CheckButton1:HookScript("OnClick", function (self, button, down)
+	if button == "LeftButton" and down == false then
+		if self:GetChecked() == true then
+			FMCsettings["TalentButtons"]["Visible"] = true
+			self.Text:SetTextColor(C.Main:GetRGB())
+			PlaySound(858, "Master")
+		elseif self:GetChecked() == false then
+			FMCsettings["TalentButtons"]["Visible"] = false
+			self.Text:SetTextColor(0.35, 0.35, 0.35, 0.8)
+			PlaySound(858, "Master")
+		end
+		C_UI.Reload()
+	end
+end)
+-- check button hide and show animation --
+fmcOptions3Box1CheckButton2.Text:SetText("Animation")
+fmcOptions3Box1CheckButton2:SetScript("OnEnter", function(self)
+	local word = self.Text:GetText()
+	VDW.Tooltip_Show(self, prefixTip, string.format(L.W_CHECKBOX_TIP, word), C.Main)
+end)
+fmcOptions3Box1CheckButton2:HookScript("OnLeave", function(self) VDW.Tooltip_Hide() end)
+fmcOptions3Box1CheckButton2:HookScript("OnClick", function (self, button, down)
+	if button == "LeftButton" and down == false then
+		if self:GetChecked() == true then
+			FMCsettings["Animation"]["Visible"] = true
+			self.Text:SetTextColor(C.Main:GetRGB())
+			animationEnable()
+			animationCheck()
+			PlaySound(858, "Master")
+		elseif self:GetChecked() == false then
+			FMCsettings["Animation"]["Visible"] = false
+			self.Text:SetTextColor(0.35, 0.35, 0.35, 0.8)
+			animationDisable()
+			animationCheck()
+			PlaySound(858, "Master")
+		end
+		VDW.FMC.AnimationSettings()
+	end
+end)
+-- direction --
+ColoringPopOutButtons(1, 1)
+fmcOptions3Box1PopOut1.Title:SetText(L.W_DIRECTION)
+for i, name in ipairs(popoutDirection) do
+	counter = counter + 1
+	local btn = CreateFrame("Button", "fmcOptions3Box1PopOut1Choice"..i, nil, "vdwPopOutButton")
+	_G["fmcOptions3Box1PopOut1Choice"..i]:ClearAllPoints()
+	if i == 1 then
+		_G["fmcOptions3Box1PopOut1Choice"..i]:SetParent(fmcOptions3Box1PopOut1)
+		_G["fmcOptions3Box1PopOut1Choice"..i]:SetPoint("TOP", fmcOptions3Box1PopOut1, "BOTTOM", 0, 4)
+		_G["fmcOptions3Box1PopOut1Choice"..i]:SetScript("OnShow", function(self)
+			self:GetParent():SetNormalAtlas("charactercreate-customize-dropdownbox-hover")
+			PlaySound(855, "Master")
+		end)
+		_G["fmcOptions3Box1PopOut1Choice"..i]:SetScript("OnHide", function(self)
+			self:GetParent():SetNormalAtlas("charactercreate-customize-dropdownbox-open")
+			PlaySound(855, "Master")
+		end)
+	else
+		_G["fmcOptions3Box1PopOut1Choice"..i]:SetParent(fmcOptions3Box1PopOut1Choice1)
+		_G["fmcOptions3Box1PopOut1Choice"..i]:SetPoint("TOP", _G["fmcOptions3Box1PopOut1Choice"..i-1], "BOTTOM", 0, 0)
+		_G["fmcOptions3Box1PopOut1Choice"..i]:Show()
+	end
+	_G["fmcOptions3Box1PopOut1Choice"..i].Text:SetText(name)
+	_G["fmcOptions3Box1PopOut1Choice"..i]:HookScript("OnClick", function(self, button, down)
+		if button == "LeftButton" and down == false then
+			FMCsettings["TalentButtons"]["Direction"] = self.Text:GetText()
+			fmcOptions3Box1PopOut1.Text:SetText(self.Text:GetText())
+			fmcOptions3Box1PopOut1Choice1:Hide()
+			C_UI.Reload()
+		end
+	end)
+	local w = _G["fmcOptions3Box1PopOut1Choice"..i].Text:GetStringWidth()
+	if w > maxW then maxW = w end
+end
+finalW = math.ceil(maxW + 24)
+for i = 1, counter, 1 do
+	_G["fmcOptions3Box1PopOut1Choice"..i]:SetWidth(finalW)
+end
+counter = 0
+maxW = 160
+fmcOptions3Box1PopOut1:HookScript("OnEnter", function(self)
+	VDW.Tooltip_Show(self, prefixTip, L.W_DIRECTION_TIP, C.Main)
+end)
+fmcOptions3Box1PopOut1:HookScript("OnLeave", function(self) VDW.Tooltip_Hide() end)
+fmcOptions3Box1PopOut1:HookScript("OnClick", function(self, button, down)
+	if button == "LeftButton" and down == false then
+		if not fmcOptions3Box1PopOut1Choice1:IsShown() then
+			fmcOptions3Box1PopOut1Choice1:Show()
+		else
+			fmcOptions3Box1PopOut1Choice1:Hide()
+		end
+	end
+end)
+-- animation style --
+ColoringPopOutButtons(2, 1)
+fmcOptions3Box2PopOut1.Title:SetText(L.W_STYLE)
+for i, name in ipairs(animationStyle) do
+	counter = counter + 1
+	local btn = CreateFrame("Button", "fmcOptions3Box2PopOut1Choice"..i, nil, "vdwPopOutButton")
+	_G["fmcOptions3Box2PopOut1Choice"..i]:ClearAllPoints()
+	if i == 1 then
+		_G["fmcOptions3Box2PopOut1Choice"..i]:SetParent(fmcOptions3Box2PopOut1)
+		_G["fmcOptions3Box2PopOut1Choice"..i]:SetPoint("TOP", fmcOptions3Box2PopOut1, "BOTTOM", 0, 4)
+		_G["fmcOptions3Box2PopOut1Choice"..i]:SetScript("OnShow", function(self)
+			self:GetParent():SetNormalAtlas("charactercreate-customize-dropdownbox-hover")
+			PlaySound(855, "Master")
+		end)
+		_G["fmcOptions3Box2PopOut1Choice"..i]:SetScript("OnHide", function(self)
+			self:GetParent():SetNormalAtlas("charactercreate-customize-dropdownbox-open")
+			PlaySound(855, "Master")
+		end)
+	else
+		_G["fmcOptions3Box2PopOut1Choice"..i]:SetParent(fmcOptions3Box2PopOut1Choice1)
+		_G["fmcOptions3Box2PopOut1Choice"..i]:SetPoint("TOP", _G["fmcOptions3Box2PopOut1Choice"..i-1], "BOTTOM", 0, 0)
+		_G["fmcOptions3Box2PopOut1Choice"..i]:Show()
+	end
+	_G["fmcOptions3Box2PopOut1Choice"..i].Text:SetText(name)
+	_G["fmcOptions3Box2PopOut1Choice"..i]:HookScript("OnClick", function(self, button, down)
+		if button == "LeftButton" and down == false then
+			FMCsettings["Animation"]["Style"] = self.Text:GetText()
+			if FMCsettings["Animation"]["Style"] == G.OPTIONS_S_BANNER then
+				bannerEnable()
+				runesDisable()
+			elseif FMCsettings["Animation"]["Style"] == G.OPTIONS_S_RUNES then
+				bannerDisable()
+				runesEnable()
+			end
+			VDW.FMC.AnimationSettings()
+			fmcOptions3Box2PopOut1.Text:SetText(self.Text:GetText())
+			fmcOptions3Box2PopOut1Choice1:Hide()
+		end
+	end)
+	local w = _G["fmcOptions3Box2PopOut1Choice"..i].Text:GetStringWidth()
+	if w > maxW then maxW = w end
+end
+finalW = math.ceil(maxW + 24)
+for i = 1, counter, 1 do
+	_G["fmcOptions3Box2PopOut1Choice"..i]:SetWidth(finalW)
+end
+counter = 0
+maxW = 160
+fmcOptions3Box2PopOut1:HookScript("OnEnter", function(self)
+	local parent = self:GetParent()
+	local word = parent.Title:GetText()
+	VDW.Tooltip_Show(self, prefixTip, string.format(L.W_S_TIP, word), C.Main)
+end)
+fmcOptions3Box2PopOut1:HookScript("OnLeave", function(self) VDW.Tooltip_Hide() end)
+fmcOptions3Box2PopOut1:HookScript("OnClick", function(self, button, down)
+	if button == "LeftButton" and down == false then
+		if not fmcOptions3Box2PopOut1Choice1:IsShown() then
+			fmcOptions3Box2PopOut1Choice1:Show()
+		else
+			fmcOptions3Box2PopOut1Choice1:Hide()
+		end
+	end
+end)
+-- banner background --
+ColoringPopOutButtons(2, 2)
+fmcOptions3Box2PopOut2.Title:SetText(L.W_BANNER_ART)
+for i, name in ipairs(animationBackgroung) do
+	counter = counter + 1
+	local btn = CreateFrame("Button", "fmcOptions3Box2PopOut2Choice"..i, nil, "vdwPopOutButton")
+	_G["fmcOptions3Box2PopOut2Choice"..i]:ClearAllPoints()
+	if i == 1 then
+		_G["fmcOptions3Box2PopOut2Choice"..i]:SetParent(fmcOptions3Box2PopOut2)
+		_G["fmcOptions3Box2PopOut2Choice"..i]:SetPoint("TOP", fmcOptions3Box2PopOut2, "BOTTOM", 0, 4)
+		_G["fmcOptions3Box2PopOut2Choice"..i]:SetScript("OnShow", function(self)
+			self:GetParent():SetNormalAtlas("charactercreate-customize-dropdownbox-hover")
+			PlaySound(855, "Master")
+		end)
+		_G["fmcOptions3Box2PopOut2Choice"..i]:SetScript("OnHide", function(self)
+			self:GetParent():SetNormalAtlas("charactercreate-customize-dropdownbox-open")
+			PlaySound(855, "Master")
+		end)
+	else
+		_G["fmcOptions3Box2PopOut2Choice"..i]:SetParent(fmcOptions3Box2PopOut2Choice1)
+		_G["fmcOptions3Box2PopOut2Choice"..i]:SetPoint("TOP", _G["fmcOptions3Box2PopOut2Choice"..i-1], "BOTTOM", 0, 0)
+		_G["fmcOptions3Box2PopOut2Choice"..i]:Show()
+	end
+	_G["fmcOptions3Box2PopOut2Choice"..i].Text:SetText(name)
+	_G["fmcOptions3Box2PopOut2Choice"..i]:HookScript("OnClick", function(self, button, down)
+		if button == "LeftButton" and down == false then
+			FMCsettings["Animation"]["Background"] = self.Text:GetText()
+			VDW.FMC.AnimationSettings()
+			fmcOptions3Box2PopOut2.Text:SetText(self.Text:GetText())
+			fmcOptions3Box2PopOut2Choice1:Hide()
+		end
+	end)
+	local w = _G["fmcOptions3Box2PopOut2Choice"..i].Text:GetStringWidth()
+	if w > maxW then maxW = w end
+end
+finalW = math.ceil(maxW + 24)
+for i = 1, counter, 1 do
+	_G["fmcOptions3Box2PopOut2Choice"..i]:SetWidth(finalW)
+end
+counter = 0
+maxW = 160
+fmcOptions3Box2PopOut2:HookScript("OnEnter", function(self)
+	local word = self.Title:GetText()
+	VDW.Tooltip_Show(self, prefixTip, string.format(L.W_S_TIP, word), C.Main)
+end)
+fmcOptions3Box2PopOut2:HookScript("OnLeave", function(self) VDW.Tooltip_Hide() end)
+fmcOptions3Box2PopOut2:HookScript("OnClick", function(self, button, down)
+	if button == "LeftButton" and down == false then
+		if not fmcOptions3Box2PopOut2Choice1:IsShown() then
+			fmcOptions3Box2PopOut2Choice1:Show()
+		else
+			fmcOptions3Box2PopOut2Choice1:Hide()
+		end
+	end
+end)
+-- animation to cast bar --
+fmcOptions3Box2CheckButton1.Text:SetText("attach animation to cast bar.")
+fmcOptions3Box2CheckButton1:SetScript("OnEnter", function(self)
+	local word = self.Text:GetText()
+	VDW.Tooltip_Show(self, prefixTip, string.format(L.W_ATTACH_TIP, word), C.Main)
+end)
+fmcOptions3Box2CheckButton1:HookScript("OnLeave", function(self) VDW.Tooltip_Hide() end)
+fmcOptions3Box2CheckButton1:HookScript("OnClick", function (self, button, down)
+	if button == "LeftButton" and down == false then
+		if self:GetChecked() == true then
+			FMCsettings["Animation"]["AttachedToCastbar"] = true
+			self.Text:SetTextColor(C.Main:GetRGB())
+			fmcFrameFX1:EnableMouse(false)
+		elseif self:GetChecked() == false then
+			FMCsettings["Animation"]["AttachedToCastbar"] = false
+			self.Text:SetTextColor(0.35, 0.35, 0.35, 0.8)
+			MoveFrame()
+		end
+		VDW.FMC.AnimationSettings()
+		PlaySound(858, "Master")
+	end
+end)
+-- animation width --
+fmcOptions3Box2Slider1:SetWidth(fmcOptions3Box2:GetWidth() * 0.9)
+fmcOptions3Box2Slider1.Slider.Thumb:SetVertexColor(C.Main:GetRGB())
+fmcOptions3Box2Slider1.Back:GetRegions():SetVertexColor(C.Main:GetRGB())
+fmcOptions3Box2Slider1.Forward:GetRegions():SetVertexColor(C.Main:GetRGB())
+fmcOptions3Box2Slider1.TopText:SetTextColor(C.High:GetRGB())
+fmcOptions3Box2Slider1.MinText:SetTextColor(C.High:GetRGB())
+fmcOptions3Box2Slider1.MaxText:SetTextColor(C.High:GetRGB())
+fmcOptions3Box2Slider1.MinText:SetText(160)
+fmcOptions3Box2Slider1.MaxText:SetText(800)
+fmcOptions3Box2Slider1.Slider:SetMinMaxValues(160, 800)
+-- enter --
+fmcOptions3Box2Slider1.Slider:HookScript("OnEnter", function(self)
+	VDW.Tooltip_Show(self, prefixTip, L.W_SLIDER_TIP, C.Main)
+end)
+-- leave --
+fmcOptions3Box2Slider1.Slider:HookScript("OnLeave", function(self) VDW.Tooltip_Hide() end)
+-- mouse wheel --
+fmcOptions3Box2Slider1.Slider:SetScript("OnMouseWheel", MouseWheelSlider)
+-- value change --
+fmcOptions3Box2Slider1.Slider:SetScript("OnValueChanged", function (self, value, userInput)
+	fmcOptions3Box2Slider1.TopText:SetText("Width: "..self:GetValue())
+	FMCsettings["Animation"]["Size"]["W"] = self:GetValue()
+	fmcFrameFX1:SetSize(FMCsettings["Animation"]["Size"]["W"], FMCsettings["Animation"]["Size"]["H"])
+	PlaySound(858, "Master")
+end)
+-- animation height --
+fmcOptions3Box2Slider2:SetWidth(fmcOptions3Box2:GetWidth() * 0.9)
+fmcOptions3Box2Slider2.Slider.Thumb:SetVertexColor(C.Main:GetRGB())
+fmcOptions3Box2Slider2.Back:GetRegions():SetVertexColor(C.Main:GetRGB())
+fmcOptions3Box2Slider2.Forward:GetRegions():SetVertexColor(C.Main:GetRGB())
+fmcOptions3Box2Slider2.TopText:SetTextColor(C.High:GetRGB())
+fmcOptions3Box2Slider2.MinText:SetTextColor(C.High:GetRGB())
+fmcOptions3Box2Slider2.MaxText:SetTextColor(C.High:GetRGB())
+fmcOptions3Box2Slider2.MinText:SetText(160)
+fmcOptions3Box2Slider2.MaxText:SetText(800)
+fmcOptions3Box2Slider2.Slider:SetMinMaxValues(160, 800)
+-- enter --
+fmcOptions3Box2Slider2.Slider:HookScript("OnEnter", function(self)
+	VDW.Tooltip_Show(self, prefixTip, L.W_SLIDER_TIP, C.Main)
+end)
+-- leave --
+fmcOptions3Box2Slider2.Slider:HookScript("OnLeave", function(self) VDW.Tooltip_Hide() end)
+-- mouse wheel --
+fmcOptions3Box2Slider2.Slider:SetScript("OnMouseWheel", MouseWheelSlider)
+-- value change --
+fmcOptions3Box2Slider2.Slider:SetScript("OnValueChanged", function (self, value, userInput)
+	fmcOptions3Box2Slider2.TopText:SetText("Height: "..self:GetValue())
+	FMCsettings["Animation"]["Size"]["H"] = self:GetValue()
+	fmcFrameFX1:SetSize(FMCsettings["Animation"]["Size"]["W"], FMCsettings["Animation"]["Size"]["H"])
+	PlaySound(858, "Master")
+end)
+-- Checking the Saved Variables --
+local function CheckSavedVariables()
+	if FMCsettings["TalentButtons"]["Visible"] then
+		fmcOptions3Box1CheckButton1:SetChecked(true)
+		fmcOptions3Box1CheckButton1.Text:SetTextColor(C.Main:GetRGB())
+		popEnable(fmcOptions3Box1PopOut1)
+		checkButtonEnable(fmcOptions3Box1CheckButton2)
+		if FMCsettings["Animation"]["Visible"] then
+			fmcOptions3Box1CheckButton2:SetChecked(true)
+			fmcOptions3Box1CheckButton2.Text:SetTextColor(C.Main:GetRGB())
+			animationEnable()
+			animationCheck()
+		else
+			fmcOptions3Box1CheckButton2:SetChecked(false)
+			fmcOptions3Box1CheckButton2.Text:SetTextColor(0.35, 0.35, 0.35, 0.8)
+			animationDisable()
+		end
+	else
+		popDisable(fmcOptions3Box1PopOut1)
+		checkButtonDisable(fmcOptions3Box1CheckButton2)
+		animationDisable()
+		fmcOptions3Box1CheckButton1:SetChecked(false)
+		fmcOptions3Box1CheckButton1.Text:SetTextColor(0.35, 0.35, 0.35, 0.8)
+	end
+	fmcOptions3Box1PopOut1.Text:SetText(FMCsettings["TalentButtons"]["Direction"])
+	fmcOptions3Box2PopOut1.Text:SetText(FMCsettings["Animation"]["Style"])
+	fmcOptions3Box2PopOut2.Text:SetText(FMCsettings["Animation"]["Background"])
+	fmcOptions3Box2Slider1.Slider:SetValue(FMCsettings["Animation"]["Size"]["W"])
+	fmcOptions3Box2Slider2.Slider:SetValue(FMCsettings["Animation"]["Size"]["H"])
+end
+-- Show the option panel --
+fmcOptions3:HookScript("OnShow", function(self)
+	fmcOptions00Tab1.Text:SetTextColor(0.4, 0.4, 0.4, 1)
+	fmcOptions00Tab2.Text:SetTextColor(0.4, 0.4, 0.4, 1)
+	fmcOptions00Tab3.Text:SetTextColor(C.High:GetRGB())
+	fmcOptions00Tab4.Text:SetTextColor(0.4, 0.4, 0.4, 1)
+	if fmcOptions1:IsShown() then fmcOptions1:Hide() end
+	if fmcOptions2:IsShown() then fmcOptions2:Hide() end
+	if fmcOptions4:IsShown() then fmcOptions4:Hide() end
+	CheckSavedVariables()
+	fmcOptions3Box2CheckButton1.Text:SetWidth(fmcOptions3Box2:GetWidth() * 0.9)
+end)
+-- hide the option panel --
+fmcOptions3:HookScript("OnHide", function(self)
+	fmcFrameFX1:SetAlpha(0)
+	fmcFrameFX1:EnableMouse(false)
+	runesDisable()
+end)
