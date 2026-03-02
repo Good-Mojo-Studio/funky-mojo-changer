@@ -63,6 +63,77 @@
 					</Frame>
 				</Frames>
 			</Frame>
+<!-- Options Box 3 hide, show anim buttons -->
+			<Frame name="$parentBox3" inherits="vdwOptionsBox">
+				<Frames>
+<!-- Pop Out 1, equipment -->	
+					<Button name="$parentPopOut1" inherits="vdwPopOut">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="4" y="-40"/>
+						</Anchors>
+					</Button>
+<!-- Pop Out 2, talent loadout 1 -->	
+					<Button name="$parentPopOut2" inherits="vdwPopOut">
+						<Anchors>
+							<Anchor point="LEFT" relativeTo="$parentPopOut1" relativePoint="RIGHT" x="8" y="0"/>
+						</Anchors>
+					</Button>
+<!-- Pop Out 3, talent loadout 2 -->	
+					<Button name="$parentPopOut3" inherits="vdwPopOut">
+						<Anchors>
+							<Anchor point="LEFT" relativeTo="$parentPopOut1" relativePoint="RIGHT" x="8" y="0"/>
+						</Anchors>
+					</Button>
+<!-- Pop Out 4, talent loadout 3 -->	
+					<Button name="$parentPopOut4" inherits="vdwPopOut">
+						<Anchors>
+							<Anchor point="LEFT" relativeTo="$parentPopOut1" relativePoint="RIGHT" x="8" y="0"/>
+						</Anchors>
+					</Button>
+<!-- Pop Out 5, talent loadout 4 -->	
+					<Button name="$parentPopOut5" inherits="vdwPopOut">
+						<Anchors>
+							<Anchor point="LEFT" relativeTo="$parentPopOut1" relativePoint="RIGHT" x="8" y="0"/>
+						</Anchors>
+					</Button>
+<!-- Button 1, Bind them -->
+					<Button name="$parentButton1" inherits="vdwButton">
+						<Anchors>
+							<Anchor point="TOP" relativePoint="TOP" x="0" y="-80"/>
+						</Anchors>
+					</Button>
+				</Frames>
+			</Frame>
+<!-- Talent bind equipment list -->
+			<ScrollingMessageFrame name="$parentList1">
+				<Size x="256" y="104"/>
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x ="0" y="-32"/>
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND" textureSubLevel="-1">
+						<Texture parentKey="BGtexture" setAllPoints="true" file="Interface\BankFrame\Bank-Background.blp">
+						</Texture>
+					</Layer>
+					<Layer level="BACKGROUND" textureSubLevel="1">
+						<Texture parentKey="BGtexture1" atlas="Artifacts-BG-Shadow" useAtlasSize="false" setAllPoints="true"/>
+					</Layer>
+					<Layer level="OVERLAY">
+						<FontString parentKey="Title" font="vdw_NFshadow_16" justifyV="MIDDLE" justifyH="CENTER" text="Talent Loadout bind to Equipment Set list">
+							<Anchors>
+								<Anchor point="BOTTOM" relativePoint="TOP" x="0" y="0"/>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnLoad>
+						self:SetJustifyH("LEFT")
+						self:SetInsertMode(2)
+						self.Title:SetWidth(self:GetWidth())
+					</OnLoad>
+				</Scripts>
+			</ScrollingMessageFrame>
 		</Frames>
 	</Frame>
 	<Script file="FMC_Options_3.lua"/>

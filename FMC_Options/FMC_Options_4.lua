@@ -11,6 +11,7 @@ local  number = 0
 local counterLoading = 0
 local counterDeleting = 0
 -- Taking care of the option panel --
+fmcOptions4:SetWidth(576)
 fmcOptions4:ClearAllPoints()
 fmcOptions4:SetPoint("TOPLEFT", fmcOptions00, "TOPLEFT", 0, 0)
 -- Background of the option panel --
@@ -92,7 +93,7 @@ fmcOptions4Box1EditBox1.WritingLine:SetScript("OnEnterPressed", function(self)
 			end
 		end
 		number = number + 1
-		FMCprofiles[name] = {settings = FMCsettings, localization = FMCspecialSettings.LastLocation}
+		FMCprofiles[name] = {settings = FMCsettings,}
 		C_UI.Reload()
 	else
 		DEFAULT_CHAT_FRAME:AddMessage(C.Main:WrapTextInColorCode(prefixChat.." "..L.P_WRN_NEED))
@@ -178,7 +179,6 @@ local function LoadingProfiles() -- vdwLoadingProfiles(asv1, asv2, asv3, txt1)
 			_G["fmcOptions4Box2PopOut1Choice"..counterLoading]:HookScript("OnClick", function(self, button, down)
 				if button == "LeftButton" and down == false then
 					FMCsettings = FMCprofiles[k]["settings"]
-					FMCspecialSettings.LastLocation = FMCprofiles[k]["localization"]
 					C_UI.Reload()
 				end
 			end)

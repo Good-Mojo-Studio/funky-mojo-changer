@@ -122,36 +122,31 @@ local function FirstTimeSavedVariables()
 			},
 		}
 	end
-	if FMCprofilesLayout == nil then
-		FMCprofilesLayout = {
-			TalentButtons = {
-				LastConfig = {
-					spec1 = {specID = 0, talentID = 0,},
-					spec2 = {specID = 0, talentID = 0,},
-					spec3 = {specID = 0, talentID = 0,},
-					spec4 = {specID = 0, talentID = 0,},
-				},
+	if FMCprofilesLayout ~= nil then FMCprofilesLayout = nil end
+	if FMCsettings.LastLocation == nil then FMCsettings.LastLocation = GetLocale() end
+	if FMCspecialSettings.FirstLogin == nil then FMCspecialSettings.FirstLogin = true end
+	if FMCspecialSettings.FirstSpec == nil then FMCspecialSettings.FirstSpec = true end
+	if FMCspecialSettings.TalentButtons == nil then
+		FMCspecialSettings.TalentButtons = {
+			LastConfig = {
+				spec1 = {specID = 0, talentID = 0,},
+				spec2 = {specID = 0, talentID = 0,},
+				spec3 = {specID = 0, talentID = 0,},
+				spec4 = {specID = 0, talentID = 0,},
 			},
-			EquipmentSets = {},
-			TalentLayouts = {},
 		}
 	end
-	if FMCspecialSettings == nil then
-		FMCspecialSettings = {
-			LastLocation = GetLocale(),
-		}
+	if FMCspecialSettings.EquipmentSets == nil then FMCspecialSettings.EquipmentSets = {} end
+	if FMCspecialSettings.TalentLayouts == nil then FMCspecialSettings.TalentLayouts = {} end
+	if FMCspecialSettings.TalentBindEquipment == nil then FMCspecialSettings.TalentBindEquipment = {}
+		for i = 1, GetNumSpecializations(), 1 do
+			FMCspecialSettings.TalentBindEquipment[VDW.FMC["specId"..i]] = {}
+		end
 	end
 end
 -- events time --
 local function EventsTime(self, event, arg1, arg2, arg3, arg4)
 	if event == "PLAYER_LOGIN" then
-		if FMCspecialSettings == nil then
-			FMCspecialSettings = {
-				LastLocation = GetLocale(),
-				FirstLogin = true,
-				FirstSpec = true,
-			}
-		end
 		if UnitLevel("player") >= 10 and C_SpecializationInfo.GetSpecialization() ~= 5 then
 			CreateGlobalVariables()
 			FirstTimeSavedVariables()

@@ -3,6 +3,7 @@ local L = VDW.FMC.Local
 local C = VDW.GetAddonColors("FMC")
 local prefixTip = VDW.Prefix("FMC")
 -- Taking care of the option panel --
+fmcOptions2:SetWidth(576)
 fmcOptions2:ClearAllPoints()
 fmcOptions2:SetPoint("TOPLEFT", fmcOptions00, "TOPLEFT", 0, 0)
 -- Background of the option panel --

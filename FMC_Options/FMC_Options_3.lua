@@ -6,10 +6,13 @@ local prefixTip = VDW.Prefix("FMC")
 local maxW = 160
 local finalW = 0
 local counter = 0
+local talentLD = ""
+local equipSet = ""
 local popoutDirection = {G.OPTIONS_D_UPWARD, G.OPTIONS_D_DOWNWARD,}
 local animationStyle = {G.OPTIONS_S_BANNER, G.OPTIONS_S_RUNES,}
 local animationBackgroung = {G.OPTIONS_C_CLASS,}
 -- Taking care of the option panel --
+fmcOptions3:SetWidth(576)
 fmcOptions3:ClearAllPoints()
 fmcOptions3:SetPoint("TOPLEFT", fmcOptions00, "TOPLEFT", 0, 0)
 -- Background of the option panel --
@@ -30,7 +33,10 @@ fmcOptions3Box1:SetHeight(128)
 fmcOptions3Box1.Title:SetText("Visibility and direction")
 fmcOptions3Box2.Title:SetText("Animation")
 fmcOptions3Box2:SetPoint("TOPLEFT", fmcOptions3Box1, "BOTTOMLEFT", 0, 0)
-for i = 1, 2, 1 do
+fmcOptions3Box3:SetHeight(128)
+fmcOptions3Box3.Title:SetText("Equipment set / Talent loadout")
+fmcOptions3Box3:SetPoint("TOPLEFT", fmcOptions3Box1, "TOPRIGHT", 0, 0)
+for i = 1, 3, 1 do
 	local tW = _G["fmcOptions3Box"..i].Title:GetStringWidth()+16
 	local W = _G["fmcOptions3Box"..i]:GetWidth()
 	if tW >= W then
@@ -57,6 +63,18 @@ local function MouseWheelSlider(self, delta)
 		self:SetValue(self:GetValue() + 1)
 	elseif delta == -1 then
 		self:SetValue(self:GetValue() - 1)
+	end
+end
+-- Scrolling Functions --
+local function Scrolling(self, delta)
+	if delta == -1 and IsShiftKeyDown() then
+		self:ScrollByAmount(-8)
+	elseif delta == -1 and not IsShiftKeyDown() then
+		self:ScrollByAmount(-1)
+	elseif delta == 1 and IsShiftKeyDown() then
+		self:ScrollByAmount(8)
+	elseif delta == 1 and not IsShiftKeyDown() then
+		self:ScrollByAmount(1)
 	end
 end
 -- check button enable - disable --
@@ -470,6 +488,325 @@ fmcOptions3Box2Slider2.Slider:SetScript("OnValueChanged", function (self, value,
 	fmcFrameFX1:SetSize(FMCsettings["Animation"]["Size"]["W"], FMCsettings["Animation"]["Size"]["H"])
 	PlaySound(858, "Master")
 end)
+-- equipment set --
+ColoringPopOutButtons(3, 1)
+fmcOptions3Box3PopOut1.Title:SetText("Equipment Set")
+for name, v in pairs(FMCspecialSettings.EquipmentSets) do
+	counter = counter + 1
+	local btn = CreateFrame("Button", "fmcOptions3Box3PopOut1Choice"..counter, nil, "vdwPopOutButton")
+	_G["fmcOptions3Box3PopOut1Choice"..counter]:ClearAllPoints()
+	if counter == 1 then
+		_G["fmcOptions3Box3PopOut1Choice"..counter]:SetParent(fmcOptions3Box3PopOut1)
+		_G["fmcOptions3Box3PopOut1Choice"..counter]:SetPoint("TOP", fmcOptions3Box3PopOut1, "BOTTOM", 0, 4)
+		_G["fmcOptions3Box3PopOut1Choice"..counter]:SetScript("OnShow", function(self)
+			self:GetParent():SetNormalAtlas("charactercreate-customize-dropdownbox-hover")
+			PlaySound(855, "Master")
+		end)
+		_G["fmcOptions3Box3PopOut1Choice"..counter]:SetScript("OnHide", function(self)
+			self:GetParent():SetNormalAtlas("charactercreate-customize-dropdownbox-open")
+			PlaySound(855, "Master")
+		end)
+	else
+		_G["fmcOptions3Box3PopOut1Choice"..counter]:SetParent(fmcOptions3Box3PopOut1Choice1)
+		_G["fmcOptions3Box3PopOut1Choice"..counter]:SetPoint("TOP", _G["fmcOptions3Box3PopOut1Choice"..counter-1], "BOTTOM", 0, 0)
+		_G["fmcOptions3Box3PopOut1Choice"..counter]:Show()
+	end
+	_G["fmcOptions3Box3PopOut1Choice"..counter].Text:SetText(name)
+	_G["fmcOptions3Box3PopOut1Choice"..counter]:HookScript("OnClick", function(self, button, down)
+		if button == "LeftButton" and down == false then
+			fmcOptions3Box3PopOut1.Text:SetText(self.Text:GetText())
+			fmcOptions3Box3PopOut1Choice1:Hide()
+		end
+	end)
+	local w = _G["fmcOptions3Box3PopOut1Choice"..counter].Text:GetStringWidth()
+	if w > maxW then maxW = w end
+end
+finalW = math.ceil(maxW + 24)
+for i = 1, counter, 1 do
+	_G["fmcOptions3Box3PopOut1Choice"..counter]:SetWidth(finalW)
+end
+counter = 0
+maxW = 160
+fmcOptions3Box3PopOut1:HookScript("OnEnter", function(self)
+	VDW.Tooltip_Show(self, prefixTip, "Choose an equipment set", C.Main)
+end)
+fmcOptions3Box3PopOut1:HookScript("OnLeave", function(self) VDW.Tooltip_Hide() end)
+fmcOptions3Box3PopOut1:HookScript("OnClick", function(self, button, down)
+	if button == "LeftButton" and down == false then
+		if not fmcOptions3Box3PopOut1Choice1:IsShown() then
+			fmcOptions3Box3PopOut1Choice1:Show()
+		else
+			fmcOptions3Box3PopOut1Choice1:Hide()
+		end
+	end
+end)
+-- talent loadout 1  --
+ColoringPopOutButtons(3, 2)
+fmcOptions3Box3PopOut2.Title:SetText("Talent loadout")
+for i, name in pairs(FMCspecialSettings.TalentLayouts[VDW.FMC.specId1]) do
+	counter = counter + 1
+	local btn = CreateFrame("Button", "fmcOptions3Box3PopOut2Choice"..i, nil, "vdwPopOutButton")
+	_G["fmcOptions3Box3PopOut2Choice"..i]:ClearAllPoints()
+	if i == 1 then
+		_G["fmcOptions3Box3PopOut2Choice"..i]:SetParent(fmcOptions3Box3PopOut2)
+		_G["fmcOptions3Box3PopOut2Choice"..i]:SetPoint("TOP", fmcOptions3Box3PopOut2, "BOTTOM", 0, 4)
+		_G["fmcOptions3Box3PopOut2Choice"..i]:SetScript("OnShow", function(self)
+			self:GetParent():SetNormalAtlas("charactercreate-customize-dropdownbox-hover")
+			PlaySound(855, "Master")
+		end)
+		_G["fmcOptions3Box3PopOut2Choice"..i]:SetScript("OnHide", function(self)
+			self:GetParent():SetNormalAtlas("charactercreate-customize-dropdownbox-open")
+			PlaySound(855, "Master")
+		end)
+	else
+		_G["fmcOptions3Box3PopOut2Choice"..i]:SetParent(fmcOptions3Box3PopOut2Choice1)
+		_G["fmcOptions3Box3PopOut2Choice"..i]:SetPoint("TOP", _G["fmcOptions3Box3PopOut2Choice"..i-1], "BOTTOM", 0, 0)
+		_G["fmcOptions3Box3PopOut2Choice"..i]:Show()
+	end
+	_G["fmcOptions3Box3PopOut2Choice"..i].Text:SetText(name)
+	_G["fmcOptions3Box3PopOut2Choice"..i]:HookScript("OnClick", function(self, button, down)
+		if button == "LeftButton" and down == false then
+			fmcOptions3Box3PopOut2.Text:SetText(self.Text:GetText())
+			fmcOptions3Box3PopOut2Choice1:Hide()
+		end
+	end)
+	local w = _G["fmcOptions3Box3PopOut2Choice"..i].Text:GetStringWidth()
+	if w > maxW then maxW = w end
+end
+finalW = math.ceil(maxW + 24)
+for i = 1, counter, 1 do
+	_G["fmcOptions3Box3PopOut2Choice"..counter]:SetWidth(finalW)
+end
+counter = 0
+maxW = 160
+fmcOptions3Box3PopOut2:HookScript("OnEnter", function(self)
+	VDW.Tooltip_Show(self, prefixTip, "Choose a talent loadout", C.Main)
+end)
+fmcOptions3Box3PopOut2:HookScript("OnLeave", function(self) VDW.Tooltip_Hide() end)
+fmcOptions3Box3PopOut2:HookScript("OnClick", function(self, button, down)
+	if button == "LeftButton" and down == false then
+		if not fmcOptions3Box3PopOut2Choice1:IsShown() then
+			fmcOptions3Box3PopOut2Choice1:Show()
+		else
+			fmcOptions3Box3PopOut2Choice1:Hide()
+		end
+	end
+end)
+-- talent loadout 2  --
+ColoringPopOutButtons(3, 3)
+fmcOptions3Box3PopOut3.Title:SetText("Talent loadout")
+for i, name in pairs(FMCspecialSettings.TalentLayouts[VDW.FMC.specId2]) do
+	counter = counter + 1
+	local btn = CreateFrame("Button", "fmcOptions3Box3PopOut3Choice"..i, nil, "vdwPopOutButton")
+	_G["fmcOptions3Box3PopOut3Choice"..i]:ClearAllPoints()
+	if i == 1 then
+		_G["fmcOptions3Box3PopOut3Choice"..i]:SetParent(fmcOptions3Box3PopOut3)
+		_G["fmcOptions3Box3PopOut3Choice"..i]:SetPoint("TOP", fmcOptions3Box3PopOut3, "BOTTOM", 0, 4)
+		_G["fmcOptions3Box3PopOut3Choice"..i]:SetScript("OnShow", function(self)
+			self:GetParent():SetNormalAtlas("charactercreate-customize-dropdownbox-hover")
+			PlaySound(855, "Master")
+		end)
+		_G["fmcOptions3Box3PopOut3Choice"..i]:SetScript("OnHide", function(self)
+			self:GetParent():SetNormalAtlas("charactercreate-customize-dropdownbox-open")
+			PlaySound(855, "Master")
+		end)
+	else
+		_G["fmcOptions3Box3PopOut3Choice"..i]:SetParent(fmcOptions3Box3PopOut3Choice1)
+		_G["fmcOptions3Box3PopOut3Choice"..i]:SetPoint("TOP", _G["fmcOptions3Box3PopOut3Choice"..i-1], "BOTTOM", 0, 0)
+		_G["fmcOptions3Box3PopOut3Choice"..i]:Show()
+	end
+	_G["fmcOptions3Box3PopOut3Choice"..i].Text:SetText(name)
+	_G["fmcOptions3Box3PopOut3Choice"..i]:HookScript("OnClick", function(self, button, down)
+		if button == "LeftButton" and down == false then
+			fmcOptions3Box3PopOut3.Text:SetText(self.Text:GetText())
+			fmcOptions3Box3PopOut3Choice1:Hide()
+		end
+	end)
+	local w = _G["fmcOptions3Box3PopOut3Choice"..i].Text:GetStringWidth()
+	if w > maxW then maxW = w end
+end
+finalW = math.ceil(maxW + 24)
+for i = 1, counter, 1 do
+	_G["fmcOptions3Box3PopOut3Choice"..counter]:SetWidth(finalW)
+end
+counter = 0
+maxW = 160
+fmcOptions3Box3PopOut3:HookScript("OnEnter", function(self)
+	VDW.Tooltip_Show(self, prefixTip, "Choose a talent loadout", C.Main)
+end)
+fmcOptions3Box3PopOut3:HookScript("OnLeave", function(self) VDW.Tooltip_Hide() end)
+fmcOptions3Box3PopOut3:HookScript("OnClick", function(self, button, down)
+	if button == "LeftButton" and down == false then
+		if not fmcOptions3Box3PopOut3Choice1:IsShown() then
+			fmcOptions3Box3PopOut3Choice1:Show()
+		else
+			fmcOptions3Box3PopOut3Choice1:Hide()
+		end
+	end
+end)
+-- talent loadout 3  --
+ColoringPopOutButtons(3, 4)
+fmcOptions3Box3PopOut4.Title:SetText("Talent loadout")
+for i, name in pairs(FMCspecialSettings.TalentLayouts[VDW.FMC.specId3]) do
+	counter = counter + 1
+	local btn = CreateFrame("Button", "fmcOptions3Box3PopOut4Choice"..i, nil, "vdwPopOutButton")
+	_G["fmcOptions3Box3PopOut4Choice"..i]:ClearAllPoints()
+	if i == 1 then
+		_G["fmcOptions3Box3PopOut4Choice"..i]:SetParent(fmcOptions3Box3PopOut4)
+		_G["fmcOptions3Box3PopOut4Choice"..i]:SetPoint("TOP", fmcOptions3Box3PopOut4, "BOTTOM", 0, 4)
+		_G["fmcOptions3Box3PopOut4Choice"..i]:SetScript("OnShow", function(self)
+			self:GetParent():SetNormalAtlas("charactercreate-customize-dropdownbox-hover")
+			PlaySound(855, "Master")
+		end)
+		_G["fmcOptions3Box3PopOut4Choice"..i]:SetScript("OnHide", function(self)
+			self:GetParent():SetNormalAtlas("charactercreate-customize-dropdownbox-open")
+			PlaySound(855, "Master")
+		end)
+	else
+		_G["fmcOptions3Box3PopOut4Choice"..i]:SetParent(fmcOptions3Box3PopOut4Choice1)
+		_G["fmcOptions3Box3PopOut4Choice"..i]:SetPoint("TOP", _G["fmcOptions3Box3PopOut4Choice"..i-1], "BOTTOM", 0, 0)
+		_G["fmcOptions3Box3PopOut4Choice"..i]:Show()
+	end
+	_G["fmcOptions3Box3PopOut4Choice"..i].Text:SetText(name)
+	_G["fmcOptions3Box3PopOut4Choice"..i]:HookScript("OnClick", function(self, button, down)
+		if button == "LeftButton" and down == false then
+			fmcOptions3Box3PopOut4.Text:SetText(self.Text:GetText())
+			fmcOptions3Box3PopOut4Choice1:Hide()
+		end
+	end)
+	local w = _G["fmcOptions3Box3PopOut4Choice"..i].Text:GetStringWidth()
+	if w > maxW then maxW = w end
+end
+finalW = math.ceil(maxW + 24)
+for i = 1, counter, 1 do
+	_G["fmcOptions3Box3PopOut4Choice"..counter]:SetWidth(finalW)
+end
+counter = 0
+maxW = 160
+fmcOptions3Box3PopOut4:HookScript("OnEnter", function(self)
+	VDW.Tooltip_Show(self, prefixTip, "Choose a talent loadout", C.Main)
+end)
+fmcOptions3Box3PopOut4:HookScript("OnLeave", function(self) VDW.Tooltip_Hide() end)
+fmcOptions3Box3PopOut4:HookScript("OnClick", function(self, button, down)
+	if button == "LeftButton" and down == false then
+		if not fmcOptions3Box3PopOut4Choice1:IsShown() then
+			fmcOptions3Box3PopOut4Choice1:Show()
+		else
+			fmcOptions3Box3PopOut4Choice1:Hide()
+		end
+	end
+end)
+if FMCspecialSettings.TalentLayouts[VDW.FMC.specId4] then
+-- talent loadout 4  --
+	ColoringPopOutButtons(3, 5)
+	fmcOptions3Box3PopOut5.Title:SetText("Talent loadout")
+	for i, name in pairs(FMCspecialSettings.TalentLayouts[VDW.FMC.specId4]) do
+		counter = counter + 1
+		local btn = CreateFrame("Button", "fmcOptions3Box3PopOut5Choice"..i, nil, "vdwPopOutButton")
+		_G["fmcOptions3Box3PopOut5Choice"..i]:ClearAllPoints()
+		if i == 1 then
+			_G["fmcOptions3Box3PopOut5Choice"..i]:SetParent(fmcOptions3Box3PopOut5)
+			_G["fmcOptions3Box3PopOut5Choice"..i]:SetPoint("TOP", fmcOptions3Box3PopOut5, "BOTTOM", 0, 4)
+			_G["fmcOptions3Box3PopOut5Choice"..i]:SetScript("OnShow", function(self)
+				self:GetParent():SetNormalAtlas("charactercreate-customize-dropdownbox-hover")
+				PlaySound(855, "Master")
+			end)
+			_G["fmcOptions3Box3PopOut5Choice"..i]:SetScript("OnHide", function(self)
+				self:GetParent():SetNormalAtlas("charactercreate-customize-dropdownbox-open")
+				PlaySound(855, "Master")
+			end)
+		else
+			_G["fmcOptions3Box3PopOut5Choice"..i]:SetParent(fmcOptions3Box3PopOut5Choice1)
+			_G["fmcOptions3Box3PopOut5Choice"..i]:SetPoint("TOP", _G["fmcOptions3Box3PopOut5Choice"..i-1], "BOTTOM", 0, 0)
+			_G["fmcOptions3Box3PopOut5Choice"..i]:Show()
+		end
+		_G["fmcOptions3Box3PopOut5Choice"..i].Text:SetText(name)
+		_G["fmcOptions3Box3PopOut5Choice"..i]:HookScript("OnClick", function(self, button, down)
+			if button == "LeftButton" and down == false then
+				fmcOptions3Box3PopOut5.Text:SetText(self.Text:GetText())
+				fmcOptions3Box3PopOut5Choice1:Hide()
+			end
+		end)
+		local w = _G["fmcOptions3Box3PopOut5Choice"..i].Text:GetStringWidth()
+		if w > maxW then maxW = w end
+	end
+	finalW = math.ceil(maxW + 24)
+	for i = 1, counter, 1 do
+		_G["fmcOptions3Box3PopOut5Choice"..counter]:SetWidth(finalW)
+	end
+	counter = 0
+	maxW = 160
+	fmcOptions3Box3PopOut5:HookScript("OnEnter", function(self)
+		VDW.Tooltip_Show(self, prefixTip, "Choose a talent loadout", C.Main)
+	end)
+	fmcOptions3Box3PopOut5:HookScript("OnLeave", function(self) VDW.Tooltip_Hide() end)
+	fmcOptions3Box3PopOut5:HookScript("OnClick", function(self, button, down)
+		if button == "LeftButton" and down == false then
+			if not fmcOptions3Box3PopOut5Choice1:IsShown() then
+				fmcOptions3Box3PopOut5Choice1:Show()
+			else
+				fmcOptions3Box3PopOut5Choice1:Hide()
+			end
+		end
+	end)
+end
+-- bind button
+fmcOptions3Box3Button1.Text:SetTextColor(C.Main:GetRGB())
+fmcOptions3Box3Button1.NormalTexture:SetVertexColor(C.High:GetRGB())
+fmcOptions3Box3Button1.HighlightTexture:SetVertexColor(C.Main:GetRGB())
+fmcOptions3Box3Button1.PushedTexture:SetVertexColor(C.High:GetRGB())
+fmcOptions3Box3Button1.Text:SetText("Bind them")
+fmcOptions3Box3Button1:HookScript("OnEnter", function(self)
+	if fmcOptions3Box3PopOut1.Text:GetText() ~= nil and (fmcOptions3Box3PopOut2.Text:GetText() ~= nil or fmcOptions3Box3PopOut3.Text:GetText() ~= nil or fmcOptions3Box3PopOut4.Text:GetText() ~= nil or fmcOptions3Box3PopOut5.Text:GetText() ~= nil) then
+		talentLD = ""
+		equipSet = fmcOptions3Box3PopOut1.Text:GetText()
+		if GetSpecialization() == 1 then talentLD = fmcOptions3Box3PopOut2.Text:GetText()
+		elseif GetSpecialization() == 2 then talentLD = fmcOptions3Box3PopOut3.Text:GetText()
+		elseif GetSpecialization() == 3 then talentLD = fmcOptions3Box3PopOut4.Text:GetText()
+		elseif GetSpecialization() == 4 then talentLD = fmcOptions3Box3PopOut5.Text:GetText()
+		end
+		VDW.Tooltip_Show(self, prefixTip, "Bind the equipment set '"..equipSet.."' to talent loadout '"..talentLD.."'", C.Main)
+	end
+end)
+fmcOptions3Box3Button1:HookScript("OnLeave", function(self) VDW.Tooltip_Hide() end)
+fmcOptions3Box3Button1:HookScript("OnClick", function(self, button, down)
+	if button == "LeftButton" and down == false then
+		if fmcOptions3Box3PopOut1.Text:GetText() ~= nil and (fmcOptions3Box3PopOut2.Text:GetText() ~= nil or fmcOptions3Box3PopOut3.Text:GetText() ~= nil or fmcOptions3Box3PopOut4.Text:GetText() ~= nil or fmcOptions3Box3PopOut5.Text:GetText() ~= nil) then
+			if GetSpecialization() == 1 then FMCspecialSettings.TalentBindEquipment[VDW.FMC.specId1][talentLD] = FMCspecialSettings.EquipmentSets[equipSet]
+			elseif GetSpecialization() == 2 then FMCspecialSettings.TalentBindEquipment[VDW.FMC.specId2][talentLD] = FMCspecialSettings.EquipmentSets[equipSet]
+			elseif GetSpecialization() == 3 then FMCspecialSettings.TalentBindEquipment[VDW.FMC.specId3][talentLD] = FMCspecialSettings.EquipmentSets[equipSet]
+			elseif GetSpecialization() == 4 then FMCspecialSettings.TalentBindEquipment[VDW.FMC.specId4][talentLD] = FMCspecialSettings.EquipmentSets[equipSet]
+			end
+			DEFAULT_CHAT_FRAME:AddMessage(C.Main:WrapTextInColorCode(VDW.PrefixChat("FMC").." The Equipment Set has been bound to the Talent Loadout!"))
+			UIErrorsFrame:AddExternalWarningMessage("The Equipment Set has been bound to the Talent Loadout!")
+			fmcOptions00:Hide()
+		else
+			DEFAULT_CHAT_FRAME:AddMessage(C.Main:WrapTextInColorCode(VDW.PrefixChat("FMC").." One or both of the Pop Out Buttons are empty!"))
+			UIErrorsFrame:AddExternalWarningMessage("One or both of the Pop Out Buttons are empty!")
+			C_Sound.PlayVocalErrorSound(48)
+		end
+	end
+end)
+-- taking care of the scrolling list 1
+fmcOptions3List1.BGtexture:SetVertexColor(C.High:GetRGB())
+fmcOptions3List1.Title:SetTextColor(C.Main:GetRGB())
+fmcOptions3List1:SetFontObject("vdw_NFshadow_14")
+fmcOptions3List1:SetTextColor(C.Main:GetRGB())
+fmcOptions3List1:SetScript("OnMouseWheel", function(self, delta) Scrolling(self, delta) end)
+local function sendMessages(specID)
+	local count = 0
+	for fk, fv in pairs (FMCspecialSettings.TalentBindEquipment[specID]) do
+		if fk then
+			for sk, sv in pairs (FMCspecialSettings.EquipmentSets) do
+				if sv == fv then
+					count = count + 1
+					fmcOptions3List1:AddMessage(" "..count..".The equipment set '"..sk.."' is bound to the '"..fk.."' talent loadout")
+					fmcOptions3List1:AddMessage("---")
+				end
+			end
+		end
+	end
+end
 -- Checking the Saved Variables --
 local function CheckSavedVariables()
 	if FMCsettings["TalentButtons"]["Visible"] then
@@ -499,6 +836,31 @@ local function CheckSavedVariables()
 	fmcOptions3Box2PopOut2.Text:SetText(FMCsettings["Animation"]["Background"])
 	fmcOptions3Box2Slider1.Slider:SetValue(FMCsettings["Animation"]["Size"]["W"])
 	fmcOptions3Box2Slider2.Slider:SetValue(FMCsettings["Animation"]["Size"]["H"])
+	if GetSpecialization() == 1 then
+		fmcOptions3Box3PopOut2:Show()
+		fmcOptions3Box3PopOut3:Hide()
+		fmcOptions3Box3PopOut4:Hide()
+		fmcOptions3Box3PopOut5:Hide()
+		sendMessages(VDW.FMC.specId1)
+	elseif GetSpecialization() == 2 then
+		fmcOptions3Box3PopOut2:Hide()
+		fmcOptions3Box3PopOut3:Show()
+		fmcOptions3Box3PopOut4:Hide()
+		fmcOptions3Box3PopOut5:Hide()
+		sendMessages(VDW.FMC.specId2)
+	elseif GetSpecialization() == 3 then
+		fmcOptions3Box3PopOut2:Hide()
+		fmcOptions3Box3PopOut3:Hide()
+		fmcOptions3Box3PopOut4:Show()
+		fmcOptions3Box3PopOut5:Hide()
+		sendMessages(VDW.FMC.specId3)
+	elseif GetSpecialization() == 4 then
+		fmcOptions3Box3PopOut2:Hide()
+		fmcOptions3Box3PopOut3:Hide()
+		fmcOptions3Box3PopOut4:Hide()
+		fmcOptions3Box3PopOut5:Show()
+		sendMessages(VDW.FMC.specId4)
+	end
 end
 -- Show the option panel --
 fmcOptions3:HookScript("OnShow", function(self)
@@ -517,4 +879,10 @@ fmcOptions3:HookScript("OnHide", function(self)
 	fmcFrameFX1:SetAlpha(0)
 	fmcFrameFX1:EnableMouse(false)
 	runesDisable()
+	fmcOptions3List1:Clear()
+	fmcOptions3Box3PopOut1:SetText("")
+	fmcOptions3Box3PopOut2:SetText("")
+	fmcOptions3Box3PopOut3:SetText("")
+	fmcOptions3Box3PopOut4:SetText("")
+	fmcOptions3Box3PopOut5:SetText("")
 end)
