@@ -124,6 +124,7 @@ local function FirstTimeSavedVariables()
 	end
 	if FMCprofilesLayout ~= nil then FMCprofilesLayout = nil end
 	if FMCsettings.LastLocation == nil then FMCsettings.LastLocation = GetLocale() end
+	if FMCspecialSettings == nil then FMCspecialSettings = {} end
 	if FMCspecialSettings.FirstLogin == nil then FMCspecialSettings.FirstLogin = true end
 	if FMCspecialSettings.FirstSpec == nil then FMCspecialSettings.FirstSpec = true end
 	if FMCspecialSettings.TalentButtons == nil then

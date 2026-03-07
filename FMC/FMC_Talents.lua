@@ -572,6 +572,7 @@ local function EventsTime(self, event, arg1, arg2, arg3, arg4)
 			FMCsettings["LastLocation"] = GetLocale()
 			equipSets()
 			VDW.FMC.AnimationSettings()
+			FMCsettings.LastLocation = GetLocale()
 			if FMCsettings["TalentButtons"]["Visible"] then
 				CreateButtons()
 				if GetNumSpecializations() == 2 then
