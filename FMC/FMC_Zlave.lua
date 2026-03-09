@@ -52,13 +52,10 @@ local function CreateGlobalVariables()
 			end
 		end,
 		funcOnEnter = function(button)
-			MenuUtil.ShowTooltip(button, function(tooltip)
-			tooltip:SetOwner(AddonCompartmentFrame, "ANCHOR_TOP", 0, 0)
-			tooltip:SetText(C.Main:WrapTextInColorCode(prefixTip).."|n"..G.BUTTON_L_CLICK..": "..G.TIP_OPEN_SETTINGS_MAIN)
-			end)
+			VDW.Tooltip_Show(button, prefixTip, G.BUTTON_L_CLICK..": "..G.TIP_OPEN_SETTINGS_MAIN, C.Main)
 		end,
 		funcOnLeave = function(button)
-			MenuUtil.HideTooltip(AddonCompartmentFrame)
+			VDW.Tooltip_Hide()
 		end,
 	})
 -- global for buttons --
