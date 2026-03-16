@@ -2,18 +2,7 @@
 ## IconAtlas: challenges-medal-bronze
 ## Title: Funky |cFFB57E25Mojo|r Changer
 ## Notes: |cFFF0E68CChange your |cFFB57E25Specialization|r with a |cFFB57E25Funky|r Style !|r
-## Version: 2.01.02
-## Category: User Interface
-## Category-deDE: Benutzerinterface
-## Category-esES: Interfaz de usuario
-## Category-esMX: Interfaz de usuario
-## Category-frFR: Interface utilisateur
-## Category-itIT: Interfaccia utente
-## Category-koKR: 사용자 인터페이스
-## Category-ptBR: Interface do usuário
-## Category-ruRU: Интерфейс пользователя
-## Category-zhCN: 用户界面
-## Category-zhTW: 使用者介面
+## Version: 2.01.03
 ## Group: VDWS
 ## Dependencies: VDW
 ## DefaultState: enabled

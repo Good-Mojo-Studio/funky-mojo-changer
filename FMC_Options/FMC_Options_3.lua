@@ -27,7 +27,7 @@ fmcOptions3.TopTxt:SetTextColor(C.Main:GetRGB())
 fmcOptions3.TopTxt:SetText(string.format(L.T_TIP, L.T_T_BUTTONS))
 -- Bottom right text of the option panel --
 fmcOptions3.BottomRightTxt:SetTextColor(C.Main:GetRGB())
-fmcOptions3.BottomRightTxt:SetText("May the Good "..C.High:WrapTextInColorCode("Mojo").." be with you!")
+fmcOptions3.BottomRightTxt:SetText("May the Good "..C.High:WrapTextInColorCode("Mojo").." be with you! ")
 -- taking care of the boxes --
 fmcOptions3Box1:SetHeight(128)
 fmcOptions3Box1.Title:SetText("Visibility and direction")

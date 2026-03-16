@@ -330,7 +330,10 @@ local function CheckTalentsEquipment2()
 					if fv == chkTalentID and sk == "name" then
 						fmcPopOutTalents1.Text:SetText(fk..". "..sv)
 						for tk, tv in pairs (FMCspecialSettings.TalentBindEquipment[VDW.FMC.specId1]) do
-							if tk == sv then C_EquipmentSet.UseEquipmentSet(tv) end
+							if tk == sv then
+								local _, _, _, isEquipped = C_EquipmentSet.GetEquipmentSetInfo(tv) 
+								if not isEquipped then C_EquipmentSet.UseEquipmentSet(tv) end
+							end
 						end
 					end
 				end
@@ -346,7 +349,10 @@ local function CheckTalentsEquipment2()
 					if fv == chkTalentID and sk == "name" then
 						fmcPopOutTalents2.Text:SetText(fk..". "..sv)
 						for tk, tv in pairs (FMCspecialSettings.TalentBindEquipment[VDW.FMC.specId2]) do
-							if tk == sv then C_EquipmentSet.UseEquipmentSet(tv) end
+							if tk == sv then
+								local _, _, _, isEquipped = C_EquipmentSet.GetEquipmentSetInfo(tv) 
+								if not isEquipped then C_EquipmentSet.UseEquipmentSet(tv) end
+							end
 						end
 					end
 				end
@@ -366,7 +372,10 @@ local function CheckTalentsEquipment3()
 					if fv == chkTalentID and sk == "name" then
 						fmcPopOutTalents1.Text:SetText(fk..". "..sv)
 						for tk, tv in pairs (FMCspecialSettings.TalentBindEquipment[VDW.FMC.specId1]) do
-							if tk == sv then C_EquipmentSet.UseEquipmentSet(tv) end
+							if tk == sv then
+								local _, _, _, isEquipped = C_EquipmentSet.GetEquipmentSetInfo(tv) 
+								if not isEquipped then C_EquipmentSet.UseEquipmentSet(tv) end
+							end
 						end
 					end
 				end
@@ -382,7 +391,10 @@ local function CheckTalentsEquipment3()
 					if fv == chkTalentID and sk == "name" then
 						fmcPopOutTalents2.Text:SetText(fk..". "..sv)
 						for tk, tv in pairs (FMCspecialSettings.TalentBindEquipment[VDW.FMC.specId2]) do
-							if tk == sv then C_EquipmentSet.UseEquipmentSet(tv) end
+							if tk == sv then
+								local _, _, _, isEquipped = C_EquipmentSet.GetEquipmentSetInfo(tv) 
+								if not isEquipped then C_EquipmentSet.UseEquipmentSet(tv) end
+							end
 						end
 					end
 				end
@@ -398,7 +410,10 @@ local function CheckTalentsEquipment3()
 					if fv == chkTalentID and sk == "name" then
 						fmcPopOutTalents3.Text:SetText(fk..". "..sv)
 						for tk, tv in pairs (FMCspecialSettings.TalentBindEquipment[VDW.FMC.specId3]) do
-							if tk == sv then C_EquipmentSet.UseEquipmentSet(tv) end
+							if tk == sv then
+								local _, _, _, isEquipped = C_EquipmentSet.GetEquipmentSetInfo(tv) 
+								if not isEquipped then C_EquipmentSet.UseEquipmentSet(tv) end
+							end
 						end
 					end
 				end
@@ -418,7 +433,10 @@ local function CheckTalentsEquipment4()
 					if fv == chkTalentID and sk == "name" then
 						fmcPopOutTalents1.Text:SetText(fk..". "..sv)
 						for tk, tv in pairs (FMCspecialSettings.TalentBindEquipment[VDW.FMC.specId1]) do
-							if tk == sv then C_EquipmentSet.UseEquipmentSet(tv) end
+							if tk == sv then
+								local _, _, _, isEquipped = C_EquipmentSet.GetEquipmentSetInfo(tv) 
+								if not isEquipped then C_EquipmentSet.UseEquipmentSet(tv) end
+							end
 						end
 					end
 				end
@@ -434,7 +452,10 @@ local function CheckTalentsEquipment4()
 					if fv == chkTalentID and sk == "name" then
 						fmcPopOutTalents2.Text:SetText(fk..". "..sv)
 						for tk, tv in pairs (FMCspecialSettings.TalentBindEquipment[VDW.FMC.specId2]) do
-							if tk == sv then C_EquipmentSet.UseEquipmentSet(tv) end
+							if tk == sv then
+								local _, _, _, isEquipped = C_EquipmentSet.GetEquipmentSetInfo(tv) 
+								if not isEquipped then C_EquipmentSet.UseEquipmentSet(tv) end
+							end
 						end
 					end
 				end
@@ -450,7 +471,10 @@ local function CheckTalentsEquipment4()
 					if fv == chkTalentID and sk == "name" then
 						fmcPopOutTalents3.Text:SetText(fk..". "..sv)
 						for tk, tv in pairs (FMCspecialSettings.TalentBindEquipment[VDW.FMC.specId3]) do
-							if tk == sv then C_EquipmentSet.UseEquipmentSet(tv) end
+							if tk == sv then
+								local _, _, _, isEquipped = C_EquipmentSet.GetEquipmentSetInfo(tv) 
+								if not isEquipped then C_EquipmentSet.UseEquipmentSet(tv) end
+							end
 						end
 					end
 				end
@@ -466,7 +490,10 @@ local function CheckTalentsEquipment4()
 					if fv == chkTalentID and sk == "name" then
 						fmcPopOutTalents4.Text:SetText(fk..". "..sv)
 						for tk, tv in pairs (FMCspecialSettings.TalentBindEquipment[VDW.FMC.specId4]) do
-							if tk == sv then C_EquipmentSet.UseEquipmentSet(tv) end
+							if tk == sv then
+								local _, _, _, isEquipped = C_EquipmentSet.GetEquipmentSetInfo(tv) 
+								if not isEquipped then C_EquipmentSet.UseEquipmentSet(tv) end
+							end
 						end
 					end
 				end
@@ -478,7 +505,7 @@ end
 local function equipSets()
 	FMCspecialSettings["EquipmentSets"] = {}
 	for i = 0, C_EquipmentSet.GetNumEquipmentSets() - 1, 1 do
-		local name, iconFileID, setID, isEquipped, numItems, numEquipped, numInInventory, numLost, numIgnored = C_EquipmentSet.GetEquipmentSetInfo(i)
+		local name, _, setID = C_EquipmentSet.GetEquipmentSetInfo(i)
 		FMCspecialSettings["EquipmentSets"][name] = setID
 	end
 end
