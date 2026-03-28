@@ -73,7 +73,6 @@ local function ProtectOptions()
 end
 -- function for creating Talents Button --
 local function CreateButtons()
-	FMCspecialSettings["TalentLayouts"] = {}
 -- Function for stoping the movement --
 	local function StopMoving(self, i)
 		FMCsettings["TalentButtons"]["Position"]["X"] = Round(self:GetLeft())
@@ -82,8 +81,8 @@ local function CreateButtons()
 	end
 -- creating button --
 	for i = 1, GetNumSpecializations(), 1 do
-		FMCspecialSettings["TalentButtons"]["LastConfig"]["spec"..i]["specID"] = VDW.FMC["specId"..i]
-		FMCspecialSettings["TalentLayouts"][VDW.FMC["specId"..i]] = {}
+		FMCdata["TalentButtons"]["LastConfig"]["spec"..i]["specID"] = VDW.FMC["specId"..i]
+		FMCdata["TalentLayouts"][VDW.FMC["specId"..i]] = {}
 		local btn = CreateFrame("Button", "fmcPopOutTalents"..i, UIParent, "vdwPopOut")
 		_G["fmcPopOutTalents"..i]:ClearAllPoints()
 		_G["fmcPopOutTalents"..i]:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", FMCsettings["TalentButtons"]["Position"]["X"], FMCsettings["TalentButtons"]["Position"]["Y"])
@@ -129,8 +128,8 @@ local function CreateButtons()
 						if button == "LeftButton" and down == false then
 							if not IsPlayerMoving() then
 								C_ClassTalents.LoadConfig(fv, true)
-								FMCspecialSettings["TalentButtons"]["LastConfig"]["spec"..i]["talentID"] = fv
-								if PlayerSpellsFrame ~= nil then PlayerSpellsFrame.TalentsFrame.commitedConfigID = FMCspecialSettings["TalentButtons"]["LastConfig"]["spec"..i]["talentID"] end
+								FMCdata["TalentButtons"]["LastConfig"]["spec"..i]["talentID"] = fv
+								if PlayerSpellsFrame ~= nil then PlayerSpellsFrame.TalentsFrame.commitedConfigID = FMCdata["TalentButtons"]["LastConfig"]["spec"..i]["talentID"] end
 								_G["fmcPopOutTalents"..i.."Button1"]:Hide()
 							else
 								DEFAULT_CHAT_FRAME:AddMessage(C.Main:WrapTextInColorCode(prefixChat.." "..G.WRN_MOVING))
@@ -138,7 +137,7 @@ local function CreateButtons()
 							end
 						end
 					end)
-					table.insert(FMCspecialSettings["TalentLayouts"][VDW.FMC["specId"..i]], sv)
+					table.insert(FMCdata["TalentLayouts"][VDW.FMC["specId"..i]], sv)
 					local w = _G["fmcPopOutTalents"..i.."Button"..fk].Text:GetStringWidth()
 					if w > maxW then maxW = w end
 				end
@@ -152,6 +151,7 @@ local function CreateButtons()
 		maxW = 160
 		_G["fmcPopOutTalents"..i]:HookScript("OnClick", function(self, button, down)
 			if button == "LeftButton" and down == false then
+				print("clicky")
 				if not _G["fmcPopOutTalents"..i.."Button1"]:IsShown() then
 					_G["fmcPopOutTalents"..i.."Button1"]:Show()
 				else
@@ -238,19 +238,19 @@ end
 local function UpdateConfigID2()
 	if GetSpecialization() == 1 then
 		if fmcOverlayCastbar then
-			FMCspecialSettings["TalentButtons"]["LastConfig"]["spec1"]["talentID"] = PlayerSpellsFrame.TalentsFrame.LoadSystem.lastValidSelectionID
+			FMCdata["TalentButtons"]["LastConfig"]["spec1"]["talentID"] = PlayerSpellsFrame.TalentsFrame.LoadSystem.lastValidSelectionID
 			fmcOverlayCastbar = false
 		end
-		if FMCspecialSettings["TalentButtons"]["LastConfig"]["spec1"]["talentID"] ~= 0 then
-			C_ClassTalents.UpdateLastSelectedSavedConfigID(FMCspecialSettings["TalentButtons"]["LastConfig"]["spec1"]["specID"], FMCspecialSettings["TalentButtons"]["LastConfig"]["spec1"]["talentID"])
+		if FMCdata["TalentButtons"]["LastConfig"]["spec1"]["talentID"] ~= 0 then
+			C_ClassTalents.UpdateLastSelectedSavedConfigID(FMCdata["TalentButtons"]["LastConfig"]["spec1"]["specID"], FMCdata["TalentButtons"]["LastConfig"]["spec1"]["talentID"])
 		end
 	elseif GetSpecialization() == 2 then
 		if fmcOverlayCastbar then
-			FMCspecialSettings["TalentButtons"]["LastConfig"]["spec2"]["talentID"] = PlayerSpellsFrame.TalentsFrame.LoadSystem.lastValidSelectionID
+			FMCdata["TalentButtons"]["LastConfig"]["spec2"]["talentID"] = PlayerSpellsFrame.TalentsFrame.LoadSystem.lastValidSelectionID
 			fmcOverlayCastbar = false
 		end
-		if FMCspecialSettings["TalentButtons"]["LastConfig"]["spec2"]["talentID"] ~= 0 then
-			C_ClassTalents.UpdateLastSelectedSavedConfigID(FMCspecialSettings["TalentButtons"]["LastConfig"]["spec2"]["specID"], FMCspecialSettings["TalentButtons"]["LastConfig"]["spec2"]["talentID"])
+		if FMCdata["TalentButtons"]["LastConfig"]["spec2"]["talentID"] ~= 0 then
+			C_ClassTalents.UpdateLastSelectedSavedConfigID(FMCdata["TalentButtons"]["LastConfig"]["spec2"]["specID"], FMCdata["TalentButtons"]["LastConfig"]["spec2"]["talentID"])
 		end
 	end
 end
@@ -258,27 +258,27 @@ end
 local function UpdateConfigID3()
 	if GetSpecialization() == 1 then
 		if fmcOverlayCastbar then
-			FMCspecialSettings["TalentButtons"]["LastConfig"]["spec1"]["talentID"] = PlayerSpellsFrame.TalentsFrame.LoadSystem.lastValidSelectionID
+			FMCdata["TalentButtons"]["LastConfig"]["spec1"]["talentID"] = PlayerSpellsFrame.TalentsFrame.LoadSystem.lastValidSelectionID
 			fmcOverlayCastbar = false
 		end
-		if FMCspecialSettings["TalentButtons"]["LastConfig"]["spec1"]["talentID"] ~= 0 then
-			C_ClassTalents.UpdateLastSelectedSavedConfigID(FMCspecialSettings["TalentButtons"]["LastConfig"]["spec1"]["specID"], FMCspecialSettings["TalentButtons"]["LastConfig"]["spec1"]["talentID"])
+		if FMCdata["TalentButtons"]["LastConfig"]["spec1"]["talentID"] ~= 0 then
+			C_ClassTalents.UpdateLastSelectedSavedConfigID(FMCdata["TalentButtons"]["LastConfig"]["spec1"]["specID"], FMCdata["TalentButtons"]["LastConfig"]["spec1"]["talentID"])
 		end
 	elseif GetSpecialization() == 2 then
 		if fmcOverlayCastbar then
-			FMCspecialSettings["TalentButtons"]["LastConfig"]["spec2"]["talentID"] = PlayerSpellsFrame.TalentsFrame.LoadSystem.lastValidSelectionID
+			FMCdata["TalentButtons"]["LastConfig"]["spec2"]["talentID"] = PlayerSpellsFrame.TalentsFrame.LoadSystem.lastValidSelectionID
 			fmcOverlayCastbar = false
 		end
-		if FMCspecialSettings["TalentButtons"]["LastConfig"]["spec2"]["talentID"] ~= 0 then
-			C_ClassTalents.UpdateLastSelectedSavedConfigID(FMCspecialSettings["TalentButtons"]["LastConfig"]["spec2"]["specID"], FMCspecialSettings["TalentButtons"]["LastConfig"]["spec2"]["talentID"])
+		if FMCdata["TalentButtons"]["LastConfig"]["spec2"]["talentID"] ~= 0 then
+			C_ClassTalents.UpdateLastSelectedSavedConfigID(FMCdata["TalentButtons"]["LastConfig"]["spec2"]["specID"], FMCdata["TalentButtons"]["LastConfig"]["spec2"]["talentID"])
 		end
 	elseif GetSpecialization() == 3 then
 		if fmcOverlayCastbar then
-			FMCspecialSettings["TalentButtons"]["LastConfig"]["spec3"]["talentID"] = PlayerSpellsFrame.TalentsFrame.LoadSystem.lastValidSelectionID
+			FMCdata["TalentButtons"]["LastConfig"]["spec3"]["talentID"] = PlayerSpellsFrame.TalentsFrame.LoadSystem.lastValidSelectionID
 			fmcOverlayCastbar = false
 		end
-		if FMCspecialSettings["TalentButtons"]["LastConfig"]["spec3"]["talentID"] ~= 0 then
-			C_ClassTalents.UpdateLastSelectedSavedConfigID(FMCspecialSettings["TalentButtons"]["LastConfig"]["spec3"]["specID"], FMCspecialSettings["TalentButtons"]["LastConfig"]["spec3"]["talentID"])
+		if FMCdata["TalentButtons"]["LastConfig"]["spec3"]["talentID"] ~= 0 then
+			C_ClassTalents.UpdateLastSelectedSavedConfigID(FMCdata["TalentButtons"]["LastConfig"]["spec3"]["specID"], FMCdata["TalentButtons"]["LastConfig"]["spec3"]["talentID"])
 		end
 	end
 end
@@ -286,35 +286,35 @@ end
 local function UpdateConfigID4()
 	if GetSpecialization() == 1 then
 		if fmcOverlayCastbar then
-			FMCspecialSettings["TalentButtons"]["LastConfig"]["spec1"]["talentID"] = PlayerSpellsFrame.TalentsFrame.LoadSystem.lastValidSelectionID
+			FMCdata["TalentButtons"]["LastConfig"]["spec1"]["talentID"] = PlayerSpellsFrame.TalentsFrame.LoadSystem.lastValidSelectionID
 			fmcOverlayCastbar = false
 		end
-		if FMCspecialSettings["TalentButtons"]["LastConfig"]["spec1"]["talentID"] ~= 0 then
-			C_ClassTalents.UpdateLastSelectedSavedConfigID(FMCspecialSettings["TalentButtons"]["LastConfig"]["spec1"]["specID"], FMCspecialSettings["TalentButtons"]["LastConfig"]["spec1"]["talentID"])
+		if FMCdata["TalentButtons"]["LastConfig"]["spec1"]["talentID"] ~= 0 then
+			C_ClassTalents.UpdateLastSelectedSavedConfigID(FMCdata["TalentButtons"]["LastConfig"]["spec1"]["specID"], FMCdata["TalentButtons"]["LastConfig"]["spec1"]["talentID"])
 		end
 	elseif GetSpecialization() == 2 then
 		if fmcOverlayCastbar then
-			FMCspecialSettings["TalentButtons"]["LastConfig"]["spec2"]["talentID"] = PlayerSpellsFrame.TalentsFrame.LoadSystem.lastValidSelectionID
+			FMCdata["TalentButtons"]["LastConfig"]["spec2"]["talentID"] = PlayerSpellsFrame.TalentsFrame.LoadSystem.lastValidSelectionID
 			fmcOverlayCastbar = false
 		end
-		if FMCspecialSettings["TalentButtons"]["LastConfig"]["spec2"]["talentID"] ~= 0 then
-			C_ClassTalents.UpdateLastSelectedSavedConfigID(FMCspecialSettings["TalentButtons"]["LastConfig"]["spec2"]["specID"], FMCspecialSettings["TalentButtons"]["LastConfig"]["spec2"]["talentID"])
+		if FMCdata["TalentButtons"]["LastConfig"]["spec2"]["talentID"] ~= 0 then
+			C_ClassTalents.UpdateLastSelectedSavedConfigID(FMCdata["TalentButtons"]["LastConfig"]["spec2"]["specID"], FMCdata["TalentButtons"]["LastConfig"]["spec2"]["talentID"])
 		end
 	elseif GetSpecialization() == 3 then
 		if fmcOverlayCastbar then
-			FMCspecialSettings["TalentButtons"]["LastConfig"]["spec3"]["talentID"] = PlayerSpellsFrame.TalentsFrame.LoadSystem.lastValidSelectionID
+			FMCdata["TalentButtons"]["LastConfig"]["spec3"]["talentID"] = PlayerSpellsFrame.TalentsFrame.LoadSystem.lastValidSelectionID
 			fmcOverlayCastbar = false
 		end
-		if FMCspecialSettings["TalentButtons"]["LastConfig"]["spec3"]["talentID"] ~= 0 then
-			C_ClassTalents.UpdateLastSelectedSavedConfigID(FMCspecialSettings["TalentButtons"]["LastConfig"]["spec3"]["specID"], FMCspecialSettings["TalentButtons"]["LastConfig"]["spec3"]["talentID"])
+		if FMCdata["TalentButtons"]["LastConfig"]["spec3"]["talentID"] ~= 0 then
+			C_ClassTalents.UpdateLastSelectedSavedConfigID(FMCdata["TalentButtons"]["LastConfig"]["spec3"]["specID"], FMCdata["TalentButtons"]["LastConfig"]["spec3"]["talentID"])
 		end
 	elseif GetSpecialization() == 4 then
 		if fmcOverlayCastbar then
-			FMCspecialSettings["TalentButtons"]["LastConfig"]["spec4"]["talentID"] = PlayerSpellsFrame.TalentsFrame.LoadSystem.lastValidSelectionID
+			FMCdata["TalentButtons"]["LastConfig"]["spec4"]["talentID"] = PlayerSpellsFrame.TalentsFrame.LoadSystem.lastValidSelectionID
 			fmcOverlayCastbar = false
 		end
-		if FMCspecialSettings["TalentButtons"]["LastConfig"]["spec3"]["talentID"] ~= 0 then
-			C_ClassTalents.UpdateLastSelectedSavedConfigID(FMCspecialSettings["TalentButtons"]["LastConfig"]["spec4"]["specID"], FMCspecialSettings["TalentButtons"]["LastConfig"]["spec4"]["talentID"])
+		if FMCdata["TalentButtons"]["LastConfig"]["spec3"]["talentID"] ~= 0 then
+			C_ClassTalents.UpdateLastSelectedSavedConfigID(FMCdata["TalentButtons"]["LastConfig"]["spec4"]["specID"], FMCdata["TalentButtons"]["LastConfig"]["spec4"]["talentID"])
 		end
 	end
 end
@@ -329,7 +329,7 @@ local function CheckTalentsEquipment2()
 				for sk, sv in pairs (C_Traits.GetConfigInfo(fv)) do
 					if fv == chkTalentID and sk == "name" then
 						fmcPopOutTalents1.Text:SetText(fk..". "..sv)
-						for tk, tv in pairs (FMCspecialSettings.TalentBindEquipment[VDW.FMC.specId1]) do
+						for tk, tv in pairs (FMCdata.TalentBindEquipment[VDW.FMC.specId1]) do
 							if tk == sv then
 								local _, _, _, isEquipped = C_EquipmentSet.GetEquipmentSetInfo(tv) 
 								if not isEquipped then C_EquipmentSet.UseEquipmentSet(tv) end
@@ -348,7 +348,7 @@ local function CheckTalentsEquipment2()
 				for sk, sv in pairs (C_Traits.GetConfigInfo(fv)) do
 					if fv == chkTalentID and sk == "name" then
 						fmcPopOutTalents2.Text:SetText(fk..". "..sv)
-						for tk, tv in pairs (FMCspecialSettings.TalentBindEquipment[VDW.FMC.specId2]) do
+						for tk, tv in pairs (FMCdata.TalentBindEquipment[VDW.FMC.specId2]) do
 							if tk == sv then
 								local _, _, _, isEquipped = C_EquipmentSet.GetEquipmentSetInfo(tv) 
 								if not isEquipped then C_EquipmentSet.UseEquipmentSet(tv) end
@@ -371,7 +371,7 @@ local function CheckTalentsEquipment3()
 				for sk, sv in pairs (C_Traits.GetConfigInfo(fv)) do
 					if fv == chkTalentID and sk == "name" then
 						fmcPopOutTalents1.Text:SetText(fk..". "..sv)
-						for tk, tv in pairs (FMCspecialSettings.TalentBindEquipment[VDW.FMC.specId1]) do
+						for tk, tv in pairs (FMCdata.TalentBindEquipment[VDW.FMC.specId1]) do
 							if tk == sv then
 								local _, _, _, isEquipped = C_EquipmentSet.GetEquipmentSetInfo(tv) 
 								if not isEquipped then C_EquipmentSet.UseEquipmentSet(tv) end
@@ -390,7 +390,7 @@ local function CheckTalentsEquipment3()
 				for sk, sv in pairs (C_Traits.GetConfigInfo(fv)) do
 					if fv == chkTalentID and sk == "name" then
 						fmcPopOutTalents2.Text:SetText(fk..". "..sv)
-						for tk, tv in pairs (FMCspecialSettings.TalentBindEquipment[VDW.FMC.specId2]) do
+						for tk, tv in pairs (FMCdata.TalentBindEquipment[VDW.FMC.specId2]) do
 							if tk == sv then
 								local _, _, _, isEquipped = C_EquipmentSet.GetEquipmentSetInfo(tv) 
 								if not isEquipped then C_EquipmentSet.UseEquipmentSet(tv) end
@@ -409,7 +409,7 @@ local function CheckTalentsEquipment3()
 				for sk, sv in pairs (C_Traits.GetConfigInfo(fv)) do
 					if fv == chkTalentID and sk == "name" then
 						fmcPopOutTalents3.Text:SetText(fk..". "..sv)
-						for tk, tv in pairs (FMCspecialSettings.TalentBindEquipment[VDW.FMC.specId3]) do
+						for tk, tv in pairs (FMCdata.TalentBindEquipment[VDW.FMC.specId3]) do
 							if tk == sv then
 								local _, _, _, isEquipped = C_EquipmentSet.GetEquipmentSetInfo(tv) 
 								if not isEquipped then C_EquipmentSet.UseEquipmentSet(tv) end
@@ -432,7 +432,7 @@ local function CheckTalentsEquipment4()
 				for sk, sv in pairs (C_Traits.GetConfigInfo(fv)) do
 					if fv == chkTalentID and sk == "name" then
 						fmcPopOutTalents1.Text:SetText(fk..". "..sv)
-						for tk, tv in pairs (FMCspecialSettings.TalentBindEquipment[VDW.FMC.specId1]) do
+						for tk, tv in pairs (FMCdata.TalentBindEquipment[VDW.FMC.specId1]) do
 							if tk == sv then
 								local _, _, _, isEquipped = C_EquipmentSet.GetEquipmentSetInfo(tv) 
 								if not isEquipped then C_EquipmentSet.UseEquipmentSet(tv) end
@@ -451,7 +451,7 @@ local function CheckTalentsEquipment4()
 				for sk, sv in pairs (C_Traits.GetConfigInfo(fv)) do
 					if fv == chkTalentID and sk == "name" then
 						fmcPopOutTalents2.Text:SetText(fk..". "..sv)
-						for tk, tv in pairs (FMCspecialSettings.TalentBindEquipment[VDW.FMC.specId2]) do
+						for tk, tv in pairs (FMCdata.TalentBindEquipment[VDW.FMC.specId2]) do
 							if tk == sv then
 								local _, _, _, isEquipped = C_EquipmentSet.GetEquipmentSetInfo(tv) 
 								if not isEquipped then C_EquipmentSet.UseEquipmentSet(tv) end
@@ -470,7 +470,7 @@ local function CheckTalentsEquipment4()
 				for sk, sv in pairs (C_Traits.GetConfigInfo(fv)) do
 					if fv == chkTalentID and sk == "name" then
 						fmcPopOutTalents3.Text:SetText(fk..". "..sv)
-						for tk, tv in pairs (FMCspecialSettings.TalentBindEquipment[VDW.FMC.specId3]) do
+						for tk, tv in pairs (FMCdata.TalentBindEquipment[VDW.FMC.specId3]) do
 							if tk == sv then
 								local _, _, _, isEquipped = C_EquipmentSet.GetEquipmentSetInfo(tv) 
 								if not isEquipped then C_EquipmentSet.UseEquipmentSet(tv) end
@@ -489,7 +489,7 @@ local function CheckTalentsEquipment4()
 				for sk, sv in pairs (C_Traits.GetConfigInfo(fv)) do
 					if fv == chkTalentID and sk == "name" then
 						fmcPopOutTalents4.Text:SetText(fk..". "..sv)
-						for tk, tv in pairs (FMCspecialSettings.TalentBindEquipment[VDW.FMC.specId4]) do
+						for tk, tv in pairs (FMCdata.TalentBindEquipment[VDW.FMC.specId4]) do
 							if tk == sv then
 								local _, _, _, isEquipped = C_EquipmentSet.GetEquipmentSetInfo(tv) 
 								if not isEquipped then C_EquipmentSet.UseEquipmentSet(tv) end
@@ -503,10 +503,9 @@ local function CheckTalentsEquipment4()
 end
 -- equipment sets --
 local function equipSets()
-	FMCspecialSettings["EquipmentSets"] = {}
 	for i = 0, C_EquipmentSet.GetNumEquipmentSets() - 1, 1 do
 		local name, _, setID = C_EquipmentSet.GetEquipmentSetInfo(i)
-		FMCspecialSettings["EquipmentSets"][name] = setID
+		FMCdata["EquipmentSets"][name] = setID
 	end
 end
 -- animations --
@@ -595,11 +594,9 @@ end
 local function EventsTime(self, event, arg1, arg2, arg3, arg4)
 	if event == "PLAYER_LOGIN" then
 		if UnitLevel("player") >= 10 and C_SpecializationInfo.GetSpecialization() ~= 5 then
-			ProtectOptions()
-			FMCsettings["LastLocation"] = GetLocale()
+			--ProtectOptions()
 			equipSets()
 			VDW.FMC.AnimationSettings()
-			FMCsettings.LastLocation = GetLocale()
 			if FMCsettings["TalentButtons"]["Visible"] then
 				CreateButtons()
 				if GetNumSpecializations() == 2 then
@@ -621,10 +618,10 @@ local function EventsTime(self, event, arg1, arg2, arg3, arg4)
 		equipSets()
 	elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
 		if UnitLevel("player") >= 10 and C_SpecializationInfo.GetSpecialization() ~= 5 then
-			if FMCspecialSettings.FirstSpec then
+			if FMCdata.FirstSpec then
 				CreateButtons()
 				DEFAULT_CHAT_FRAME:AddMessage(C.Main:WrapTextInColorCode(prefixChat.." Please select your talents and then restart (/reload) WoW, so the talents buttons will work properly. Read the instruction in the settings."))
-				FMCspecialSettings.FirstSpec = false
+				FMCdata.FirstSpec = false
 			end
 			if FMCsettings["TalentButtons"]["Visible"] then
 				if GetNumSpecializations() == 2 then

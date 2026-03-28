@@ -340,7 +340,7 @@ local function EventsTime(self, event, arg1, arg2, arg3, arg4)
 	elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
 		if UnitLevel("player") >= 10 and C_SpecializationInfo.GetSpecialization() ~= 5 then
 			if fmcOptions00 and fmcOptions00:IsShown() then fmcOptions00:Hide() end
-			if FMCspecialSettings.FirstSpec then CreateButtons() end
+			if FMCdata.FirstSpec then CreateButtons() end
 			if FMCsettings["SpecButtons"]["Visible"] then
 				if GetNumSpecializations() == 2 then
 					Buttons1bgTool()

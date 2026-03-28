@@ -120,12 +120,13 @@ local function FirstTimeSavedVariables()
 		}
 	end
 	if FMCprofilesLayout ~= nil then FMCprofilesLayout = nil end
-	if FMCsettings.LastLocation == nil then FMCsettings.LastLocation = GetLocale() end
-	if FMCspecialSettings == nil then FMCspecialSettings = {} end
-	if FMCspecialSettings.FirstLogin == nil then FMCspecialSettings.FirstLogin = true end
-	if FMCspecialSettings.FirstSpec == nil then FMCspecialSettings.FirstSpec = true end
-	if FMCspecialSettings.TalentButtons == nil then
-		FMCspecialSettings.TalentButtons = {
+	if FMCsettings.LastLocation ~= nil then FMCsettings.LastLocation = nil end
+	
+	if FMCdata == nil then FMCdata = {} end
+	if FMCdata.FirstLogin == nil then FMCdata.FirstLogin = true end
+	if FMCdata.FirstSpec == nil then FMCdata.FirstSpec = true end
+	if FMCdata.TalentButtons == nil then
+		FMCdata.TalentButtons = {
 			LastConfig = {
 				spec1 = {specID = 0, talentID = 0,},
 				spec2 = {specID = 0, talentID = 0,},
@@ -134,14 +135,15 @@ local function FirstTimeSavedVariables()
 			},
 		}
 	end
-	if FMCspecialSettings.EquipmentSets == nil then FMCspecialSettings.EquipmentSets = {} end
-	if FMCspecialSettings.TalentLayouts == nil then FMCspecialSettings.TalentLayouts = {} end
-	if FMCspecialSettings.TalentBindEquipment == nil then FMCspecialSettings.TalentBindEquipment = {}
+	if FMCdata.EquipmentSets == nil then FMCdata.EquipmentSets = {} end
+	if FMCdata.TalentLayouts == nil then FMCdata.TalentLayouts = {} end
+	if FMCdata.TalentBindEquipment == nil then FMCdata.TalentBindEquipment = {}
 		for i = 1, GetNumSpecializations(), 1 do
-			FMCspecialSettings.TalentBindEquipment[VDW.FMC["specId"..i]] = {}
+			FMCdata.TalentBindEquipment[VDW.FMC["specId"..i]] = {}
 		end
 	end
 end
+-- character button
 CharacterMicroButton:HookScript("OnEnter", function(self)
 	if MicroMenuContainer and MicroMenuContainer:IsShown() then
 		local function word()
@@ -165,20 +167,20 @@ CharacterMicroButton:HookScript("OnEnter", function(self)
 				loot = C.High:WrapTextInColorCode(VDW.FMC.specName4)
 			end
 			if GetSpecialization() == 1 then
-				local configInfo = C_Traits.GetConfigInfo(FMCspecialSettings.TalentButtons.LastConfig.spec1.talentID)
-				local subTreeInfo = C_Traits.GetSubTreeInfo(FMCspecialSettings.TalentButtons.LastConfig.spec1.talentID, hero)
+				local configInfo = C_Traits.GetConfigInfo(FMCdata.TalentButtons.LastConfig.spec1.talentID)
+				local subTreeInfo = C_Traits.GetSubTreeInfo(FMCdata.TalentButtons.LastConfig.spec1.talentID, hero)
 				w = "Spec: "..C.High:WrapTextInColorCode(VDW.FMC.specName1).."|nTalents: "..C.High:WrapTextInColorCode(configInfo.name).."|nHero: "..C.High:WrapTextInColorCode(subTreeInfo.name).."|nEquipment: "..equip.."|nLoot Spec: "..loot
 			elseif GetSpecialization() == 2 then
-				local configInfo = C_Traits.GetConfigInfo(FMCspecialSettings.TalentButtons.LastConfig.spec2.talentID)
-				local subTreeInfo = C_Traits.GetSubTreeInfo(FMCspecialSettings.TalentButtons.LastConfig.spec2.talentID, hero)
+				local configInfo = C_Traits.GetConfigInfo(FMCdata.TalentButtons.LastConfig.spec2.talentID)
+				local subTreeInfo = C_Traits.GetSubTreeInfo(FMCdata.TalentButtons.LastConfig.spec2.talentID, hero)
 				w = "Spec: "..C.High:WrapTextInColorCode(VDW.FMC.specName2).."|nTalents: "..C.High:WrapTextInColorCode(configInfo.name).."|nHero: "..C.High:WrapTextInColorCode(subTreeInfo.name).."|nEquipment: "..equip.."|nLoot Spec: "..loot
 			elseif GetSpecialization() == 3 then
-				local configInfo = C_Traits.GetConfigInfo(FMCspecialSettings.TalentButtons.LastConfig.spec3.talentID)
-				local subTreeInfo = C_Traits.GetSubTreeInfo(FMCspecialSettings.TalentButtons.LastConfig.spec3.talentID, hero)
+				local configInfo = C_Traits.GetConfigInfo(FMCdata.TalentButtons.LastConfig.spec3.talentID)
+				local subTreeInfo = C_Traits.GetSubTreeInfo(FMCdata.TalentButtons.LastConfig.spec3.talentID, hero)
 				w = "Spec: "..C.High:WrapTextInColorCode(VDW.FMC.specName3).."|nTalents: "..C.High:WrapTextInColorCode(configInfo.name).."|nHero: "..C.High:WrapTextInColorCode(subTreeInfo.name).."|nEquipment: "..equip.."|nLoot Spec: "..loot
 			elseif GetSpecialization() == 4 then
-				local configInfo = C_Traits.GetConfigInfo(FMCspecialSettings.TalentButtons.LastConfig.spec4.talentID)
-				local subTreeInfo = C_Traits.GetSubTreeInfo(FMCspecialSettings.TalentButtons.LastConfig.spec4.talentID, hero)
+				local configInfo = C_Traits.GetConfigInfo(FMCdata.TalentButtons.LastConfig.spec4.talentID)
+				local subTreeInfo = C_Traits.GetSubTreeInfo(FMCdata.TalentButtons.LastConfig.spec4.talentID, hero)
 				w = "Spec: "..C.High:WrapTextInColorCode(VDW.FMC.specName4).."|nTalents: "..C.High:WrapTextInColorCode(configInfo.name).."|nHero: "..C.High:WrapTextInColorCode(subTreeInfo.name).."|nEquipment: "..equip.."|nLoot Spec: "..loot
 			end
 			return w
@@ -195,15 +197,17 @@ local function EventsTime(self, event, arg1, arg2, arg3, arg4)
 		if UnitLevel("player") >= 10 and C_SpecializationInfo.GetSpecialization() ~= 5 then
 			CreateGlobalVariables()
 			FirstTimeSavedVariables()
+			FMCdata.FirstLogin = false
+			FMCdata.FirstSpec = false
 		elseif UnitLevel("player") == 10 and C_SpecializationInfo.GetSpecialization() == 5 then
-			if FMCspecialSettings.FirstLogin then
+			if FMCdata.FirstLogin then
 				DEFAULT_CHAT_FRAME:AddMessage(C.Main:WrapTextInColorCode(prefixChat.." FMC is not working, you need to choose a specialization."))
-				FMCspecialSettings.FirstLogin = false
+				FMCdata.FirstLogin = false
 			end
 		elseif UnitLevel("player") < 10 then
-			if FMCspecialSettings.FirstLogin then
+			if FMCdata.FirstLogin then
 				DEFAULT_CHAT_FRAME:AddMessage(C.Main:WrapTextInColorCode(prefixChat.." FMC is not working, you need to be above level 10 and you need to choose a specialization."))
-				FMCspecialSettings.FirstLogin = false
+				FMCdata.FirstLogin = false
 			end
 		end
 	elseif event == "PLAYER_LEVEL_UP" then
@@ -214,11 +218,10 @@ local function EventsTime(self, event, arg1, arg2, arg3, arg4)
 		end
 	elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
 		if UnitLevel("player") >= 10 and C_SpecializationInfo.GetSpecialization() ~= 5 then
-			if FMCspecialSettings.FirstSpec then
+			if FMCdata.FirstSpec then
 				DEFAULT_CHAT_FRAME:AddMessage(C.Main:WrapTextInColorCode(prefixChat.." Launching FMC, please wait..."))
 				CreateGlobalVariables()
 				FirstTimeSavedVariables()
-				--FMCspecialSettings.FirstSpec = false
 			end
 		end
 	end

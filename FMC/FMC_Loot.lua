@@ -206,7 +206,7 @@ local function EventsTime(self, event, arg1, arg2, arg3, arg4)
 		end
 	elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
 		if UnitLevel("player") >= 10 and C_SpecializationInfo.GetSpecialization() ~= 5 then
-			if FMCspecialSettings.FirstSpec then
+			if FMCdata.FirstSpec then
 				CreateButtons()
 				if GetNumSpecializations() == 2 then
 					CheckLootSpec2()

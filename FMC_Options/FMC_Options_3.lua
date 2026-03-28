@@ -491,7 +491,7 @@ end)
 -- equipment set --
 ColoringPopOutButtons(3, 1)
 fmcOptions3Box3PopOut1.Title:SetText("Equipment Set")
-for name, v in pairs(FMCspecialSettings.EquipmentSets) do
+for name, v in pairs(FMCdata.EquipmentSets) do
 	counter = counter + 1
 	local btn = CreateFrame("Button", "fmcOptions3Box3PopOut1Choice"..counter, nil, "vdwPopOutButton")
 	_G["fmcOptions3Box3PopOut1Choice"..counter]:ClearAllPoints()
@@ -543,7 +543,7 @@ end)
 -- talent loadout 1  --
 ColoringPopOutButtons(3, 2)
 fmcOptions3Box3PopOut2.Title:SetText("Talent loadout")
-for i, name in pairs(FMCspecialSettings.TalentLayouts[VDW.FMC.specId1]) do
+for i, name in pairs(FMCdata.TalentLayouts[VDW.FMC.specId1]) do
 	counter = counter + 1
 	local btn = CreateFrame("Button", "fmcOptions3Box3PopOut2Choice"..i, nil, "vdwPopOutButton")
 	_G["fmcOptions3Box3PopOut2Choice"..i]:ClearAllPoints()
@@ -595,7 +595,7 @@ end)
 -- talent loadout 2  --
 ColoringPopOutButtons(3, 3)
 fmcOptions3Box3PopOut3.Title:SetText("Talent loadout")
-for i, name in pairs(FMCspecialSettings.TalentLayouts[VDW.FMC.specId2]) do
+for i, name in pairs(FMCdata.TalentLayouts[VDW.FMC.specId2]) do
 	counter = counter + 1
 	local btn = CreateFrame("Button", "fmcOptions3Box3PopOut3Choice"..i, nil, "vdwPopOutButton")
 	_G["fmcOptions3Box3PopOut3Choice"..i]:ClearAllPoints()
@@ -647,7 +647,7 @@ end)
 -- talent loadout 3  --
 ColoringPopOutButtons(3, 4)
 fmcOptions3Box3PopOut4.Title:SetText("Talent loadout")
-for i, name in pairs(FMCspecialSettings.TalentLayouts[VDW.FMC.specId3]) do
+for i, name in pairs(FMCdata.TalentLayouts[VDW.FMC.specId3]) do
 	counter = counter + 1
 	local btn = CreateFrame("Button", "fmcOptions3Box3PopOut4Choice"..i, nil, "vdwPopOutButton")
 	_G["fmcOptions3Box3PopOut4Choice"..i]:ClearAllPoints()
@@ -696,11 +696,11 @@ fmcOptions3Box3PopOut4:HookScript("OnClick", function(self, button, down)
 		end
 	end
 end)
-if FMCspecialSettings.TalentLayouts[VDW.FMC.specId4] then
+if FMCdata.TalentLayouts[VDW.FMC.specId4] then
 -- talent loadout 4  --
 	ColoringPopOutButtons(3, 5)
 	fmcOptions3Box3PopOut5.Title:SetText("Talent loadout")
-	for i, name in pairs(FMCspecialSettings.TalentLayouts[VDW.FMC.specId4]) do
+	for i, name in pairs(FMCdata.TalentLayouts[VDW.FMC.specId4]) do
 		counter = counter + 1
 		local btn = CreateFrame("Button", "fmcOptions3Box3PopOut5Choice"..i, nil, "vdwPopOutButton")
 		_G["fmcOptions3Box3PopOut5Choice"..i]:ClearAllPoints()
@@ -772,10 +772,10 @@ fmcOptions3Box3Button1:HookScript("OnLeave", function(self) VDW.Tooltip_Hide() e
 fmcOptions3Box3Button1:HookScript("OnClick", function(self, button, down)
 	if button == "LeftButton" and down == false then
 		if fmcOptions3Box3PopOut1.Text:GetText() ~= nil and (fmcOptions3Box3PopOut2.Text:GetText() ~= nil or fmcOptions3Box3PopOut3.Text:GetText() ~= nil or fmcOptions3Box3PopOut4.Text:GetText() ~= nil or fmcOptions3Box3PopOut5.Text:GetText() ~= nil) then
-			if GetSpecialization() == 1 then FMCspecialSettings.TalentBindEquipment[VDW.FMC.specId1][talentLD] = FMCspecialSettings.EquipmentSets[equipSet]
-			elseif GetSpecialization() == 2 then FMCspecialSettings.TalentBindEquipment[VDW.FMC.specId2][talentLD] = FMCspecialSettings.EquipmentSets[equipSet]
-			elseif GetSpecialization() == 3 then FMCspecialSettings.TalentBindEquipment[VDW.FMC.specId3][talentLD] = FMCspecialSettings.EquipmentSets[equipSet]
-			elseif GetSpecialization() == 4 then FMCspecialSettings.TalentBindEquipment[VDW.FMC.specId4][talentLD] = FMCspecialSettings.EquipmentSets[equipSet]
+			if GetSpecialization() == 1 then FMCdata.TalentBindEquipment[VDW.FMC.specId1][talentLD] = FMCdata.EquipmentSets[equipSet]
+			elseif GetSpecialization() == 2 then FMCdata.TalentBindEquipment[VDW.FMC.specId2][talentLD] = FMCdata.EquipmentSets[equipSet]
+			elseif GetSpecialization() == 3 then FMCdata.TalentBindEquipment[VDW.FMC.specId3][talentLD] = FMCdata.EquipmentSets[equipSet]
+			elseif GetSpecialization() == 4 then FMCdata.TalentBindEquipment[VDW.FMC.specId4][talentLD] = FMCdata.EquipmentSets[equipSet]
 			end
 			DEFAULT_CHAT_FRAME:AddMessage(C.Main:WrapTextInColorCode(VDW.PrefixChat("FMC").." The Equipment Set has been bound to the Talent Loadout!"))
 			UIErrorsFrame:AddExternalWarningMessage("The Equipment Set has been bound to the Talent Loadout!")
@@ -795,9 +795,9 @@ fmcOptions3List1:SetTextColor(C.Main:GetRGB())
 fmcOptions3List1:SetScript("OnMouseWheel", function(self, delta) Scrolling(self, delta) end)
 local function sendMessages(specID)
 	local count = 0
-	for fk, fv in pairs (FMCspecialSettings.TalentBindEquipment[specID]) do
+	for fk, fv in pairs (FMCdata.TalentBindEquipment[specID]) do
 		if fk then
-			for sk, sv in pairs (FMCspecialSettings.EquipmentSets) do
+			for sk, sv in pairs (FMCdata.EquipmentSets) do
 				if sv == fv then
 					count = count + 1
 					fmcOptions3List1:AddMessage(" "..count..".The equipment set '"..sk.."' is bound to the '"..fk.."' talent loadout")
