@@ -151,7 +151,6 @@ local function CreateButtons()
 		maxW = 160
 		_G["fmcPopOutTalents"..i]:HookScript("OnClick", function(self, button, down)
 			if button == "LeftButton" and down == false then
-				print("clicky")
 				if not _G["fmcPopOutTalents"..i.."Button1"]:IsShown() then
 					_G["fmcPopOutTalents"..i.."Button1"]:Show()
 				else
@@ -503,9 +502,39 @@ local function CheckTalentsEquipment4()
 end
 -- equipment sets --
 local function equipSets()
+	FMCdata.EquipmentSets = {}
 	for i = 0, C_EquipmentSet.GetNumEquipmentSets() - 1, 1 do
 		local name, _, setID = C_EquipmentSet.GetEquipmentSetInfo(i)
-		FMCdata["EquipmentSets"][name] = setID
+		if name ~= nil then FMCdata.EquipmentSets[name] = setID end
+	end
+	if GetSpecialization() == 1 then
+		for _, nameTalent in pairs(FMCdata.TalentLayouts[VDW.FMC.specId1]) do
+			if FMCdata.TalentBindEquipment[VDW.FMC.specId1][nameTalent] then
+				local name, _, setID = C_EquipmentSet.GetEquipmentSetInfo(FMCdata.TalentBindEquipment[VDW.FMC.specId1][nameTalent])
+				if name == nil then FMCdata.TalentBindEquipment[VDW.FMC.specId1][nameTalent] = nil end
+			end
+		end
+	elseif GetSpecialization() == 2 then
+		for _, nameTalent in pairs(FMCdata.TalentLayouts[VDW.FMC.specId2]) do
+			if FMCdata.TalentBindEquipment[VDW.FMC.specId2][nameTalent] then
+				local name, _, setID = C_EquipmentSet.GetEquipmentSetInfo(FMCdata.TalentBindEquipment[VDW.FMC.specId2][nameTalent])
+				if name == nil then FMCdata.TalentBindEquipment[VDW.FMC.specId2][nameTalent] = nil end
+			end
+		end
+	elseif GetSpecialization() == 3 then
+		for _, nameTalent in pairs(FMCdata.TalentLayouts[VDW.FMC.specId3]) do
+			if FMCdata.TalentBindEquipment[VDW.FMC.specId3][nameTalent] then
+				local name, _, setID = C_EquipmentSet.GetEquipmentSetInfo(FMCdata.TalentBindEquipment[VDW.FMC.specId3][nameTalent])
+				if name == nil then FMCdata.TalentBindEquipment[VDW.FMC.specId3][nameTalent] = nil end
+			end
+		end
+	elseif GetSpecialization() == 4 then
+		for _, nameTalent in pairs(FMCdata.TalentLayouts[VDW.FMC.specId4]) do
+			if FMCdata.TalentBindEquipment[VDW.FMC.specId4][nameTalent] then
+				local name, _, setID = C_EquipmentSet.GetEquipmentSetInfo(FMCdata.TalentBindEquipment[VDW.FMC.specId4][nameTalent])
+				if name == nil then FMCdata.TalentBindEquipment[VDW.FMC.specId4][nameTalent] = nil end
+			end
+		end
 	end
 end
 -- animations --
@@ -618,6 +647,7 @@ local function EventsTime(self, event, arg1, arg2, arg3, arg4)
 		equipSets()
 	elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
 		if UnitLevel("player") >= 10 and C_SpecializationInfo.GetSpecialization() ~= 5 then
+			equipSets()
 			if FMCdata.FirstSpec then
 				CreateButtons()
 				DEFAULT_CHAT_FRAME:AddMessage(C.Main:WrapTextInColorCode(prefixChat.." Please select your talents and then restart (/reload) WoW, so the talents buttons will work properly. Read the instruction in the settings."))

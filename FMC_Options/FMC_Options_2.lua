@@ -3,13 +3,22 @@ local L = VDW.FMC.Local
 local C = VDW.GetAddonColors("FMC")
 local prefixTip = VDW.Prefix("FMC")
 -- Taking care of the option panel --
-fmcOptions2:SetWidth(576)
+fmcOptions2:SetWidth(612)
 fmcOptions2:ClearAllPoints()
 fmcOptions2:SetPoint("TOPLEFT", fmcOptions00, "TOPLEFT", 0, 0)
 -- Background of the option panel --
 fmcOptions2.BGtexture:SetTexture("Interface\\BankFrame\\Bank-Background.blp", "CLAMP", "CLAMP", "NEAREST")
 fmcOptions2.BGtexture:SetVertexColor(C.High:GetRGB())
 fmcOptions2.BGtexture:SetDesaturation(0.3)
+fmcOptions2.Logo:SetVertexColor(C.Main:GetRGB())
+fmcOptions2.BorderTopRight:SetVertexColor(C.High:GetRGB())
+fmcOptions2.BorderBottomRight:SetVertexColor(C.High:GetRGB())
+fmcOptions2.BorderRightMiddle:SetVertexColor(C.High:GetRGB())
+fmcOptions2.BorderTopLeft:SetVertexColor(C.High:GetRGB())
+fmcOptions2.BorderBottomLeft:SetVertexColor(C.High:GetRGB())
+fmcOptions2.BorderLeftMiddle:SetVertexColor(C.High:GetRGB())
+fmcOptions2.BorderTopMiddle:SetVertexColor(C.High:GetRGB())
+fmcOptions2.BorderBottomMiddle:SetVertexColor(C.High:GetRGB())
 -- Title of the option panel --
 fmcOptions2.Title:SetTextColor(C.Main:GetRGB())
 fmcOptions2.Title:SetText(prefixTip.."|nVersion: "..C.High:WrapTextInColorCode(C_AddOns.GetAddOnMetadata("FMC", "Version")))

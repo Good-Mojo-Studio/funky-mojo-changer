@@ -63,7 +63,7 @@
 					</Frame>
 				</Frames>
 			</Frame>
-<!-- Options Box 3 hide, show anim buttons -->
+<!-- Options Box 3 equipment set - talent laodout -->
 			<Frame name="$parentBox3" inherits="vdwOptionsBox">
 				<Frames>
 <!-- Pop Out 1, equipment -->	
@@ -103,6 +103,18 @@
 						</Anchors>
 					</Button>
 				</Frames>
+			</Frame>
+<!-- Options Box 4 Note box -->
+			<Frame name="$parentBox4" inherits="vdwOptionsBox">
+				<Layers>
+					<Layer level="OVERLAY">
+						<FontString parentKey="Notes" font="vdw_NFshadow_13" justifyV="MIDDLE" justifyH="CENTER">
+							<Anchors>
+								<Anchor point="TOP" relativePoint="TOP" x="0" y="-32"/>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
 			</Frame>
 <!-- Talent bind equipment list -->
 			<ScrollingMessageFrame name="$parentList1">

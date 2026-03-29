@@ -12,13 +12,22 @@ local popoutDirection = {G.OPTIONS_D_UPWARD, G.OPTIONS_D_DOWNWARD,}
 local animationStyle = {G.OPTIONS_S_BANNER, G.OPTIONS_S_RUNES,}
 local animationBackgroung = {G.OPTIONS_C_CLASS,}
 -- Taking care of the option panel --
-fmcOptions3:SetWidth(576)
+fmcOptions3:SetWidth(612)
 fmcOptions3:ClearAllPoints()
 fmcOptions3:SetPoint("TOPLEFT", fmcOptions00, "TOPLEFT", 0, 0)
 -- Background of the option panel --
 fmcOptions3.BGtexture:SetTexture("Interface\\BankFrame\\Bank-Background.blp", "CLAMP", "CLAMP", "NEAREST")
 fmcOptions3.BGtexture:SetVertexColor(C.High:GetRGB())
 fmcOptions3.BGtexture:SetDesaturation(0.3)
+fmcOptions3.Logo:SetVertexColor(C.Main:GetRGB())
+fmcOptions3.BorderTopRight:SetVertexColor(C.High:GetRGB())
+fmcOptions3.BorderBottomRight:SetVertexColor(C.High:GetRGB())
+fmcOptions3.BorderRightMiddle:SetVertexColor(C.High:GetRGB())
+fmcOptions3.BorderTopLeft:SetVertexColor(C.High:GetRGB())
+fmcOptions3.BorderBottomLeft:SetVertexColor(C.High:GetRGB())
+fmcOptions3.BorderLeftMiddle:SetVertexColor(C.High:GetRGB())
+fmcOptions3.BorderTopMiddle:SetVertexColor(C.High:GetRGB())
+fmcOptions3.BorderBottomMiddle:SetVertexColor(C.High:GetRGB())
 -- Title of the option panel --
 fmcOptions3.Title:SetTextColor(C.Main:GetRGB())
 fmcOptions3.Title:SetText(prefixTip.."|nVersion: "..C.High:WrapTextInColorCode(C_AddOns.GetAddOnMetadata("FMC", "Version")))
@@ -36,7 +45,14 @@ fmcOptions3Box2:SetPoint("TOPLEFT", fmcOptions3Box1, "BOTTOMLEFT", 0, 0)
 fmcOptions3Box3:SetHeight(128)
 fmcOptions3Box3.Title:SetText("Equipment set / Talent loadout")
 fmcOptions3Box3:SetPoint("TOPLEFT", fmcOptions3Box1, "TOPRIGHT", 0, 0)
-for i = 1, 3, 1 do
+fmcOptions3Box4:SetHeight(216)
+fmcOptions3Box4.Title:SetText("Important Notes")
+fmcOptions3Box4:SetPoint("TOPLEFT", fmcOptions3Box2, "TOPRIGHT", 0, 0)
+fmcOptions3Box4.Notes:SetTextColor(C.Main:GetRGB())
+fmcOptions3Box4.Notes:SetWidth(fmcOptions3Box3:GetWidth() - 12)
+fmcOptions3Box4.Notes:SetText("|A:"..C_AddOns.GetAddOnMetadata("FMC", "IconAtlas")..":16:16|a"..C.High:WrapTextInColorCode("Note 1: ").."When you "..C.High:WrapTextInColorCode("delete").." an equipment set, please delete from "..C.High:WrapTextInColorCode("bottom").." to "..C.High:WrapTextInColorCode("top").." and avoid to delete the first and the in between if there are more than one|n|n|A:"..C_AddOns.GetAddOnMetadata("FMC", "IconAtlas")..":16:16|a"..C.High:WrapTextInColorCode("Note 2: ").."When you "..C.High:WrapTextInColorCode("create")..", or "..C.High:WrapTextInColorCode("delete").." an equipment set. Please "..C.High:WrapTextInColorCode("/reload").." your game!|n|n|A:"..C_AddOns.GetAddOnMetadata("FMC", "IconAtlas")..":16:16|a"..C.High:WrapTextInColorCode("Note 3: ").."When you "..C.High:WrapTextInColorCode("create")..", or "..C.High:WrapTextInColorCode("delete").." a talent loadout. Please "..C.High:WrapTextInColorCode("/reload").." your game!")
+
+for i = 1, 4, 1 do
 	local tW = _G["fmcOptions3Box"..i].Title:GetStringWidth()+16
 	local W = _G["fmcOptions3Box"..i]:GetWidth()
 	if tW >= W then
@@ -533,10 +549,16 @@ end)
 fmcOptions3Box3PopOut1:HookScript("OnLeave", function(self) VDW.Tooltip_Hide() end)
 fmcOptions3Box3PopOut1:HookScript("OnClick", function(self, button, down)
 	if button == "LeftButton" and down == false then
-		if not fmcOptions3Box3PopOut1Choice1:IsShown() then
-			fmcOptions3Box3PopOut1Choice1:Show()
+		if fmcOptions3Box3PopOut1Choice1 then
+			if not fmcOptions3Box3PopOut1Choice1:IsShown() then
+				fmcOptions3Box3PopOut1Choice1:Show()
+			else
+				fmcOptions3Box3PopOut1Choice1:Hide()
+			end
 		else
-			fmcOptions3Box3PopOut1Choice1:Hide()
+			DEFAULT_CHAT_FRAME:AddMessage(C.Main:WrapTextInColorCode(VDW.PrefixChat("FMC").." There are no Equipment Sets!|nPlease create some."))
+			UIErrorsFrame:AddExternalWarningMessage("There are no Equipment Sets, please create some!")
+			C_Sound.PlayVocalErrorSound(48)
 		end
 	end
 end)
@@ -795,13 +817,17 @@ fmcOptions3List1:SetTextColor(C.Main:GetRGB())
 fmcOptions3List1:SetScript("OnMouseWheel", function(self, delta) Scrolling(self, delta) end)
 local function sendMessages(specID)
 	local count = 0
-	for fk, fv in pairs (FMCdata.TalentBindEquipment[specID]) do
+	for fk, fv in pairs(FMCdata.TalentBindEquipment[specID]) do
 		if fk then
 			for sk, sv in pairs (FMCdata.EquipmentSets) do
-				if sv == fv then
-					count = count + 1
-					fmcOptions3List1:AddMessage(" "..count..".The equipment set '"..sk.."' is bound to the '"..fk.."' talent loadout")
-					fmcOptions3List1:AddMessage("---")
+				if sk then
+					if sv == fv then
+						count = count + 1
+						fmcOptions3List1:AddMessage(" "..count..".The equipment set '"..sk.."' is bound to the '"..fk.."' talent loadout")
+						fmcOptions3List1:AddMessage("---")
+					end
+				else
+					FMCdata.TalentBindEquipment[specID] = {}
 				end
 			end
 		end
