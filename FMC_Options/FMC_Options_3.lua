@@ -563,163 +563,187 @@ fmcOptions3Box3PopOut1:HookScript("OnClick", function(self, button, down)
 	end
 end)
 -- talent loadout 1  --
-ColoringPopOutButtons(3, 2)
-fmcOptions3Box3PopOut2.Title:SetText("Talent loadout")
-for i, name in pairs(FMCdata.TalentLayouts[VDW.FMC.specId1]) do
-	counter = counter + 1
-	local btn = CreateFrame("Button", "fmcOptions3Box3PopOut2Choice"..i, nil, "vdwPopOutButton")
-	_G["fmcOptions3Box3PopOut2Choice"..i]:ClearAllPoints()
-	if i == 1 then
-		_G["fmcOptions3Box3PopOut2Choice"..i]:SetParent(fmcOptions3Box3PopOut2)
-		_G["fmcOptions3Box3PopOut2Choice"..i]:SetPoint("TOP", fmcOptions3Box3PopOut2, "BOTTOM", 0, 4)
-		_G["fmcOptions3Box3PopOut2Choice"..i]:SetScript("OnShow", function(self)
-			self:GetParent():SetNormalAtlas("charactercreate-customize-dropdownbox-hover")
-			PlaySound(855, "Master")
+if FMCdata.TalentLayouts[VDW.FMC.specId1] then
+	ColoringPopOutButtons(3, 2)
+	fmcOptions3Box3PopOut2.Title:SetText("Talent loadout")
+	for i, name in pairs(FMCdata.TalentLayouts[VDW.FMC.specId1]) do
+		counter = counter + 1
+		local btn = CreateFrame("Button", "fmcOptions3Box3PopOut2Choice"..i, nil, "vdwPopOutButton")
+		_G["fmcOptions3Box3PopOut2Choice"..i]:ClearAllPoints()
+		if i == 1 then
+			_G["fmcOptions3Box3PopOut2Choice"..i]:SetParent(fmcOptions3Box3PopOut2)
+			_G["fmcOptions3Box3PopOut2Choice"..i]:SetPoint("TOP", fmcOptions3Box3PopOut2, "BOTTOM", 0, 4)
+			_G["fmcOptions3Box3PopOut2Choice"..i]:SetScript("OnShow", function(self)
+				self:GetParent():SetNormalAtlas("charactercreate-customize-dropdownbox-hover")
+				PlaySound(855, "Master")
+			end)
+			_G["fmcOptions3Box3PopOut2Choice"..i]:SetScript("OnHide", function(self)
+				self:GetParent():SetNormalAtlas("charactercreate-customize-dropdownbox-open")
+				PlaySound(855, "Master")
+			end)
+		else
+			_G["fmcOptions3Box3PopOut2Choice"..i]:SetParent(fmcOptions3Box3PopOut2Choice1)
+			_G["fmcOptions3Box3PopOut2Choice"..i]:SetPoint("TOP", _G["fmcOptions3Box3PopOut2Choice"..i-1], "BOTTOM", 0, 0)
+			_G["fmcOptions3Box3PopOut2Choice"..i]:Show()
+		end
+		_G["fmcOptions3Box3PopOut2Choice"..i].Text:SetText(name)
+		_G["fmcOptions3Box3PopOut2Choice"..i]:HookScript("OnClick", function(self, button, down)
+			if button == "LeftButton" and down == false then
+				fmcOptions3Box3PopOut2.Text:SetText(self.Text:GetText())
+				fmcOptions3Box3PopOut2Choice1:Hide()
+			end
 		end)
-		_G["fmcOptions3Box3PopOut2Choice"..i]:SetScript("OnHide", function(self)
-			self:GetParent():SetNormalAtlas("charactercreate-customize-dropdownbox-open")
-			PlaySound(855, "Master")
-		end)
-	else
-		_G["fmcOptions3Box3PopOut2Choice"..i]:SetParent(fmcOptions3Box3PopOut2Choice1)
-		_G["fmcOptions3Box3PopOut2Choice"..i]:SetPoint("TOP", _G["fmcOptions3Box3PopOut2Choice"..i-1], "BOTTOM", 0, 0)
-		_G["fmcOptions3Box3PopOut2Choice"..i]:Show()
+		local w = _G["fmcOptions3Box3PopOut2Choice"..i].Text:GetStringWidth()
+		if w > maxW then maxW = w end
 	end
-	_G["fmcOptions3Box3PopOut2Choice"..i].Text:SetText(name)
-	_G["fmcOptions3Box3PopOut2Choice"..i]:HookScript("OnClick", function(self, button, down)
+	finalW = math.ceil(maxW + 24)
+	for i = 1, counter, 1 do
+		_G["fmcOptions3Box3PopOut2Choice"..counter]:SetWidth(finalW)
+	end
+	counter = 0
+	maxW = 160
+	fmcOptions3Box3PopOut2:HookScript("OnEnter", function(self)
+		VDW.Tooltip_Show(self, prefixTip, "Choose a talent loadout", C.Main)
+	end)
+	fmcOptions3Box3PopOut2:HookScript("OnLeave", function(self) VDW.Tooltip_Hide() end)
+	fmcOptions3Box3PopOut2:HookScript("OnClick", function(self, button, down)
 		if button == "LeftButton" and down == false then
-			fmcOptions3Box3PopOut2.Text:SetText(self.Text:GetText())
-			fmcOptions3Box3PopOut2Choice1:Hide()
+			if fmcOptions3Box3PopOut2Choice1 then
+				if not fmcOptions3Box3PopOut2Choice1:IsShown() then
+					fmcOptions3Box3PopOut2Choice1:Show()
+				else
+					fmcOptions3Box3PopOut2Choice1:Hide()
+				end
+			else
+				DEFAULT_CHAT_FRAME:AddMessage(C.Main:WrapTextInColorCode(VDW.PrefixChat("FMC").." There are no Talent Loadouts, beside 'Starter Build'!|nPlease create some."))
+				UIErrorsFrame:AddExternalWarningMessage("There are no Talent Loadouts, beside 'Starter Build', please create some!")
+				C_Sound.PlayVocalErrorSound(48)
+			end
 		end
 	end)
-	local w = _G["fmcOptions3Box3PopOut2Choice"..i].Text:GetStringWidth()
-	if w > maxW then maxW = w end
 end
-finalW = math.ceil(maxW + 24)
-for i = 1, counter, 1 do
-	_G["fmcOptions3Box3PopOut2Choice"..counter]:SetWidth(finalW)
-end
-counter = 0
-maxW = 160
-fmcOptions3Box3PopOut2:HookScript("OnEnter", function(self)
-	VDW.Tooltip_Show(self, prefixTip, "Choose a talent loadout", C.Main)
-end)
-fmcOptions3Box3PopOut2:HookScript("OnLeave", function(self) VDW.Tooltip_Hide() end)
-fmcOptions3Box3PopOut2:HookScript("OnClick", function(self, button, down)
-	if button == "LeftButton" and down == false then
-		if not fmcOptions3Box3PopOut2Choice1:IsShown() then
-			fmcOptions3Box3PopOut2Choice1:Show()
-		else
-			fmcOptions3Box3PopOut2Choice1:Hide()
-		end
-	end
-end)
 -- talent loadout 2  --
-ColoringPopOutButtons(3, 3)
-fmcOptions3Box3PopOut3.Title:SetText("Talent loadout")
-for i, name in pairs(FMCdata.TalentLayouts[VDW.FMC.specId2]) do
-	counter = counter + 1
-	local btn = CreateFrame("Button", "fmcOptions3Box3PopOut3Choice"..i, nil, "vdwPopOutButton")
-	_G["fmcOptions3Box3PopOut3Choice"..i]:ClearAllPoints()
-	if i == 1 then
-		_G["fmcOptions3Box3PopOut3Choice"..i]:SetParent(fmcOptions3Box3PopOut3)
-		_G["fmcOptions3Box3PopOut3Choice"..i]:SetPoint("TOP", fmcOptions3Box3PopOut3, "BOTTOM", 0, 4)
-		_G["fmcOptions3Box3PopOut3Choice"..i]:SetScript("OnShow", function(self)
-			self:GetParent():SetNormalAtlas("charactercreate-customize-dropdownbox-hover")
-			PlaySound(855, "Master")
+if FMCdata.TalentLayouts[VDW.FMC.specId2] then
+	ColoringPopOutButtons(3, 3)
+	fmcOptions3Box3PopOut3.Title:SetText("Talent loadout")
+	for i, name in pairs(FMCdata.TalentLayouts[VDW.FMC.specId2]) do
+		counter = counter + 1
+		local btn = CreateFrame("Button", "fmcOptions3Box3PopOut3Choice"..i, nil, "vdwPopOutButton")
+		_G["fmcOptions3Box3PopOut3Choice"..i]:ClearAllPoints()
+		if i == 1 then
+			_G["fmcOptions3Box3PopOut3Choice"..i]:SetParent(fmcOptions3Box3PopOut3)
+			_G["fmcOptions3Box3PopOut3Choice"..i]:SetPoint("TOP", fmcOptions3Box3PopOut3, "BOTTOM", 0, 4)
+			_G["fmcOptions3Box3PopOut3Choice"..i]:SetScript("OnShow", function(self)
+				self:GetParent():SetNormalAtlas("charactercreate-customize-dropdownbox-hover")
+				PlaySound(855, "Master")
+			end)
+			_G["fmcOptions3Box3PopOut3Choice"..i]:SetScript("OnHide", function(self)
+				self:GetParent():SetNormalAtlas("charactercreate-customize-dropdownbox-open")
+				PlaySound(855, "Master")
+			end)
+		else
+			_G["fmcOptions3Box3PopOut3Choice"..i]:SetParent(fmcOptions3Box3PopOut3Choice1)
+			_G["fmcOptions3Box3PopOut3Choice"..i]:SetPoint("TOP", _G["fmcOptions3Box3PopOut3Choice"..i-1], "BOTTOM", 0, 0)
+			_G["fmcOptions3Box3PopOut3Choice"..i]:Show()
+		end
+		_G["fmcOptions3Box3PopOut3Choice"..i].Text:SetText(name)
+		_G["fmcOptions3Box3PopOut3Choice"..i]:HookScript("OnClick", function(self, button, down)
+			if button == "LeftButton" and down == false then
+				fmcOptions3Box3PopOut3.Text:SetText(self.Text:GetText())
+				fmcOptions3Box3PopOut3Choice1:Hide()
+			end
 		end)
-		_G["fmcOptions3Box3PopOut3Choice"..i]:SetScript("OnHide", function(self)
-			self:GetParent():SetNormalAtlas("charactercreate-customize-dropdownbox-open")
-			PlaySound(855, "Master")
-		end)
-	else
-		_G["fmcOptions3Box3PopOut3Choice"..i]:SetParent(fmcOptions3Box3PopOut3Choice1)
-		_G["fmcOptions3Box3PopOut3Choice"..i]:SetPoint("TOP", _G["fmcOptions3Box3PopOut3Choice"..i-1], "BOTTOM", 0, 0)
-		_G["fmcOptions3Box3PopOut3Choice"..i]:Show()
+		local w = _G["fmcOptions3Box3PopOut3Choice"..i].Text:GetStringWidth()
+		if w > maxW then maxW = w end
 	end
-	_G["fmcOptions3Box3PopOut3Choice"..i].Text:SetText(name)
-	_G["fmcOptions3Box3PopOut3Choice"..i]:HookScript("OnClick", function(self, button, down)
+	finalW = math.ceil(maxW + 24)
+	for i = 1, counter, 1 do
+		_G["fmcOptions3Box3PopOut3Choice"..counter]:SetWidth(finalW)
+	end
+	counter = 0
+	maxW = 160
+	fmcOptions3Box3PopOut3:HookScript("OnEnter", function(self)
+		VDW.Tooltip_Show(self, prefixTip, "Choose a talent loadout", C.Main)
+	end)
+	fmcOptions3Box3PopOut3:HookScript("OnLeave", function(self) VDW.Tooltip_Hide() end)
+	fmcOptions3Box3PopOut3:HookScript("OnClick", function(self, button, down)
 		if button == "LeftButton" and down == false then
-			fmcOptions3Box3PopOut3.Text:SetText(self.Text:GetText())
-			fmcOptions3Box3PopOut3Choice1:Hide()
+			if fmcOptions3Box3PopOut3Choice1 then
+				if not fmcOptions3Box3PopOut3Choice1:IsShown() then
+					fmcOptions3Box3PopOut3Choice1:Show()
+				else
+					fmcOptions3Box3PopOut3Choice1:Hide()
+				end
+			else
+				DEFAULT_CHAT_FRAME:AddMessage(C.Main:WrapTextInColorCode(VDW.PrefixChat("FMC").." There are no Talent Loadouts, beside 'Starter Build'!|nPlease create some."))
+				UIErrorsFrame:AddExternalWarningMessage("There are no Talent Loadouts, beside 'Starter Build', please create some!")
+				C_Sound.PlayVocalErrorSound(48)
+			end
 		end
 	end)
-	local w = _G["fmcOptions3Box3PopOut3Choice"..i].Text:GetStringWidth()
-	if w > maxW then maxW = w end
 end
-finalW = math.ceil(maxW + 24)
-for i = 1, counter, 1 do
-	_G["fmcOptions3Box3PopOut3Choice"..counter]:SetWidth(finalW)
-end
-counter = 0
-maxW = 160
-fmcOptions3Box3PopOut3:HookScript("OnEnter", function(self)
-	VDW.Tooltip_Show(self, prefixTip, "Choose a talent loadout", C.Main)
-end)
-fmcOptions3Box3PopOut3:HookScript("OnLeave", function(self) VDW.Tooltip_Hide() end)
-fmcOptions3Box3PopOut3:HookScript("OnClick", function(self, button, down)
-	if button == "LeftButton" and down == false then
-		if not fmcOptions3Box3PopOut3Choice1:IsShown() then
-			fmcOptions3Box3PopOut3Choice1:Show()
-		else
-			fmcOptions3Box3PopOut3Choice1:Hide()
-		end
-	end
-end)
 -- talent loadout 3  --
-ColoringPopOutButtons(3, 4)
-fmcOptions3Box3PopOut4.Title:SetText("Talent loadout")
-for i, name in pairs(FMCdata.TalentLayouts[VDW.FMC.specId3]) do
-	counter = counter + 1
-	local btn = CreateFrame("Button", "fmcOptions3Box3PopOut4Choice"..i, nil, "vdwPopOutButton")
-	_G["fmcOptions3Box3PopOut4Choice"..i]:ClearAllPoints()
-	if i == 1 then
-		_G["fmcOptions3Box3PopOut4Choice"..i]:SetParent(fmcOptions3Box3PopOut4)
-		_G["fmcOptions3Box3PopOut4Choice"..i]:SetPoint("TOP", fmcOptions3Box3PopOut4, "BOTTOM", 0, 4)
-		_G["fmcOptions3Box3PopOut4Choice"..i]:SetScript("OnShow", function(self)
-			self:GetParent():SetNormalAtlas("charactercreate-customize-dropdownbox-hover")
-			PlaySound(855, "Master")
+if FMCdata.TalentLayouts[VDW.FMC.specId3] then
+	ColoringPopOutButtons(3, 4)
+	fmcOptions3Box3PopOut4.Title:SetText("Talent loadout")
+	for i, name in pairs(FMCdata.TalentLayouts[VDW.FMC.specId3]) do
+		counter = counter + 1
+		local btn = CreateFrame("Button", "fmcOptions3Box3PopOut4Choice"..i, nil, "vdwPopOutButton")
+		_G["fmcOptions3Box3PopOut4Choice"..i]:ClearAllPoints()
+		if i == 1 then
+			_G["fmcOptions3Box3PopOut4Choice"..i]:SetParent(fmcOptions3Box3PopOut4)
+			_G["fmcOptions3Box3PopOut4Choice"..i]:SetPoint("TOP", fmcOptions3Box3PopOut4, "BOTTOM", 0, 4)
+			_G["fmcOptions3Box3PopOut4Choice"..i]:SetScript("OnShow", function(self)
+				self:GetParent():SetNormalAtlas("charactercreate-customize-dropdownbox-hover")
+				PlaySound(855, "Master")
+			end)
+			_G["fmcOptions3Box3PopOut4Choice"..i]:SetScript("OnHide", function(self)
+				self:GetParent():SetNormalAtlas("charactercreate-customize-dropdownbox-open")
+				PlaySound(855, "Master")
+			end)
+		else
+			_G["fmcOptions3Box3PopOut4Choice"..i]:SetParent(fmcOptions3Box3PopOut4Choice1)
+			_G["fmcOptions3Box3PopOut4Choice"..i]:SetPoint("TOP", _G["fmcOptions3Box3PopOut4Choice"..i-1], "BOTTOM", 0, 0)
+			_G["fmcOptions3Box3PopOut4Choice"..i]:Show()
+		end
+		_G["fmcOptions3Box3PopOut4Choice"..i].Text:SetText(name)
+		_G["fmcOptions3Box3PopOut4Choice"..i]:HookScript("OnClick", function(self, button, down)
+			if button == "LeftButton" and down == false then
+				fmcOptions3Box3PopOut4.Text:SetText(self.Text:GetText())
+				fmcOptions3Box3PopOut4Choice1:Hide()
+			end
 		end)
-		_G["fmcOptions3Box3PopOut4Choice"..i]:SetScript("OnHide", function(self)
-			self:GetParent():SetNormalAtlas("charactercreate-customize-dropdownbox-open")
-			PlaySound(855, "Master")
-		end)
-	else
-		_G["fmcOptions3Box3PopOut4Choice"..i]:SetParent(fmcOptions3Box3PopOut4Choice1)
-		_G["fmcOptions3Box3PopOut4Choice"..i]:SetPoint("TOP", _G["fmcOptions3Box3PopOut4Choice"..i-1], "BOTTOM", 0, 0)
-		_G["fmcOptions3Box3PopOut4Choice"..i]:Show()
+		local w = _G["fmcOptions3Box3PopOut4Choice"..i].Text:GetStringWidth()
+		if w > maxW then maxW = w end
 	end
-	_G["fmcOptions3Box3PopOut4Choice"..i].Text:SetText(name)
-	_G["fmcOptions3Box3PopOut4Choice"..i]:HookScript("OnClick", function(self, button, down)
+	finalW = math.ceil(maxW + 24)
+	for i = 1, counter, 1 do
+		_G["fmcOptions3Box3PopOut4Choice"..counter]:SetWidth(finalW)
+	end
+	counter = 0
+	maxW = 160
+	fmcOptions3Box3PopOut4:HookScript("OnEnter", function(self)
+		VDW.Tooltip_Show(self, prefixTip, "Choose a talent loadout", C.Main)
+	end)
+	fmcOptions3Box3PopOut4:HookScript("OnLeave", function(self) VDW.Tooltip_Hide() end)
+	fmcOptions3Box3PopOut4:HookScript("OnClick", function(self, button, down)
 		if button == "LeftButton" and down == false then
-			fmcOptions3Box3PopOut4.Text:SetText(self.Text:GetText())
-			fmcOptions3Box3PopOut4Choice1:Hide()
+			if fmcOptions3Box3PopOut4Choice1 then
+				if not fmcOptions3Box3PopOut4Choice1:IsShown() then
+					fmcOptions3Box3PopOut4Choice1:Show()
+				else
+					fmcOptions3Box3PopOut4Choice1:Hide()
+				end
+			else
+				DEFAULT_CHAT_FRAME:AddMessage(C.Main:WrapTextInColorCode(VDW.PrefixChat("FMC").." There are no Talent Loadouts, beside 'Starter Build'!|nPlease create some."))
+				UIErrorsFrame:AddExternalWarningMessage("There are no Talent Loadouts, beside 'Starter Build', please create some!")
+				C_Sound.PlayVocalErrorSound(48)
+			end
 		end
 	end)
-	local w = _G["fmcOptions3Box3PopOut4Choice"..i].Text:GetStringWidth()
-	if w > maxW then maxW = w end
 end
-finalW = math.ceil(maxW + 24)
-for i = 1, counter, 1 do
-	_G["fmcOptions3Box3PopOut4Choice"..counter]:SetWidth(finalW)
-end
-counter = 0
-maxW = 160
-fmcOptions3Box3PopOut4:HookScript("OnEnter", function(self)
-	VDW.Tooltip_Show(self, prefixTip, "Choose a talent loadout", C.Main)
-end)
-fmcOptions3Box3PopOut4:HookScript("OnLeave", function(self) VDW.Tooltip_Hide() end)
-fmcOptions3Box3PopOut4:HookScript("OnClick", function(self, button, down)
-	if button == "LeftButton" and down == false then
-		if not fmcOptions3Box3PopOut4Choice1:IsShown() then
-			fmcOptions3Box3PopOut4Choice1:Show()
-		else
-			fmcOptions3Box3PopOut4Choice1:Hide()
-		end
-	end
-end)
+-- talent loadout 4
 if FMCdata.TalentLayouts[VDW.FMC.specId4] then
--- talent loadout 4  --
 	ColoringPopOutButtons(3, 5)
 	fmcOptions3Box3PopOut5.Title:SetText("Talent loadout")
 	for i, name in pairs(FMCdata.TalentLayouts[VDW.FMC.specId4]) do
@@ -764,10 +788,16 @@ if FMCdata.TalentLayouts[VDW.FMC.specId4] then
 	fmcOptions3Box3PopOut5:HookScript("OnLeave", function(self) VDW.Tooltip_Hide() end)
 	fmcOptions3Box3PopOut5:HookScript("OnClick", function(self, button, down)
 		if button == "LeftButton" and down == false then
-			if not fmcOptions3Box3PopOut5Choice1:IsShown() then
-				fmcOptions3Box3PopOut5Choice1:Show()
+			if fmcOptions3Box3PopOut5Choice1 then
+				if not fmcOptions3Box3PopOut5Choice1:IsShown() then
+					fmcOptions3Box3PopOut5Choice1:Show()
+				else
+					fmcOptions3Box3PopOut5Choice1:Hide()
+				end
 			else
-				fmcOptions3Box3PopOut5Choice1:Hide()
+				DEFAULT_CHAT_FRAME:AddMessage(C.Main:WrapTextInColorCode(VDW.PrefixChat("FMC").." There are no Talent Loadouts, beside 'Starter Build'!|nPlease create some."))
+				UIErrorsFrame:AddExternalWarningMessage("There are no Talent Loadouts, beside 'Starter Build', please create some!")
+				C_Sound.PlayVocalErrorSound(48)
 			end
 		end
 	end)
@@ -838,8 +868,6 @@ local function CheckSavedVariables()
 	if FMCsettings["TalentButtons"]["Visible"] then
 		fmcOptions3Box1CheckButton1:SetChecked(true)
 		fmcOptions3Box1CheckButton1.Text:SetTextColor(C.Main:GetRGB())
-		popEnable(fmcOptions3Box1PopOut1)
-		checkButtonEnable(fmcOptions3Box1CheckButton2)
 		if FMCsettings["Animation"]["Visible"] then
 			fmcOptions3Box1CheckButton2:SetChecked(true)
 			fmcOptions3Box1CheckButton2.Text:SetTextColor(C.Main:GetRGB())
@@ -852,6 +880,12 @@ local function CheckSavedVariables()
 		end
 	else
 		popDisable(fmcOptions3Box1PopOut1)
+		popDisable(fmcOptions3Box3PopOut1)
+		popDisable(fmcOptions3Box3PopOut2)
+		popDisable(fmcOptions3Box3PopOut3)
+		popDisable(fmcOptions3Box3PopOut4)
+		popDisable(fmcOptions3Box3PopOut5)
+		popDisable(fmcOptions3Box3Button1)
 		checkButtonDisable(fmcOptions3Box1CheckButton2)
 		animationDisable()
 		fmcOptions3Box1CheckButton1:SetChecked(false)

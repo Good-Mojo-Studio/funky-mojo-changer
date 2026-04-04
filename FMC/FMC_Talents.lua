@@ -500,8 +500,9 @@ local function CheckTalentsEquipment4()
 		end
 	end
 end
--- equipment sets --
+-- equipment sets
 local function equipSets()
+	C_EquipmentSet.ClearIgnoredSlotsForSave()
 	FMCdata.EquipmentSets = {}
 	for i = 0, C_EquipmentSet.GetNumEquipmentSets() - 1, 1 do
 		local name, _, setID = C_EquipmentSet.GetEquipmentSetInfo(i)
@@ -624,10 +625,10 @@ local function EventsTime(self, event, arg1, arg2, arg3, arg4)
 	if event == "PLAYER_LOGIN" then
 		if UnitLevel("player") >= 10 and C_SpecializationInfo.GetSpecialization() ~= 5 then
 			--ProtectOptions()
-			equipSets()
 			VDW.FMC.AnimationSettings()
 			if FMCsettings["TalentButtons"]["Visible"] then
 				CreateButtons()
+				equipSets()
 				if GetNumSpecializations() == 2 then
 					ShowHideTalentsPopOut2()
 					UpdateConfigID2()
@@ -644,16 +645,16 @@ local function EventsTime(self, event, arg1, arg2, arg3, arg4)
 			end
 		end
 	elseif event == "EQUIPMENT_SETS_CHANGED" then
-		equipSets()
+		if FMCsettings["TalentButtons"]["Visible"] then equipSets() else FMCdata.EquipmentSets = {} end
 	elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
 		if UnitLevel("player") >= 10 and C_SpecializationInfo.GetSpecialization() ~= 5 then
-			equipSets()
 			if FMCdata.FirstSpec then
 				CreateButtons()
 				DEFAULT_CHAT_FRAME:AddMessage(C.Main:WrapTextInColorCode(prefixChat.." Please select your talents and then restart (/reload) WoW, so the talents buttons will work properly. Read the instruction in the settings."))
 				FMCdata.FirstSpec = false
 			end
 			if FMCsettings["TalentButtons"]["Visible"] then
+				equipSets()
 				if GetNumSpecializations() == 2 then
 					ShowHideTalentsPopOut2()
 					UpdateConfigID2()
