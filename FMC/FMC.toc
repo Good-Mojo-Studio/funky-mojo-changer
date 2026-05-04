@@ -1,8 +1,8 @@
-## Interface: 120001
+## Interface: 120005
 ## IconAtlas: challenges-medal-bronze
 ## Title: Funky |cFFB57E25Mojo|r Changer
 ## Notes: |cFFF0E68CChange your |cFFB57E25Specialization|r with a |cFFB57E25Funky|r Style !|r
-## Version: 2.01.06
+## Version: 2.01.07
 ## Group: VDWS
 ## Dependencies: VDW
 ## DefaultState: enabled
