@@ -143,54 +143,6 @@ local function FirstTimeSavedVariables()
 		end
 	end
 end
--- character button
-CharacterMicroButton:HookScript("OnEnter", function(self)
-	if MicroMenuContainer and MicroMenuContainer:IsShown() then
-		local function word()
-			local w = "Can't find..."
-			local equip = "Can't find..."
-			local loot = "Can't find..."
-			local hero = C_ClassTalents.GetActiveHeroTalentSpec()
-			for i = 0, C_EquipmentSet.GetNumEquipmentSets() - 1, 1 do
-				local name, _, _, isEquipped = C_EquipmentSet.GetEquipmentSetInfo(i)
-				if isEquipped then equip = C.High:WrapTextInColorCode(name) end
-			end
-			if GetLootSpecialization() == 0 then
-				loot = C.High:WrapTextInColorCode("Current Specialization")
-			elseif GetLootSpecialization() == VDW.FMC.specId1 then
-				loot = C.High:WrapTextInColorCode(VDW.FMC.specName1)
-			elseif GetLootSpecialization() == VDW.FMC.specId2 then
-				loot = C.High:WrapTextInColorCode(VDW.FMC.specName2)
-			elseif GetLootSpecialization() == VDW.FMC.specId3 then
-				loot = C.High:WrapTextInColorCode(VDW.FMC.specName3)
-			elseif GetLootSpecialization() == VDW.FMC.specId4 then
-				loot = C.High:WrapTextInColorCode(VDW.FMC.specName4)
-			end
-			if GetSpecialization() == 1 then
-				local configInfo = C_Traits.GetConfigInfo(FMCdata.TalentButtons.LastConfig.spec1.talentID)
-				local subTreeInfo = C_Traits.GetSubTreeInfo(FMCdata.TalentButtons.LastConfig.spec1.talentID, hero)
-				w = "Spec: "..C.High:WrapTextInColorCode(VDW.FMC.specName1).."|nTalents: "..C.High:WrapTextInColorCode(configInfo.name).."|nHero: "..C.High:WrapTextInColorCode(subTreeInfo.name).."|nEquipment: "..equip.."|nLoot Spec: "..loot
-			elseif GetSpecialization() == 2 then
-				local configInfo = C_Traits.GetConfigInfo(FMCdata.TalentButtons.LastConfig.spec2.talentID)
-				local subTreeInfo = C_Traits.GetSubTreeInfo(FMCdata.TalentButtons.LastConfig.spec2.talentID, hero)
-				w = "Spec: "..C.High:WrapTextInColorCode(VDW.FMC.specName2).."|nTalents: "..C.High:WrapTextInColorCode(configInfo.name).."|nHero: "..C.High:WrapTextInColorCode(subTreeInfo.name).."|nEquipment: "..equip.."|nLoot Spec: "..loot
-			elseif GetSpecialization() == 3 then
-				local configInfo = C_Traits.GetConfigInfo(FMCdata.TalentButtons.LastConfig.spec3.talentID)
-				local subTreeInfo = C_Traits.GetSubTreeInfo(FMCdata.TalentButtons.LastConfig.spec3.talentID, hero)
-				w = "Spec: "..C.High:WrapTextInColorCode(VDW.FMC.specName3).."|nTalents: "..C.High:WrapTextInColorCode(configInfo.name).."|nHero: "..C.High:WrapTextInColorCode(subTreeInfo.name).."|nEquipment: "..equip.."|nLoot Spec: "..loot
-			elseif GetSpecialization() == 4 then
-				local configInfo = C_Traits.GetConfigInfo(FMCdata.TalentButtons.LastConfig.spec4.talentID)
-				local subTreeInfo = C_Traits.GetSubTreeInfo(FMCdata.TalentButtons.LastConfig.spec4.talentID, hero)
-				w = "Spec: "..C.High:WrapTextInColorCode(VDW.FMC.specName4).."|nTalents: "..C.High:WrapTextInColorCode(configInfo.name).."|nHero: "..C.High:WrapTextInColorCode(subTreeInfo.name).."|nEquipment: "..equip.."|nLoot Spec: "..loot
-			end
-			return w
-		end
-		VDW.Tooltip_Show(MicroMenuContainer, prefixTip, word(), C.Main)
-	end
-end)
-CharacterMicroButton:HookScript("OnLeave", function(self)
-	VDW.Tooltip_Hide()
-end)
 -- events time --
 local function EventsTime(self, event, arg1, arg2, arg3, arg4)
 	if event == "PLAYER_LOGIN" then

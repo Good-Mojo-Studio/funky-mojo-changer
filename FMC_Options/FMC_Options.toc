@@ -1,7 +1,7 @@
 ## Interface: 120005
-## IconAtlas: challenges-medal-small-bronze
-## Title: Funky |cFFB57E25Mojo|r Changer |cFFB57E25Options|r
-## Notes: |cFFF0E68COptions for the Funky |cFFB57E25Mojo|r Changer!|r
+## IconAtlas: AzeriteArmor-Notification-Neck
+## Title: Funky |cFFF2CF72Mojo|r Changer |cFFF2CF72Options|r
+## Notes: |cFFD79128Options for the |cFFF2CF72Funky|r Mojo |cFFF2CF72Changer|r!|r
 ## Version: 2.01.07
 ## Group: VDWS
 ## Dependencies: FMC
