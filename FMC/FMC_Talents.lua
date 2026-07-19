@@ -1,88 +1,24 @@
-local G = VDW.Local.Override
-local C = VDW.GetAddonColors("FMC")
+-- some variables
+local Color = VDW.GetAddonColors("FMC")
 local prefixTip = VDW.Prefix("FMC")
-local prefixChat = VDW.PrefixChat("FMC")
-local fmcOverlayCastbar = false
 local maxW = 160
 local finalW = 0
 local counter = 0
--- local-only strings for THIS file --
-local L = (function()
-	local base = {
--- tip --
-		TIP_TALENTS_BUTTON = " to choose a talent loadout.|n|n",
-	}
--- override --
-	local o = {
-		frFR = {
--- tip --
-			TIP_TALENTS_BUTTON = " pour choisir une configuration de talents.|n|n",
-		},
-		deDE = {
--- tip --
-			TIP_TALENTS_BUTTON =" um eine Talentvorlage auszuwaehlen.|n|n",
-		},
-		esES = {
--- tip --
-			TIP_TALENTS_BUTTON = " para elegir una configuracion de talentos.|n|n",
-		},
-		esMX = {
--- tip --
-			TIP_TALENTS_BUTTON = " para elegir una configuracion de talentos.|n|n",
-		},
-		ptBR = {
--- tip --
-			TIP_TALENTS_BUTTON =" para escolher uma configuracao de talentos.|n|n",
-		},
-		itIT = {
--- tip --
-			TIP_TALENTS_BUTTON = " per scegliere una configurazione di talenti.|n|n",
-		},
-		ruRU = base,
-		zhCN = base,
-		zhTW = base,
-		koKR = base,
-	}
--- function --
-	local loc = GetLocale()
-	local ov = o[loc]
-	if type(ov) == "string" then ov = o[ov] end
-	if ov then
-		for k, v in pairs(ov) do base[k] = v end
-	end
-	return base
-end)()
--- protect the options --
-local function ProtectOptions()
-	local loc = GetLocale()
-	if loc ~= FMCsettings["LastLocation"] then
-		for k, v in pairs(VDW.Local.Translate) do
-			for i, s in pairs (v) do
-				if FMCsettings["TalentButtons"]["Direction"] == s then
-					FMCsettings["TalentButtons"]["Direction"] = VDW.Local.Translate[loc][i]
-				end
-				if FMCsettings["Animation"]["Style"] == s then
-					FMCsettings["Animation"]["Style"] = VDW.Local.Translate[loc][i]
-				end
-				if FMCsettings["Animation"]["Background"] == s then
-					FMCsettings["Animation"]["Background"] = VDW.Local.Translate[loc][i]
-				end
-			end
-		end
-	end
-end
--- function for creating Talents Button --
+local duration = 0
+
+local configID = 0
+local specID = 0
+local loadoutIndex = 0
+-- create buttons
 local function CreateButtons()
--- Function for stoping the movement --
+-- stoping the movement
 	local function StopMoving(self, i)
 		FMCsettings["TalentButtons"]["Position"]["X"] = Round(self:GetLeft())
 		FMCsettings["TalentButtons"]["Position"]["Y"] = Round(self:GetBottom())
 		self:StopMovingOrSizing()
 	end
--- creating button --
+-- creating button
 	for i = 1, GetNumSpecializations(), 1 do
-		FMCdata["TalentButtons"]["LastConfig"]["spec"..i]["specID"] = VDW.FMC["specId"..i]
-		FMCdata["TalentLayouts"][VDW.FMC["specId"..i]] = {}
 		local btn = CreateFrame("Button", "fmcPopOutTalents"..i, UIParent, "vdwPopOut")
 		_G["fmcPopOutTalents"..i]:ClearAllPoints()
 		_G["fmcPopOutTalents"..i]:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", FMCsettings["TalentButtons"]["Position"]["X"], FMCsettings["TalentButtons"]["Position"]["Y"])
@@ -90,7 +26,7 @@ local function CreateButtons()
 		_G["fmcPopOutTalents"..i].PushedTexture:SetVertexColor(VDW.PlayerClassColor:GetRGB())
 		_G["fmcPopOutTalents"..i].HighlightTexture:SetVertexColor(VDW.PlayerClassColor:GetRGB())
 		_G["fmcPopOutTalents"..i]:Show()
-		for fk, fv in pairs(C_ClassTalents.GetConfigIDsBySpecID(VDW.FMC["specId"..i])) do
+		for fk, fv in pairs(C_ClassTalents.GetConfigIDsBySpecID(FMC["specId"..i])) do
 			for sk, sv in pairs (C_Traits.GetConfigInfo(fv)) do
 				if sk == "name" then
 					counter = counter + 1
@@ -98,11 +34,11 @@ local function CreateButtons()
 					_G["fmcPopOutTalents"..i.."Button"..fk]:ClearAllPoints()
 					if fk == 1 then
 						_G["fmcPopOutTalents"..i.."Button"..fk]:SetParent(_G["fmcPopOutTalents"..i])
-						if FMCsettings["TalentButtons"]["Direction"] == G.OPTIONS_D_UPWARD then
+						if FMCsettings["TalentButtons"]["Direction"] == "Upward" then
 							_G["fmcPopOutTalents"..i].NormalTexture:SetRotation(math.pi)
 							_G["fmcPopOutTalents"..i].HighlightTexture:SetRotation(math.pi)
 							_G["fmcPopOutTalents"..i.."Button"..fk]:SetPoint("BOTTOM", "fmcPopOutTalents"..i, "TOP", 0, 0)
-						elseif FMCsettings["TalentButtons"]["Direction"] == G.OPTIONS_D_DOWNWARD then
+						elseif FMCsettings["TalentButtons"]["Direction"] == "Downward" then
 							_G["fmcPopOutTalents"..i.."Button"..fk]:SetPoint("TOP", "fmcPopOutTalents"..i, "BOTTOM", 0, 0)
 						end
 						_G["fmcPopOutTalents"..i.."Button"..fk]:SetScript("OnShow", function(self)
@@ -114,10 +50,10 @@ local function CreateButtons()
 							PlaySound(855, "Master")
 						end)
 					else
-						if FMCsettings["TalentButtons"]["Direction"] == G.OPTIONS_D_UPWARD then
+						if FMCsettings["TalentButtons"]["Direction"] == "Upward" then
 							_G["fmcPopOutTalents"..i.."Button"..fk]:SetParent(_G["fmcPopOutTalents"..i.."Button1"])
 							_G["fmcPopOutTalents"..i.."Button"..fk]:SetPoint("BOTTOM", _G["fmcPopOutTalents"..i.."Button"..fk-1], "TOP", 0, 0)
-						elseif FMCsettings["TalentButtons"]["Direction"] == G.OPTIONS_D_DOWNWARD then
+						elseif FMCsettings["TalentButtons"]["Direction"] == "Downward" then
 							_G["fmcPopOutTalents"..i.."Button"..fk]:SetParent(_G["fmcPopOutTalents"..i.."Button1"])
 							_G["fmcPopOutTalents"..i.."Button"..fk]:SetPoint("TOP", _G["fmcPopOutTalents"..i.."Button"..fk-1], "BOTTOM", 0, 0)
 						end
@@ -126,18 +62,16 @@ local function CreateButtons()
 					_G["fmcPopOutTalents"..i.."Button"..fk].Text:SetText(fk..". "..sv)
 					_G["fmcPopOutTalents"..i.."Button"..fk]:SetScript("OnClick", function(self, button, down)
 						if button == "LeftButton" and down == false then
-							if not IsPlayerMoving() then
-								C_ClassTalents.LoadConfig(fv, true)
-								FMCdata["TalentButtons"]["LastConfig"]["spec"..i]["talentID"] = fv
-								if PlayerSpellsFrame ~= nil then PlayerSpellsFrame.TalentsFrame.commitedConfigID = FMCdata["TalentButtons"]["LastConfig"]["spec"..i]["talentID"] end
-								_G["fmcPopOutTalents"..i.."Button1"]:Hide()
+							if IsPlayerMoving() then
+								DEFAULT_CHAT_FRAME:AddMessage(Color.Main:WrapTextInColorCode(VDW.PrefixChat("FMC").." "..VDWtranslate.Global.MOVING_LOCKDOWN))
+								UIErrorsFrame:AddExternalWarningMessage(VDW.PrefixError("FMC").." "..VDWtranslate.Global.MOVING_LOCKDOWN)
 							else
-								DEFAULT_CHAT_FRAME:AddMessage(C.Main:WrapTextInColorCode(prefixChat.." "..G.WRN_MOVING))
-								_G["fmcPopOutTalents"..i.."Button1"]:Hide()
+								C_ClassTalents.UpdateLastSelectedSavedConfigID(FMC["specId"..i], fv)
+								C_ClassTalents.SwitchToLoadoutByIndex(fk)
 							end
+							_G["fmcPopOutTalents"..i.."Button1"]:Hide()
 						end
 					end)
-					table.insert(FMCdata["TalentLayouts"][VDW.FMC["specId"..i]], sv)
 					local w = _G["fmcPopOutTalents"..i.."Button"..fk].Text:GetStringWidth()
 					if w > maxW then maxW = w end
 				end
@@ -159,33 +93,17 @@ local function CreateButtons()
 			end
 		end)
 		_G["fmcPopOutTalents"..i]:HookScript("OnEnter", function (self)
-			VDW.Tooltip_Show(self, prefixTip, G.BUTTON_L_CLICK..L.TIP_TALENTS_BUTTON..G.BUTTON_R_CLICK..G.TIP_DRAG_ME, C.Main, "Right")
+			VDW.Tooltip_Show(self, prefixTip, VDWtranslate.Global.LEFT_CLICK.." "..VDWtranslate.Global.TALENT_BUTTONS_TIP.."|n|n"..VDWtranslate.Global.RIGHT_CLICK.." "..VDWtranslate.Global.DRAG_ME_TO_MOVE, Color.Main, "Left")
 		end)
 		_G["fmcPopOutTalents"..i]:HookScript("OnLeave", function(self) VDW.Tooltip_Hide() end)
--- Moving the buttons --
+-- moving the buttons
 		_G["fmcPopOutTalents"..i]:SetMovable(true)
 		_G["fmcPopOutTalents"..i]:RegisterForDrag("RightButton")
 		_G["fmcPopOutTalents"..i]:SetScript("OnDragStart", _G["fmcPopOutTalents"..i].StartMoving)
 		_G["fmcPopOutTalents"..i]:SetScript("OnDragStop", function(self) StopMoving(self, i) end)
 	end
 end
--- show & hide talent pop out 2 specs --
-local function ShowHideTalentsPopOut2()
-	for i = 1, GetNumSpecializations(), 1 do
-		_G["fmcPopOutTalents"..i]:ClearAllPoints()
-		_G["fmcPopOutTalents"..i]:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", FMCsettings["TalentButtons"]["Position"]["X"], FMCsettings["TalentButtons"]["Position"]["Y"])
-	end
-	if GetSpecialization() == 1 then
-		fmcPopOutTalents1:Show()
-		fmcPopOutTalents2:Hide()
-		fmcPopOutTalents3:Hide()
-	elseif GetSpecialization() == 2 then
-		fmcPopOutTalents1:Hide()
-		fmcPopOutTalents2:Show()
-		fmcPopOutTalents3:Hide()
-	end
-end
--- show & hide talent pop out 3 specs --
+-- show & hide talent pop out 3 specs
 local function ShowHideTalentsPopOut3()
 	for i = 1, GetNumSpecializations(), 1 do
 		_G["fmcPopOutTalents"..i]:ClearAllPoints()
@@ -205,7 +123,7 @@ local function ShowHideTalentsPopOut3()
 		fmcPopOutTalents3:Show()
 	end
 end
--- show & hide talent pop out 4 specs --
+-- show & hide talent pop out 4 specs
 local function ShowHideTalentsPopOut4()
 	for i = 1, GetNumSpecializations(), 1 do
 		_G["fmcPopOutTalents"..i]:ClearAllPoints()
@@ -233,186 +151,60 @@ local function ShowHideTalentsPopOut4()
 		fmcPopOutTalents4:Show()
 	end
 end
--- function for updating the config ID 2 specs --
-local function UpdateConfigID2()
+-- check talents button 3 specs
+local function CheckTalents3()
 	if GetSpecialization() == 1 then
-		if fmcOverlayCastbar then
-			FMCdata["TalentButtons"]["LastConfig"]["spec1"]["talentID"] = PlayerSpellsFrame.TalentsFrame.LoadSystem.lastValidSelectionID
-			fmcOverlayCastbar = false
-		end
-		if FMCdata["TalentButtons"]["LastConfig"]["spec1"]["talentID"] ~= 0 then
-			C_ClassTalents.UpdateLastSelectedSavedConfigID(FMCdata["TalentButtons"]["LastConfig"]["spec1"]["specID"], FMCdata["TalentButtons"]["LastConfig"]["spec1"]["talentID"])
-		end
-	elseif GetSpecialization() == 2 then
-		if fmcOverlayCastbar then
-			FMCdata["TalentButtons"]["LastConfig"]["spec2"]["talentID"] = PlayerSpellsFrame.TalentsFrame.LoadSystem.lastValidSelectionID
-			fmcOverlayCastbar = false
-		end
-		if FMCdata["TalentButtons"]["LastConfig"]["spec2"]["talentID"] ~= 0 then
-			C_ClassTalents.UpdateLastSelectedSavedConfigID(FMCdata["TalentButtons"]["LastConfig"]["spec2"]["specID"], FMCdata["TalentButtons"]["LastConfig"]["spec2"]["talentID"])
-		end
-	end
-end
--- function for updating the config ID 3 specs --
-local function UpdateConfigID3()
-	if GetSpecialization() == 1 then
-		if fmcOverlayCastbar then
-			FMCdata["TalentButtons"]["LastConfig"]["spec1"]["talentID"] = PlayerSpellsFrame.TalentsFrame.LoadSystem.lastValidSelectionID
-			fmcOverlayCastbar = false
-		end
-		if FMCdata["TalentButtons"]["LastConfig"]["spec1"]["talentID"] ~= 0 then
-			C_ClassTalents.UpdateLastSelectedSavedConfigID(FMCdata["TalentButtons"]["LastConfig"]["spec1"]["specID"], FMCdata["TalentButtons"]["LastConfig"]["spec1"]["talentID"])
-		end
-	elseif GetSpecialization() == 2 then
-		if fmcOverlayCastbar then
-			FMCdata["TalentButtons"]["LastConfig"]["spec2"]["talentID"] = PlayerSpellsFrame.TalentsFrame.LoadSystem.lastValidSelectionID
-			fmcOverlayCastbar = false
-		end
-		if FMCdata["TalentButtons"]["LastConfig"]["spec2"]["talentID"] ~= 0 then
-			C_ClassTalents.UpdateLastSelectedSavedConfigID(FMCdata["TalentButtons"]["LastConfig"]["spec2"]["specID"], FMCdata["TalentButtons"]["LastConfig"]["spec2"]["talentID"])
-		end
-	elseif GetSpecialization() == 3 then
-		if fmcOverlayCastbar then
-			FMCdata["TalentButtons"]["LastConfig"]["spec3"]["talentID"] = PlayerSpellsFrame.TalentsFrame.LoadSystem.lastValidSelectionID
-			fmcOverlayCastbar = false
-		end
-		if FMCdata["TalentButtons"]["LastConfig"]["spec3"]["talentID"] ~= 0 then
-			C_ClassTalents.UpdateLastSelectedSavedConfigID(FMCdata["TalentButtons"]["LastConfig"]["spec3"]["specID"], FMCdata["TalentButtons"]["LastConfig"]["spec3"]["talentID"])
-		end
-	end
-end
--- function for updating the config ID 4 specs --
-local function UpdateConfigID4()
-	if GetSpecialization() == 1 then
-		if fmcOverlayCastbar then
-			FMCdata["TalentButtons"]["LastConfig"]["spec1"]["talentID"] = PlayerSpellsFrame.TalentsFrame.LoadSystem.lastValidSelectionID
-			fmcOverlayCastbar = false
-		end
-		if FMCdata["TalentButtons"]["LastConfig"]["spec1"]["talentID"] ~= 0 then
-			C_ClassTalents.UpdateLastSelectedSavedConfigID(FMCdata["TalentButtons"]["LastConfig"]["spec1"]["specID"], FMCdata["TalentButtons"]["LastConfig"]["spec1"]["talentID"])
-		end
-	elseif GetSpecialization() == 2 then
-		if fmcOverlayCastbar then
-			FMCdata["TalentButtons"]["LastConfig"]["spec2"]["talentID"] = PlayerSpellsFrame.TalentsFrame.LoadSystem.lastValidSelectionID
-			fmcOverlayCastbar = false
-		end
-		if FMCdata["TalentButtons"]["LastConfig"]["spec2"]["talentID"] ~= 0 then
-			C_ClassTalents.UpdateLastSelectedSavedConfigID(FMCdata["TalentButtons"]["LastConfig"]["spec2"]["specID"], FMCdata["TalentButtons"]["LastConfig"]["spec2"]["talentID"])
-		end
-	elseif GetSpecialization() == 3 then
-		if fmcOverlayCastbar then
-			FMCdata["TalentButtons"]["LastConfig"]["spec3"]["talentID"] = PlayerSpellsFrame.TalentsFrame.LoadSystem.lastValidSelectionID
-			fmcOverlayCastbar = false
-		end
-		if FMCdata["TalentButtons"]["LastConfig"]["spec3"]["talentID"] ~= 0 then
-			C_ClassTalents.UpdateLastSelectedSavedConfigID(FMCdata["TalentButtons"]["LastConfig"]["spec3"]["specID"], FMCdata["TalentButtons"]["LastConfig"]["spec3"]["talentID"])
-		end
-	elseif GetSpecialization() == 4 then
-		if fmcOverlayCastbar then
-			FMCdata["TalentButtons"]["LastConfig"]["spec4"]["talentID"] = PlayerSpellsFrame.TalentsFrame.LoadSystem.lastValidSelectionID
-			fmcOverlayCastbar = false
-		end
-		if FMCdata["TalentButtons"]["LastConfig"]["spec3"]["talentID"] ~= 0 then
-			C_ClassTalents.UpdateLastSelectedSavedConfigID(FMCdata["TalentButtons"]["LastConfig"]["spec4"]["specID"], FMCdata["TalentButtons"]["LastConfig"]["spec4"]["talentID"])
-		end
-	end
-end
--- function checking talents button and equipment 2 specs--
-local function CheckTalentsEquipment2()
-	if GetSpecialization() == 1 then
-		local chkTalentID = C_ClassTalents.GetLastSelectedSavedConfigID(VDW.FMC.specId1)
+		local chkTalentID = C_ClassTalents.GetLastSelectedSavedConfigID(FMC.specId1)
 		if chkTalentID == nil then
 			fmcPopOutTalents1.Text:SetText("Starter Build")
 		else
-			for fk, fv in pairs(C_ClassTalents.GetConfigIDsBySpecID(VDW.FMC.specId1)) do
+			for fk, fv in pairs(C_ClassTalents.GetConfigIDsBySpecID(FMC.specId1)) do
 				for sk, sv in pairs (C_Traits.GetConfigInfo(fv)) do
 					if fv == chkTalentID and sk == "name" then
 						fmcPopOutTalents1.Text:SetText(fk..". "..sv)
-						for tk, tv in pairs (FMCdata.TalentBindEquipment[VDW.FMC.specId1]) do
-							if tk == sv then
-								local _, _, _, isEquipped = C_EquipmentSet.GetEquipmentSetInfo(tv) 
-								if not isEquipped then C_EquipmentSet.UseEquipmentSet(tv) end
-							end
+						FMC.TalentsName = sv
+						local heroSpecID = C_ClassTalents.GetActiveHeroTalentSpec()
+						if heroSpecID then
+							local subTreeInfo = C_Traits.GetSubTreeInfo(fv, heroSpecID)
+							FMC.HeroName = subTreeInfo.name
 						end
 					end
 				end
 			end
 		end
 	elseif GetSpecialization() == 2 then
-		local chkTalentID = C_ClassTalents.GetLastSelectedSavedConfigID(VDW.FMC.specId2)
+		local chkTalentID = C_ClassTalents.GetLastSelectedSavedConfigID(FMC.specId2)
 		if chkTalentID == nil then
 			fmcPopOutTalents2.Text:SetText("Starter Build")
 		else
-			for fk, fv in pairs(C_ClassTalents.GetConfigIDsBySpecID(VDW.FMC.specId2)) do
+			for fk, fv in pairs(C_ClassTalents.GetConfigIDsBySpecID(FMC.specId2)) do
 				for sk, sv in pairs (C_Traits.GetConfigInfo(fv)) do
 					if fv == chkTalentID and sk == "name" then
 						fmcPopOutTalents2.Text:SetText(fk..". "..sv)
-						for tk, tv in pairs (FMCdata.TalentBindEquipment[VDW.FMC.specId2]) do
-							if tk == sv then
-								local _, _, _, isEquipped = C_EquipmentSet.GetEquipmentSetInfo(tv) 
-								if not isEquipped then C_EquipmentSet.UseEquipmentSet(tv) end
-							end
-						end
-					end
-				end
-			end
-		end
-	end
-end
--- function checking talents button and equipment 3 specs--
-local function CheckTalentsEquipment3()
-	if GetSpecialization() == 1 then
-		local chkTalentID = C_ClassTalents.GetLastSelectedSavedConfigID(VDW.FMC.specId1)
-		if chkTalentID == nil then
-			fmcPopOutTalents1.Text:SetText("Starter Build")
-		else
-			for fk, fv in pairs(C_ClassTalents.GetConfigIDsBySpecID(VDW.FMC.specId1)) do
-				for sk, sv in pairs (C_Traits.GetConfigInfo(fv)) do
-					if fv == chkTalentID and sk == "name" then
-						fmcPopOutTalents1.Text:SetText(fk..". "..sv)
-						for tk, tv in pairs (FMCdata.TalentBindEquipment[VDW.FMC.specId1]) do
-							if tk == sv then
-								local _, _, _, isEquipped = C_EquipmentSet.GetEquipmentSetInfo(tv) 
-								if not isEquipped then C_EquipmentSet.UseEquipmentSet(tv) end
-							end
-						end
-					end
-				end
-			end
-		end
-	elseif GetSpecialization() == 2 then
-		local chkTalentID = C_ClassTalents.GetLastSelectedSavedConfigID(VDW.FMC.specId2)
-		if chkTalentID == nil then
-			fmcPopOutTalents2.Text:SetText("Starter Build")
-		else
-			for fk, fv in pairs(C_ClassTalents.GetConfigIDsBySpecID(VDW.FMC.specId2)) do
-				for sk, sv in pairs (C_Traits.GetConfigInfo(fv)) do
-					if fv == chkTalentID and sk == "name" then
-						fmcPopOutTalents2.Text:SetText(fk..". "..sv)
-						for tk, tv in pairs (FMCdata.TalentBindEquipment[VDW.FMC.specId2]) do
-							if tk == sv then
-								local _, _, _, isEquipped = C_EquipmentSet.GetEquipmentSetInfo(tv) 
-								if not isEquipped then C_EquipmentSet.UseEquipmentSet(tv) end
-							end
+						FMC.TalentsName = sv
+						local heroSpecID = C_ClassTalents.GetActiveHeroTalentSpec()
+						if heroSpecID then
+							local subTreeInfo = C_Traits.GetSubTreeInfo(fv, heroSpecID)
+							FMC.HeroName = subTreeInfo.name
 						end
 					end
 				end
 			end
 		end
 	elseif GetSpecialization() == 3 then
-		local chkTalentID = C_ClassTalents.GetLastSelectedSavedConfigID(VDW.FMC.specId3)
+		local chkTalentID = C_ClassTalents.GetLastSelectedSavedConfigID(FMC.specId3)
 		if chkTalentID == nil then
 			fmcPopOutTalents3.Text:SetText("Starter Build")
 		else
-			for fk, fv in pairs(C_ClassTalents.GetConfigIDsBySpecID(VDW.FMC.specId3)) do
+			for fk, fv in pairs(C_ClassTalents.GetConfigIDsBySpecID(FMC.specId3)) do
 				for sk, sv in pairs (C_Traits.GetConfigInfo(fv)) do
 					if fv == chkTalentID and sk == "name" then
 						fmcPopOutTalents3.Text:SetText(fk..". "..sv)
-						for tk, tv in pairs (FMCdata.TalentBindEquipment[VDW.FMC.specId3]) do
-							if tk == sv then
-								local _, _, _, isEquipped = C_EquipmentSet.GetEquipmentSetInfo(tv) 
-								if not isEquipped then C_EquipmentSet.UseEquipmentSet(tv) end
-							end
+						FMC.TalentsName = sv
+						local heroSpecID = C_ClassTalents.GetActiveHeroTalentSpec()
+						if heroSpecID then
+							local subTreeInfo = C_Traits.GetSubTreeInfo(fv, heroSpecID)
+							FMC.HeroName = subTreeInfo.name
 						end
 					end
 				end
@@ -420,127 +212,89 @@ local function CheckTalentsEquipment3()
 		end
 	end
 end
--- function checking talents button and equipment 4 specs--
-local function CheckTalentsEquipment4()
+-- check talents button 4 specs
+local function CheckTalents4()
 	if GetSpecialization() == 1 then
-		local chkTalentID = C_ClassTalents.GetLastSelectedSavedConfigID(VDW.FMC.specId1)
+		local chkTalentID = C_ClassTalents.GetLastSelectedSavedConfigID(FMC.specId1)
 		if chkTalentID == nil then
 			fmcPopOutTalents1.Text:SetText("Starter Build")
 		else
-			for fk, fv in pairs(C_ClassTalents.GetConfigIDsBySpecID(VDW.FMC.specId1)) do
+			for fk, fv in pairs(C_ClassTalents.GetConfigIDsBySpecID(FMC.specId1)) do
 				for sk, sv in pairs (C_Traits.GetConfigInfo(fv)) do
 					if fv == chkTalentID and sk == "name" then
 						fmcPopOutTalents1.Text:SetText(fk..". "..sv)
-						for tk, tv in pairs (FMCdata.TalentBindEquipment[VDW.FMC.specId1]) do
-							if tk == sv then
-								local _, _, _, isEquipped = C_EquipmentSet.GetEquipmentSetInfo(tv) 
-								if not isEquipped then C_EquipmentSet.UseEquipmentSet(tv) end
-							end
+						FMC.TalentsName = sv
+						local heroSpecID = C_ClassTalents.GetActiveHeroTalentSpec()
+						if heroSpecID then
+							local subTreeInfo = C_Traits.GetSubTreeInfo(fv, heroSpecID)
+							FMC.HeroName = subTreeInfo.name
 						end
 					end
 				end
 			end
 		end
 	elseif GetSpecialization() == 2 then
-		local chkTalentID = C_ClassTalents.GetLastSelectedSavedConfigID(VDW.FMC.specId2)
+		local chkTalentID = C_ClassTalents.GetLastSelectedSavedConfigID(FMC.specId2)
 		if chkTalentID == nil then
 			fmcPopOutTalents2.Text:SetText("Starter Build")
 		else
-			for fk, fv in pairs(C_ClassTalents.GetConfigIDsBySpecID(VDW.FMC.specId2)) do
+			for fk, fv in pairs(C_ClassTalents.GetConfigIDsBySpecID(FMC.specId2)) do
 				for sk, sv in pairs (C_Traits.GetConfigInfo(fv)) do
 					if fv == chkTalentID and sk == "name" then
 						fmcPopOutTalents2.Text:SetText(fk..". "..sv)
-						for tk, tv in pairs (FMCdata.TalentBindEquipment[VDW.FMC.specId2]) do
-							if tk == sv then
-								local _, _, _, isEquipped = C_EquipmentSet.GetEquipmentSetInfo(tv) 
-								if not isEquipped then C_EquipmentSet.UseEquipmentSet(tv) end
-							end
+						FMC.TalentsName = sv
+						local heroSpecID = C_ClassTalents.GetActiveHeroTalentSpec()
+						if heroSpecID then
+							local subTreeInfo = C_Traits.GetSubTreeInfo(fv, heroSpecID)
+							FMC.HeroName = subTreeInfo.name
 						end
 					end
 				end
 			end
 		end
 	elseif GetSpecialization() == 3 then
-		local chkTalentID = C_ClassTalents.GetLastSelectedSavedConfigID(VDW.FMC.specId3)
+		local chkTalentID = C_ClassTalents.GetLastSelectedSavedConfigID(FMC.specId3)
 		if chkTalentID == nil then
 			fmcPopOutTalents3.Text:SetText("Starter Build")
 		else
-			for fk, fv in pairs(C_ClassTalents.GetConfigIDsBySpecID(VDW.FMC.specId3)) do
+			for fk, fv in pairs(C_ClassTalents.GetConfigIDsBySpecID(FMC.specId3)) do
 				for sk, sv in pairs (C_Traits.GetConfigInfo(fv)) do
 					if fv == chkTalentID and sk == "name" then
 						fmcPopOutTalents3.Text:SetText(fk..". "..sv)
-						for tk, tv in pairs (FMCdata.TalentBindEquipment[VDW.FMC.specId3]) do
-							if tk == sv then
-								local _, _, _, isEquipped = C_EquipmentSet.GetEquipmentSetInfo(tv) 
-								if not isEquipped then C_EquipmentSet.UseEquipmentSet(tv) end
-							end
+						FMC.TalentsName = sv
+						local heroSpecID = C_ClassTalents.GetActiveHeroTalentSpec()
+						if heroSpecID then
+							local subTreeInfo = C_Traits.GetSubTreeInfo(fv, heroSpecID)
+							FMC.HeroName = subTreeInfo.name
 						end
 					end
 				end
 			end
 		end
 	elseif GetSpecialization() == 4 then
-		local chkTalentID = C_ClassTalents.GetLastSelectedSavedConfigID(VDW.FMC.specId4)
+		local chkTalentID = C_ClassTalents.GetLastSelectedSavedConfigID(FMC.specId4)
 		if chkTalentID == nil then
 			fmcPopOutTalents4.Text:SetText("Starter Build")
 		else
-			for fk, fv in pairs(C_ClassTalents.GetConfigIDsBySpecID(VDW.FMC.specId4)) do
+			for fk, fv in pairs(C_ClassTalents.GetConfigIDsBySpecID(FMC.specId4)) do
 				for sk, sv in pairs (C_Traits.GetConfigInfo(fv)) do
 					if fv == chkTalentID and sk == "name" then
 						fmcPopOutTalents4.Text:SetText(fk..". "..sv)
-						for tk, tv in pairs (FMCdata.TalentBindEquipment[VDW.FMC.specId4]) do
-							if tk == sv then
-								local _, _, _, isEquipped = C_EquipmentSet.GetEquipmentSetInfo(tv) 
-								if not isEquipped then C_EquipmentSet.UseEquipmentSet(tv) end
-							end
+						FMC.TalentsName = sv
+						local heroSpecID = C_ClassTalents.GetActiveHeroTalentSpec()
+						if heroSpecID then
+							local subTreeInfo = C_Traits.GetSubTreeInfo(fv, heroSpecID)
+							FMC.HeroName = subTreeInfo.name
 						end
 					end
 				end
-			end
-		end
-	end
-end
--- equipment sets
-local function equipSets()
-	C_EquipmentSet.ClearIgnoredSlotsForSave()
-	FMCdata.EquipmentSets = {}
-	for i = 0, C_EquipmentSet.GetNumEquipmentSets() - 1, 1 do
-		local name, _, setID = C_EquipmentSet.GetEquipmentSetInfo(i)
-		if name ~= nil then FMCdata.EquipmentSets[name] = setID end
-	end
-	if GetSpecialization() == 1 then
-		for _, nameTalent in pairs(FMCdata.TalentLayouts[VDW.FMC.specId1]) do
-			if FMCdata.TalentBindEquipment[VDW.FMC.specId1][nameTalent] then
-				local name, _, setID = C_EquipmentSet.GetEquipmentSetInfo(FMCdata.TalentBindEquipment[VDW.FMC.specId1][nameTalent])
-				if name == nil then FMCdata.TalentBindEquipment[VDW.FMC.specId1][nameTalent] = nil end
-			end
-		end
-	elseif GetSpecialization() == 2 then
-		for _, nameTalent in pairs(FMCdata.TalentLayouts[VDW.FMC.specId2]) do
-			if FMCdata.TalentBindEquipment[VDW.FMC.specId2][nameTalent] then
-				local name, _, setID = C_EquipmentSet.GetEquipmentSetInfo(FMCdata.TalentBindEquipment[VDW.FMC.specId2][nameTalent])
-				if name == nil then FMCdata.TalentBindEquipment[VDW.FMC.specId2][nameTalent] = nil end
-			end
-		end
-	elseif GetSpecialization() == 3 then
-		for _, nameTalent in pairs(FMCdata.TalentLayouts[VDW.FMC.specId3]) do
-			if FMCdata.TalentBindEquipment[VDW.FMC.specId3][nameTalent] then
-				local name, _, setID = C_EquipmentSet.GetEquipmentSetInfo(FMCdata.TalentBindEquipment[VDW.FMC.specId3][nameTalent])
-				if name == nil then FMCdata.TalentBindEquipment[VDW.FMC.specId3][nameTalent] = nil end
-			end
-		end
-	elseif GetSpecialization() == 4 then
-		for _, nameTalent in pairs(FMCdata.TalentLayouts[VDW.FMC.specId4]) do
-			if FMCdata.TalentBindEquipment[VDW.FMC.specId4][nameTalent] then
-				local name, _, setID = C_EquipmentSet.GetEquipmentSetInfo(FMCdata.TalentBindEquipment[VDW.FMC.specId4][nameTalent])
-				if name == nil then FMCdata.TalentBindEquipment[VDW.FMC.specId4][nameTalent] = nil end
 			end
 		end
 	end
 end
 -- animations --
 -- function for the class banner --
-local function ChoosingBackground(self)
+local function ChoosingBackground1(self)
 	if VDW.PlayerClassID == 1 then --Warrior
 		self:SetAtlas("talents-animations-class-warrior")
 	elseif VDW.PlayerClassID == 2 then --Paladin
@@ -567,26 +321,59 @@ local function ChoosingBackground(self)
 		self:SetAtlas("talents-animations-class-demonhunter")
 	elseif VDW.PlayerClassID == 13 then --Evoker
 		self:SetAtlas("talents-animations-class-evoker")
+		self:SetAlpha(1)
 	end
 end
--- function for the position and bg of banner --
-function VDW.FMC.AnimationSettings()
-	if FMCsettings["Animation"]["Visible"] then
-		if FMCsettings["Animation"]["Style"] == G.OPTIONS_S_BANNER then
+local function ChoosingBackground2(self)
+	if VDW.PlayerClassID == 1 then --Warrior
+		self:SetAtlas("Artifacts-Warrior-BG-rune")
+	elseif VDW.PlayerClassID == 2 then --Paladin
+		self:SetAtlas("Artifacts-Paladin-BG-rune")
+	elseif VDW.PlayerClassID == 3 then --Hunter
+		self:SetAtlas("Artifacts-Hunter-BG-rune")
+	elseif VDW.PlayerClassID == 4 then --Rogue
+		self:SetAtlas("Artifacts-Rogue-BG-rune")
+	elseif VDW.PlayerClassID == 5 then --Priest
+		self:SetAtlas("Artifacts-Priest-BG-rune")
+	elseif VDW.PlayerClassID == 6 then --Death Kight
+		self:SetAtlas("Artifacts-DeathKnightFrost-BG-Rune")
+	elseif VDW.PlayerClassID == 7 then --Shaman
+		self:SetAtlas("Artifacts-Shaman-BG-rune")
+	elseif VDW.PlayerClassID == 8 then --Mage
+		self:SetAtlas("Artifacts-MageArcane-BG-rune")
+	elseif VDW.PlayerClassID == 9 then --Warlock
+		self:SetAtlas("Artifacts-Warlock-BG-rune")
+	elseif VDW.PlayerClassID == 10 then --Monk
+		self:SetAtlas("Artifacts-Monk-BG-rune")
+	elseif VDW.PlayerClassID == 11 then --Druid
+		self:SetAtlas("Artifacts-Druid-BG-rune")
+	elseif VDW.PlayerClassID == 12 then --Demon Hunter
+		self:SetAtlas("Artifacts-DemonHunter-BG-rune")
+	elseif VDW.PlayerClassID == 13 then --Evoker
+		self:SetTexture("Interface\\AddOns\\VDW\\media\\banners\\Dracthyr_Crest.png")
+		self:SetAlpha(0.25)
+	end
+end
+-- position and background of banner
+function FMC.AnimationSettings()
+	if FMCsettings.TalentAnimation.Visible then
+		if FMCsettings.TalentAnimation.Style == "Banner" then
 			fmcFrameFX1:Show()
 			fmcFrameFX2:Hide()
-			if FMCsettings["Animation"]["AttachedToCastbar"] then
+			if FMCsettings.TalentAnimation.Banner.AttachedToCastbar then
 				fmcFrameFX1:ClearAllPoints()
 				fmcFrameFX1:SetPoint("CENTER", PlayerCastingBarFrame, "CENTER", 0, 0)
 			else
 				fmcFrameFX1:ClearAllPoints()
-				fmcFrameFX1:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", FMCsettings["Animation"]["Position"]["X"], FMCsettings["Animation"]["Position"]["Y"])
+				fmcFrameFX1:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", FMCsettings.TalentAnimation.Banner.Position.X, FMCsettings.TalentAnimation.Banner.Position.Y)
 			end
-			fmcFrameFX1:SetSize(FMCsettings["Animation"]["Size"]["W"], FMCsettings["Animation"]["Size"]["H"])
-			if FMCsettings["Animation"]["Background"] == G.OPTIONS_C_CLASS then
-				ChoosingBackground(fmcFrameFX1Background)
+			fmcFrameFX1:SetSize(FMCsettings.TalentAnimation.Banner.Size.W, FMCsettings.TalentAnimation.Banner.Size.H)
+			if FMCsettings.TalentAnimation.Banner.Background == "Class" then
+				ChoosingBackground1(fmcFrameFX1Background)
+			elseif FMCsettings.TalentAnimation.Banner.Background == "ClassArtifact" then
+				ChoosingBackground2(fmcFrameFX1Background)
 			end
-		elseif FMCsettings["Animation"]["Style"] == G.OPTIONS_S_RUNES then
+		elseif FMCsettings.TalentAnimation.Style == "Runes" then
 			fmcFrameFX1:Hide()
 			fmcFrameFX2:Show()
 		end
@@ -595,109 +382,92 @@ function VDW.FMC.AnimationSettings()
 		fmcFrameFX2:Hide()
 	end
 end
--- function for main animation --
+-- animation play
 local function PlayAnimation()
-	if FMCsettings["Animation"]["Visible"] then
-		if FMCsettings["Animation"]["Style"] == G.OPTIONS_S_BANNER then
-			fmcFrameFX1.Animation.Main:SetDuration(PlayerCastingBarFrame.maxValue)
-			fmcFrameFX1.Animation:Play()
-		elseif FMCsettings["Animation"]["Style"] == G.OPTIONS_S_RUNES then
-			fmcFrameFX2.Animation.Rune1b:SetDuration(PlayerCastingBarFrame.maxValue/5)
-			fmcFrameFX2.Animation.Rune1:SetDuration(PlayerCastingBarFrame.maxValue/5)
-			fmcFrameFX2.Animation.Rune2b:SetStartDelay(PlayerCastingBarFrame.maxValue/5)
-			fmcFrameFX2.Animation.Rune2:SetStartDelay((PlayerCastingBarFrame.maxValue/5) + 0.15)
-			fmcFrameFX2.Animation.Rune2:SetDuration(PlayerCastingBarFrame.maxValue/5)
-			fmcFrameFX2.Animation.Rune3b:SetStartDelay((PlayerCastingBarFrame.maxValue/5)*2)
-			fmcFrameFX2.Animation.Rune3:SetStartDelay(((PlayerCastingBarFrame.maxValue/5)*2) + 0.15)
-			fmcFrameFX2.Animation.Rune3:SetDuration(PlayerCastingBarFrame.maxValue/5)
-			fmcFrameFX2.Animation.Rune4b:SetStartDelay((PlayerCastingBarFrame.maxValue/5)*3)
-			fmcFrameFX2.Animation.Rune4:SetStartDelay(((PlayerCastingBarFrame.maxValue/5)*3) + 0.15)
-			fmcFrameFX2.Animation.Rune4:SetDuration(PlayerCastingBarFrame.maxValue/5)
-			fmcFrameFX2.Animation.Rune5b:SetStartDelay((PlayerCastingBarFrame.maxValue/5)*4)
-			fmcFrameFX2.Animation.Rune5:SetStartDelay(((PlayerCastingBarFrame.maxValue/5)*4) + 0.15)
-			fmcFrameFX2.Animation.Rune5:SetDuration(PlayerCastingBarFrame.maxValue/5)
-			fmcFrameFX2.Animation:Play()
-		end
+	local durationSec = duration:GetTotalDuration(Enum.DurationTimeModifier.RealTime)
+	if FMCsettings.TalentAnimation.Style == "Banner" then
+		fmcFrameFX1.Animation.Main:SetDuration(durationSec)
+		fmcFrameFX1.Animation:Play()
+	elseif FMCsettings.TalentAnimation.Style == "Runes" then
+		fmcFrameFX2.Animation.Rune1b:SetDuration(durationSec/5)
+		fmcFrameFX2.Animation.Rune1:SetDuration(durationSec/5)
+		fmcFrameFX2.Animation.Rune2b:SetStartDelay(durationSec/5)
+		fmcFrameFX2.Animation.Rune2:SetStartDelay((durationSec/5) + 0.15)
+		fmcFrameFX2.Animation.Rune2:SetDuration(durationSec/5)
+		fmcFrameFX2.Animation.Rune3b:SetStartDelay((durationSec/5)*2)
+		fmcFrameFX2.Animation.Rune3:SetStartDelay(((durationSec/5)*2) + 0.15)
+		fmcFrameFX2.Animation.Rune3:SetDuration(durationSec/5)
+		fmcFrameFX2.Animation.Rune4b:SetStartDelay((durationSec/5)*3)
+		fmcFrameFX2.Animation.Rune4:SetStartDelay(((durationSec/5)*3) + 0.15)
+		fmcFrameFX2.Animation.Rune4:SetDuration(durationSec/5)
+		fmcFrameFX2.Animation.Rune5b:SetStartDelay((durationSec/5)*4)
+		fmcFrameFX2.Animation.Rune5:SetStartDelay(((durationSec/5)*4) + 0.15)
+		fmcFrameFX2.Animation.Rune5:SetDuration(durationSec/5)
+		fmcFrameFX2.Animation:Play()
 	end
 end
--- Events Time --
+-- animation stop
+local function StopAnimation()
+	if fmcFrameFX1.Animation:IsPlaying() then
+		fmcFrameFX1.Animation:Stop()
+	elseif fmcFrameFX2.Animation:IsPlaying() then
+		fmcFrameFX2.Animation:Stop()
+	end
+end
+-- events time
 local function EventsTime(self, event, arg1, arg2, arg3, arg4)
 	if event == "PLAYER_LOGIN" then
 		if UnitLevel("player") >= 10 and C_SpecializationInfo.GetSpecialization() ~= 5 then
-			--ProtectOptions()
-			VDW.FMC.AnimationSettings()
-			if FMCsettings["TalentButtons"]["Visible"] then
+			if FMCsettings.TalentButtons.Visible then
+				FMC.AnimationSettings()
 				CreateButtons()
-				equipSets()
-				if GetNumSpecializations() == 2 then
-					ShowHideTalentsPopOut2()
-					UpdateConfigID2()
-					CheckTalentsEquipment2()
-				elseif GetNumSpecializations() == 3 then
+				if GetNumSpecializations() == 3 then
 					ShowHideTalentsPopOut3()
-					UpdateConfigID3()
-					CheckTalentsEquipment3()
+					CheckTalents3()
 				elseif GetNumSpecializations() == 4 then
 					ShowHideTalentsPopOut4()
-					UpdateConfigID4()
-					CheckTalentsEquipment4()
+					CheckTalents4()
 				end
 			end
 		end
-	elseif event == "EQUIPMENT_SETS_CHANGED" then
-		if FMCsettings["TalentButtons"]["Visible"] then equipSets() else FMCdata.EquipmentSets = {} end
 	elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
 		if UnitLevel("player") >= 10 and C_SpecializationInfo.GetSpecialization() ~= 5 then
-			if FMCdata.FirstSpec then
-				CreateButtons()
-				DEFAULT_CHAT_FRAME:AddMessage(C.Main:WrapTextInColorCode(prefixChat.." Please select your talents and then restart (/reload) WoW, so the talents buttons will work properly. Read the instruction in the settings."))
-				FMCdata.FirstSpec = false
-			end
-			if FMCsettings["TalentButtons"]["Visible"] then
-				equipSets()
-				if GetNumSpecializations() == 2 then
-					ShowHideTalentsPopOut2()
-					UpdateConfigID2()
-					CheckTalentsEquipment2()
-				elseif GetNumSpecializations() == 3 then
+			if FMCsettings.TalentButtons.Visible then
+				if GetNumSpecializations() == 3 then
 					ShowHideTalentsPopOut3()
-					UpdateConfigID3()
-					CheckTalentsEquipment3()
+					CheckTalents3()
 				elseif GetNumSpecializations() == 4 then
 					ShowHideTalentsPopOut4()
-					UpdateConfigID4()
-					CheckTalentsEquipment4()
+					CheckTalents4()
 				end
 			end
 		end
-	elseif event == "UNIT_SPELLCAST_START" and arg1 == "player" then
+	elseif event == "UNIT_SPELLCAST_START" and arg1 == "player" and arg3 == 384255 then
 		if UnitLevel("player") >= 10 and C_SpecializationInfo.GetSpecialization() ~= 5 then
-			if arg3 == 384255 then
-				if fmcOptions00 and fmcOptions00:IsShown() then fmcOptions00:Hide() end
+			if FMCsettings.TalentButtons.Visible and FMCsettings.TalentAnimation.Visible then
+				duration = UnitCastingDuration(arg1)
 				PlayAnimation()
-				if OverlayPlayerCastingBarFrame.showCastbar then
-					fmcOverlayCastbar = true
-				end
 			end
 		end
-	elseif event == "UNIT_SPELLCAST_SUCCEEDED" and arg1 == "player" then
+	elseif event == "UNIT_SPELLCAST_INTERRUPTED" and arg1 == "player" and arg3 == 384255 then
 		if UnitLevel("player") >= 10 and C_SpecializationInfo.GetSpecialization() ~= 5 then
-			if FMCsettings["TalentButtons"]["Visible"] then
-				if arg3 == 384255 then
-					if GetNumSpecializations() == 2 then
-						ShowHideTalentsPopOut2()
-						UpdateConfigID2()
-						CheckTalentsEquipment2()
-					elseif GetNumSpecializations() == 3 then
+			if FMCsettings.TalentButtons.Visible and FMCsettings.TalentAnimation.Visible then
+				StopAnimation()
+			end
+		end
+	elseif event == "UNIT_SPELLCAST_SUCCEEDED" and arg1 == "player" and arg3 == 384255 then
+		if UnitLevel("player") >= 10 and C_SpecializationInfo.GetSpecialization() ~= 5 then
+			if FMCsettings.TalentButtons.Visible then
+				C_Timer.After(0.5, function()
+					if GetNumSpecializations() == 3 then
 						ShowHideTalentsPopOut3()
-						UpdateConfigID3()
-						CheckTalentsEquipment3()
+						CheckTalents3()
 					elseif GetNumSpecializations() == 4 then
 						ShowHideTalentsPopOut4()
-						UpdateConfigID4()
-						CheckTalentsEquipment4()
+						CheckTalents4()
 					end
-				end
+				end)
+				StopAnimation()
 			end
 		end
 	end

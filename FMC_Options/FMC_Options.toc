@@ -1,8 +1,8 @@
-## Interface: 120005
+## Interface: 120007
 ## IconAtlas: AzeriteArmor-Notification-Neck
 ## Title: Funky |cFFF2CF72Mojo|r Changer |cFFF2CF72Options|r
 ## Notes: |cFFD79128Options for the |cFFF2CF72Funky|r Mojo |cFFF2CF72Changer|r!|r
-## Version: 2.01.07
+## Version: 2.02.00
 ## Group: VDWS
 ## Dependencies: FMC
 ## LoadOnDemand: 1
@@ -10,7 +10,6 @@
 ## Author: The_Indolent
 ## X-Website: https://panosanastasiou.rocks/
 
-FMC_Options_L.lua
 FMC_Options_0.xml
 FMC_Options_1.xml
 FMC_Options_2.xml

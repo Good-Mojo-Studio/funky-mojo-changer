@@ -1,25 +1,38 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ https://raw.githubusercontent.com/Gethe/wow-ui-source/live/Interface/AddOns/Blizzard_SharedXML/UI.xsd">
-	<Frame name="fmcOptions2" inherits="vdwOptionsPanel" parent="UIParent">
+	<Frame parentKey="Panel2" inherits="vdwOptionsPanel" parent="fmcOptions">
+		<Size x="568" y="452"/>
 		<Frames>
 <!-- Options Box 1 hide, show and size -->
-			<Frame name="$parentBox1" inherits="vdwOptionsBox">
+			<Frame parentKey="Box1" inherits="vdwOptionsBox">
 				<Anchors>
 					<Anchor point="TOP" relativePoint="TOP" x ="0" y="-64"/>
 				</Anchors>
 				<Frames>
 <!-- Check Button 1, hide and show buttons -->
-					<CheckButton name="$parentCheckButton1" inherits="vdwCheckButton">
+					<CheckButton parentKey="CheckButton1" inherits="vdwCheckButton">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="8" y="-32"/>
 						</Anchors>
 					</CheckButton>
 <!--Slider 1, size buttons -->	
-					<Frame name="$parentSlider1" inherits="vdwSlider">
+					<Frame parentKey="Slider1" inherits="vdwSlider">
 						<Anchors>
-							<Anchor point="TOP" relativeKey="$parent.Title" relativePoint="BOTTOM" x="0" y="-48"/>
+							<Anchor point="TOP" relativeKey="$parent.Title" relativePoint="BOTTOM" x="0" y="-40"/>
 						</Anchors>
 					</Frame>
 				</Frames>
+			</Frame>
+<!-- Options Box 2 Note box -->
+			<Frame parentKey="Box2" inherits="vdwOptionsBox">
+				<Layers>
+					<Layer level="OVERLAY">
+						<FontString parentKey="Notes" font="vdw_NFshadow_13" justifyV="MIDDLE" justifyH="CENTER">
+							<Anchors>
+								<Anchor point="TOP" relativePoint="TOP" x="0" y="-32"/>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
 			</Frame>
 		</Frames>
 	</Frame>

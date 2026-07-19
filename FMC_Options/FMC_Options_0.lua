@@ -1,69 +1,54 @@
--- some variables --
-local L = VDW.FMC.Local
-local C = VDW.GetAddonColors("FMC")
+-- some variables
+local Color = VDW.GetAddonColors("FMC")
 local prefixTip = VDW.Prefix("FMC")
 local maxW = 128
 local finalW = 0
--- Entering the tabs frame' Exit Button --
-fmcOptions00.ExitButton:HookScript("OnEnter", function(self)
-	VDW.Tooltip_Show(self, prefixTip, L.TIP_CLOSE_PANEL, C.Main)
+fmcOptions.ExitButton:HookScript("OnEnter", function(self)
+	VDW.Tooltip_Show(self, prefixTip, VDWtranslate.Global.CLOSE_THIS_PANEL, Color.Main, "Left")
 end)
--- Move the tabs frame --
-fmcOptions00:RegisterForDrag("LeftButton")
-fmcOptions00:SetScript("OnDragStart", fmcOptions00.StartMoving)
-fmcOptions00:SetScript("OnDragStop", fmcOptions00.StopMovingOrSizing)
--- Taking care of the Tabs --
--- Naming the tab --
-fmcOptions00Tab1.Text:SetText(L.T_S_BUTTONS)
-fmcOptions00Tab2.Text:SetText(L.T_L_BUTTONS)
-fmcOptions00Tab3.Text:SetText(L.T_T_BUTTONS)
-fmcOptions00Tab4.Text:SetText(L.P_TAB)
--- Position & center text color --
+fmcOptions:RegisterForDrag("LeftButton")
+fmcOptions:SetScript("OnDragStart", fmcOptions.StartMoving)
+fmcOptions:SetScript("OnDragStop", fmcOptions.StopMovingOrSizing)
+fmcOptions.Tab1.Text:SetText(VDWtranslate.Global.SPECIALIZATION_BUTTONS)
+fmcOptions.Tab2.Text:SetText(VDWtranslate.Global.LOOT_BUTTONS)
+fmcOptions.Tab3.Text:SetText(VDWtranslate.Global.TALENT_BUTTONS)
+fmcOptions.Tab4.Text:SetText(VDWtranslate.Global.P_TAB)
 for i = 1, 4, 1 do
-	local w = _G["fmcOptions00Tab"..i].Text:GetStringWidth()
+	local w = fmcOptions["Tab"..i].Text:GetStringWidth()
 	if w > maxW then maxW = w end
 end
 finalW = math.ceil(maxW + 16)
 for i = 1, 4, 1 do
-	if i == 1 then
-		_G["fmcOptions00Tab"..i]:SetWidth(finalW)
-	else
-		_G["fmcOptions00Tab"..i]:SetWidth(finalW)
-		_G["fmcOptions00Tab"..i]:SetPoint("TOP", _G["fmcOptions00Tab"..i-1], "BOTTOM", 0, 0)
-	end
-end
--- Entering the tabs --
-for i = 1, 3, 1 do
-	_G["fmcOptions00Tab"..i]:HookScript("OnEnter", function(self)
-		local word = self.Text:GetText()
-		VDW.Tooltip_Show(self, prefixTip, string.format(L.T_TIP, word), C.Main)
-	end)
-end
-fmcOptions00Tab4:HookScript("OnEnter", function(self)
-	VDW.Tooltip_Show(self, prefixTip, L.P_TITLE, C.Main)
-end)
--- leaving the tab --
-for i = 1, 4, 1 do
-	_G["fmcOptions00Tab"..i]:HookScript("OnLeave", function(self)
+	fmcOptions["Tab"..i].NormalTexture:SetVertexColor(Color.High:GetRGB())
+	fmcOptions["Tab"..i]:HookScript("OnLeave", function(self)
 		VDW.Tooltip_Hide()
 	end)
-end
--- clickingthe tabs --
-for i = 1, 4, 1 do
-	_G["fmcOptions00Tab"..i]:HookScript("OnClick", function(self, button, down)
+	fmcOptions["Tab"..i]:HookScript("OnClick", function(self, button, down)
 		if button == "LeftButton" and down == false then
-			if not _G["fmcOptions"..i]:IsShown() then _G["fmcOptions"..i]:Show() end
+			if not fmcOptions["Panel"..i]:IsShown() then fmcOptions["Panel"..i]:Show() end
 		end
 	end)
+	if i == 1 then
+		fmcOptions["Tab"..i]:SetWidth(finalW)
+	else
+		fmcOptions["Tab"..i]:SetWidth(finalW)
+		fmcOptions["Tab"..i]:SetPoint("TOP", fmcOptions["Tab"..i-1], "BOTTOM", 0, 0)
+	end
 end
--- show the tabs frame --
-fmcOptions00:SetScript("OnShow", function(self)
-	self:SetWidth(fmcOptions00Tab1:GetWidth() + fmcOptions1:GetWidth())
-	if not fmcOptions1:IsShown() then fmcOptions1:Show() end
+for i = 1, 3, 1 do
+	fmcOptions["Tab"..i]:HookScript("OnEnter", function(self)
+		local word = self.Text:GetText()
+		VDW.Tooltip_Show(self, prefixTip, string.format(VDWtranslate.Global.OPTIONS_FOR, word), Color.Main)
+	end)
+end
+fmcOptions.Tab4:HookScript("OnEnter", function(self)
+	VDW.Tooltip_Show(self, prefixTip, VDWtranslate.Global.P_TITLE, Color.Main)
 end)
--- Hide the tabs frame --
-fmcOptions00:HookScript("OnHide", function(self)
+fmcOptions:SetScript("OnShow", function(self)
+	if not fmcOptions.Panel1:IsShown() then fmcOptions.Panel1:Show() end
+end)
+fmcOptions:HookScript("OnHide", function(self)
 	for i = 1, 4, 1 do
-		if _G["fmcOptions"..i]:IsShown() then _G["fmcOptions"..i]:Hide() end
+		if fmcOptions["Panel"..i]:IsShown() then fmcOptions["Panel"..i]:Hide() end
 	end
 end)

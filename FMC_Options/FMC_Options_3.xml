@@ -1,111 +1,81 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ https://raw.githubusercontent.com/Gethe/wow-ui-source/live/Interface/AddOns/Blizzard_SharedXML/UI.xsd">
-	<Frame name="fmcOptions3" inherits="vdwOptionsPanel" parent="UIParent">
+	<Frame parentKey="Panel3" inherits="vdwOptionsPanel" parent="fmcOptions">
+		<Size x="568" y="452"/>
 		<Frames>
-<!-- Options Box 1 hide, show anim buttons -->
-			<Frame name="$parentBox1" inherits="vdwOptionsBox">
+<!-- Options Box 1 visibility direction talent buttons -->
+			<Frame parentKey="Box1" inherits="vdwOptionsBox">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" x ="8" y="-64"/>
 				</Anchors>
 				<Frames>
-<!-- Check Button 1, hide and show buttons -->
-					<CheckButton name="$parentCheckButton1" inherits="vdwCheckButton">
-						<Anchors>
-							<Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="8" y="-32"/>
-						</Anchors>
-					</CheckButton>
-<!-- Pop Out 1, direction -->	
-					<Button name="$parentPopOut1" inherits="vdwPopOut">
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="$parentCheckButton1" relativePoint="BOTTOMLEFT" x="0" y="-16"/>
-						</Anchors>
-					</Button>
-<!-- Check Button 2, hide and show animation -->	
-					<CheckButton name="$parentCheckButton2" inherits="vdwCheckButton">
-						<Anchors>
-							<Anchor point="LEFT" relativeTo="$parentPopOut1" relativePoint="RIGHT" x="0" y="0"/>
-						</Anchors>
-					</CheckButton>
-				</Frames>
-			</Frame>
-<!-- Options Box 2 animation options -->
-			<Frame name="$parentBox2" inherits="vdwOptionsBox">
-				<Size x="320" y="208"/>
-				<Frames>
-<!-- Popout 1, animation style -->
-					<Button name="$parentPopOut1" inherits="vdwPopOut">
-						<Anchors>
-							<Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="8" y="-40"/>
-						</Anchors>
-					</Button>
-<!-- Popout 2, banner background -->
-					<Button name="$parentPopOut2" inherits="vdwPopOut">
-						<Anchors>
-							<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-8" y="-40"/>
-						</Anchors>
-					</Button>
-<!-- Check Button 1, animation to cast bar -->	
-					<CheckButton name="$parentCheckButton1" inherits="vdwCheckButton">
-						<Anchors>
-							<Anchor point="TOPLEFT" relativeTo="$parentPopOut1" relativePoint="BOTTOMLEFT" x="0" y="-4"/>
-						</Anchors>
-					</CheckButton>
-<!--Slider 1, animation width -->	
-					<Frame name="$parentSlider1" inherits="vdwSlider">
-						<Anchors>
-							<Anchor point="TOP" relativeKey="$parent.Title" relativePoint="BOTTOM" x="0" y="-80"/>
-						</Anchors>
-					</Frame>
-<!--Slider 2, animation height -->	
-					<Frame name="$parentSlider2" inherits="vdwSlider">
-						<Anchors>
-							<Anchor point="TOP" relativeTo="$parentSlider1" relativePoint="BOTTOM" x="0" y="-8"/>
-						</Anchors>
-					</Frame>
-				</Frames>
-			</Frame>
-<!-- Options Box 3 equipment set - talent laodout -->
-			<Frame name="$parentBox3" inherits="vdwOptionsBox">
-				<Frames>
-<!-- Pop Out 1, equipment -->	
-					<Button name="$parentPopOut1" inherits="vdwPopOut">
+<!-- Pop Out 1 visibility -->
+					<Button parentKey="PopOut1" inherits="vdwPopOut">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="4" y="-40"/>
 						</Anchors>
 					</Button>
-<!-- Pop Out 2, talent loadout 1 -->	
-					<Button name="$parentPopOut2" inherits="vdwPopOut">
+<!-- Pop Out 2 direction -->
+					<Button parentKey="PopOut2" inherits="vdwPopOut">
 						<Anchors>
-							<Anchor point="LEFT" relativeTo="$parentPopOut1" relativePoint="RIGHT" x="8" y="0"/>
-						</Anchors>
-					</Button>
-<!-- Pop Out 3, talent loadout 2 -->	
-					<Button name="$parentPopOut3" inherits="vdwPopOut">
-						<Anchors>
-							<Anchor point="LEFT" relativeTo="$parentPopOut1" relativePoint="RIGHT" x="8" y="0"/>
-						</Anchors>
-					</Button>
-<!-- Pop Out 4, talent loadout 3 -->	
-					<Button name="$parentPopOut4" inherits="vdwPopOut">
-						<Anchors>
-							<Anchor point="LEFT" relativeTo="$parentPopOut1" relativePoint="RIGHT" x="8" y="0"/>
-						</Anchors>
-					</Button>
-<!-- Pop Out 5, talent loadout 4 -->	
-					<Button name="$parentPopOut5" inherits="vdwPopOut">
-						<Anchors>
-							<Anchor point="LEFT" relativeTo="$parentPopOut1" relativePoint="RIGHT" x="8" y="0"/>
-						</Anchors>
-					</Button>
-<!-- Button 1, Bind them -->
-					<Button name="$parentButton1" inherits="vdwButton">
-						<Anchors>
-							<Anchor point="TOP" relativePoint="TOP" x="0" y="-80"/>
+							<Anchor point="LEFT" relativeKey="$parent.PopOut1" relativePoint="RIGHT" x="8" y="0"/>
 						</Anchors>
 					</Button>
 				</Frames>
 			</Frame>
+<!-- Options Box 2 visibility style animation -->
+			<Frame parentKey="Box2" inherits="vdwOptionsBox">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" x ="8" y="-64"/>
+				</Anchors>
+				<Frames>
+<!-- Pop Out 1 visibility -->
+					<Button parentKey="PopOut1" inherits="vdwPopOut">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="4" y="-40"/>
+						</Anchors>
+					</Button>
+<!-- Pop Out 2 style -->
+					<Button parentKey="PopOut2" inherits="vdwPopOut">
+						<Anchors>
+							<Anchor point="LEFT" relativeKey="$parent.PopOut1" relativePoint="RIGHT" x="8" y="0"/>
+						</Anchors>
+					</Button>
+				</Frames>
+			</Frame>
+<!-- Options Box 3 lock style banner -->
+			<Frame parentKey="Box3" inherits="vdwOptionsBox">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" x ="8" y="-64"/>
+				</Anchors>
+				<Frames>
+<!-- Pop Out 1 lock -->
+					<Button parentKey="PopOut1" inherits="vdwPopOut">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="4" y="-40"/>
+						</Anchors>
+					</Button>
+<!-- Pop Out 2 style -->
+					<Button parentKey="PopOut2" inherits="vdwPopOut">
+						<Anchors>
+							<Anchor point="LEFT" relativeKey="$parent.PopOut1" relativePoint="RIGHT" x="8" y="0"/>
+						</Anchors>
+					</Button>
+<!--Slider 1, width -->	
+					<Frame parentKey="Slider1" inherits="vdwSlider">
+						<Anchors>
+							<Anchor point="TOP" relativeKey="$parent.Title" relativePoint="BOTTOM" x="0" y="-56"/>
+						</Anchors>
+					</Frame>
+<!--Slider 2, height -->	
+					<Frame parentKey="Slider2" inherits="vdwSlider">
+						<Anchors>
+							<Anchor point="TOP" relativeKey="$parent.Slider1" relativePoint="BOTTOM" x="0" y="-8"/>
+						</Anchors>
+					</Frame>
+				</Frames>
+			</Frame>
 <!-- Options Box 4 Note box -->
-			<Frame name="$parentBox4" inherits="vdwOptionsBox">
+			<Frame parentKey="Box4" inherits="vdwOptionsBox">
 				<Layers>
 					<Layer level="OVERLAY">
 						<FontString parentKey="Notes" font="vdw_NFshadow_13" justifyV="MIDDLE" justifyH="CENTER">
@@ -116,36 +86,18 @@
 					</Layer>
 				</Layers>
 			</Frame>
-<!-- Talent bind equipment list -->
-			<ScrollingMessageFrame name="$parentList1">
-				<Size x="256" y="104"/>
-				<Anchors>
-					<Anchor point="TOPRIGHT" relativePoint="TOPLEFT" x ="0" y="-32"/>
-				</Anchors>
+<!-- Options Box 5 Note box -->
+			<Frame parentKey="Box5" inherits="vdwOptionsBox">
 				<Layers>
-					<Layer level="BACKGROUND" textureSubLevel="-1">
-						<Texture parentKey="BGtexture" setAllPoints="true" file="Interface\BankFrame\Bank-Background.blp">
-						</Texture>
-					</Layer>
-					<Layer level="BACKGROUND" textureSubLevel="1">
-						<Texture parentKey="BGtexture1" atlas="Artifacts-BG-Shadow" useAtlasSize="false" setAllPoints="true"/>
-					</Layer>
 					<Layer level="OVERLAY">
-						<FontString parentKey="Title" font="vdw_NFshadow_16" justifyV="MIDDLE" justifyH="CENTER" text="Talent Loadout bind to Equipment Set list">
+						<FontString parentKey="Notes" font="vdw_NFshadow_13" justifyV="MIDDLE" justifyH="CENTER">
 							<Anchors>
-								<Anchor point="BOTTOM" relativePoint="TOP" x="0" y="0"/>
+								<Anchor point="TOP" relativePoint="TOP" x="0" y="-32"/>
 							</Anchors>
 						</FontString>
 					</Layer>
 				</Layers>
-				<Scripts>
-					<OnLoad>
-						self:SetJustifyH("LEFT")
-						self:SetInsertMode(2)
-						self.Title:SetWidth(self:GetWidth())
-					</OnLoad>
-				</Scripts>
-			</ScrollingMessageFrame>
+			</Frame>
 		</Frames>
 	</Frame>
 	<Script file="FMC_Options_3.lua"/>

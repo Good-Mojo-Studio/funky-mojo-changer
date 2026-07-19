@@ -1,180 +1,59 @@
--- some variables --
-VDW.FMC = VDW.FMC or {}
-local G = VDW.Local.Override
-local C = VDW.GetAddonColors("FMC")
-local prefixTip = VDW.Prefix("FMC")
-local prefixChat = VDW.PrefixChat("FMC")
-local function CreateGlobalVariables()
--- function for opening the options --
-	local function ShowMenu()
-		if not InCombatLockdown() then
-			local _, loaded = C_AddOns.IsAddOnLoaded("FMC_Options")
-			local loadable, reason = C_AddOns.IsAddOnLoadable("FMC_Options" , nil , true)
-			if reason == "MISSING" then
-				C_Sound.PlayVocalErrorSound(48)
-				DEFAULT_CHAT_FRAME:AddMessage(C.Main:WrapTextInColorCode(prefixChat.." "..string.format(G.WRN_ADDON_IS_STATE, C.High:WrapTextInColorCode("Funky Mojo Changer Options"), reason)))
-				UIErrorsFrame:AddExternalWarningMessage(string.format(G.WRN_ADDON_IS_STATE, C.High:WrapTextInColorCode("Funky Mojo Changer Options"), reason))
-			elseif loadable and not loaded then
-				C_AddOns.LoadAddOn("FMC_Options")
-				if not fmcOptions00:IsShown() then
-					fmcOptions00:Show()
-				else
-					fmcOptions00:Hide()
-				end
-			elseif loadable and loaded then
-				if not fmcOptions00:IsShown() then
-					fmcOptions00:Show()
-				else
-					fmcOptions00:Hide()
-				end
-			else
-				C_Sound.PlayVocalErrorSound(48)
-				DEFAULT_CHAT_FRAME:AddMessage(C.Main:WrapTextInColorCode(prefixChat.." "..string.format(G.WRN_ADDON_IS_STATE, C_AddOns.GetAddOnMetadata("FMC_Options", "Title"), reason)))
-				UIErrorsFrame:AddExternalWarningMessage(string.format(G.WRN_ADDON_IS_STATE, C_AddOns.GetAddOnMetadata("FMC_Options", "Title"), reason))
-			end
-		else
-			C_Sound.PlayVocalErrorSound(48)
-			DEFAULT_CHAT_FRAME:AddMessage(C.Main:WrapTextInColorCode(prefixChat.." "..G.WRN_COMBAT_LOCKDOWN))
-			UIErrorsFrame:AddExternalWarningMessage(G.WRN_COMBAT_LOCKDOWN)
-		end
-	end
--- slash command --
-	RegisterNewSlashCommand(ShowMenu, "fmc", "funkymojochanger")
--- mini map button functions --
-	AddonCompartmentFrame:RegisterAddon({
-		text = C.Main:WrapTextInColorCode(C_AddOns.GetAddOnMetadata("FMC", "Title")),
-		icon = C_AddOns.GetAddOnMetadata("FMC", "IconAtlas"),
-		notCheckable = true,
-		func = function(button, menuInputData, menu)
-			local buttonName = menuInputData.buttonName
-			if buttonName == "LeftButton" then
-				ShowMenu()
-			end
-		end,
-		funcOnEnter = function(button)
-			VDW.Tooltip_Show(button, prefixTip, G.BUTTON_L_CLICK..": "..G.TIP_OPEN_SETTINGS_MAIN, C.Main)
-		end,
-		funcOnLeave = function(button)
-			VDW.Tooltip_Hide()
-		end,
-	})
--- global for buttons --
-	for i = 1, GetNumSpecializations(), 1 do
-		 local specId, name, _, icon, role = C_SpecializationInfo.GetSpecializationInfo(i)
-		VDW.FMC["specId"..i] = specId
-		VDW.FMC["specName"..i] = name
-		VDW.FMC["specIcon"..i] = icon
-		VDW.FMC["specRole"..i] = role
-	end
-end
--- loading first time the variables --
+-- some variables
+FMC = FMC or {}
+local Color = VDW.GetAddonColors("FMC")
+-- loading first time the variables
 local function FirstTimeSavedVariables()
 	if FMCprofiles == nil then FMCprofiles = {} end
-	if FMCsettings == nil then
-		FMCsettings = {
-			SpecButtons = {
-				Size = 64,
-				Visible = true,
-				Button1 = {
-					Position = {X = 0, Y = 540,},
-				},
-				Button2 = {
-					Position = {X = 80, Y = 540,},
-				},
-				Button3 = {
-					Position = {X = 160, Y = 540,},
-				},
-			},
-			LootButtons = {
-				Size = 64,
-				Visible = true,
-				Button1 = {
-					Position = {X = 0, Y = 440,},
-				},
-				Button2 = {
-					Position = {X = 80, Y = 440,},
-				},
-				Button3 = {
-					Position = {X = 160, Y = 440,},
-				},
-				Button4 = {
-					Position = {X = 240, Y = 440,},
-				},
-				Button5 = {
-					Position = {X = 320, Y = 440,},
-				},
-			},
-			TalentButtons = {
-				Visible = true,
-				Position = {X = 160, Y = 340},
-				Direction = G.OPTIONS_D_UPWARD,
-			},
-			Animation = {
-				Visible = true,
-				Style = G.OPTIONS_S_BANNER,
-				Background = G.OPTIONS_C_CLASS,
-				AttachedToCastbar = false,
-				Position = {X = 160, Y = 240},
-				Size = {W = 400, H = 400},
-			},
-		}
-	end
-	if FMCprofilesLayout ~= nil then FMCprofilesLayout = nil end
-	if FMCsettings.LastLocation ~= nil then FMCsettings.LastLocation = nil end
-	
-	if FMCdata == nil then FMCdata = {} end
-	if FMCdata.FirstLogin == nil then FMCdata.FirstLogin = true end
-	if FMCdata.FirstSpec == nil then FMCdata.FirstSpec = true end
-	if FMCdata.TalentButtons == nil then
-		FMCdata.TalentButtons = {
-			LastConfig = {
-				spec1 = {specID = 0, talentID = 0,},
-				spec2 = {specID = 0, talentID = 0,},
-				spec3 = {specID = 0, talentID = 0,},
-				spec4 = {specID = 0, talentID = 0,},
-			},
-		}
-	end
-	if FMCdata.EquipmentSets == nil then FMCdata.EquipmentSets = {} end
-	if FMCdata.TalentLayouts == nil then FMCdata.TalentLayouts = {} end
-	if FMCdata.TalentBindEquipment == nil then FMCdata.TalentBindEquipment = {}
-		for i = 1, GetNumSpecializations(), 1 do
-			FMCdata.TalentBindEquipment[VDW.FMC["specId"..i]] = {}
-		end
-	end
+	if FMCsettings == nil then FMCsettings = {} end
+	-- specialization
+	if FMCsettings.SpecButtons == nil then FMCsettings.SpecButtons = {} end
+	if FMCsettings.SpecButtons.Visible == nil then FMCsettings.SpecButtons.Visible = true end
+	if FMCsettings.SpecButtons.Size == nil then FMCsettings.SpecButtons.Size = 64 end
+	if FMCsettings.SpecButtons.Button1 == nil then FMCsettings.SpecButtons.Button1 = {Position = {X = 0, Y = 540,},} end
+	if FMCsettings.SpecButtons.Button2 == nil then FMCsettings.SpecButtons.Button2 = {Position = {X = 80, Y = 540,},} end
+	if FMCsettings.SpecButtons.Button3 == nil then FMCsettings.SpecButtons.Button3 = {Position = {X = 160, Y = 540,},} end
+	-- loot
+	if FMCsettings.LootButtons == nil then FMCsettings.LootButtons = {} end
+	if FMCsettings.LootButtons.Visible == nil then FMCsettings.LootButtons.Visible = true end
+	if FMCsettings.LootButtons.Size == nil then FMCsettings.LootButtons.Size = 64 end
+	if FMCsettings.LootButtons.Button1 == nil then FMCsettings.LootButtons.Button1 = {Position = {X = 0, Y = 440,},} end
+	if FMCsettings.LootButtons.Button2 == nil then FMCsettings.LootButtons.Button2 = {Position = {X = 80, Y = 440,},} end
+	if FMCsettings.LootButtons.Button3 == nil then FMCsettings.LootButtons.Button3 = {Position = {X = 160, Y = 440,},} end
+	if FMCsettings.LootButtons.Button4 == nil then FMCsettings.LootButtons.Button4 = {Position = {X = 240, Y = 440,},} end
+	if FMCsettings.LootButtons.Button5 == nil then FMCsettings.LootButtons.Button5 = {Position = {X = 320, Y = 440,},} end
+	-- talents
+	if FMCsettings.TalentButtons == nil then FMCsettings.TalentButtons = {} end
+	if FMCsettings.TalentButtons.Visible == nil then FMCsettings.TalentButtons.Visible = true end
+	if FMCsettings.TalentButtons.Position == nil then FMCsettings.TalentButtons.Position = {X = 160, Y = 340} end
+	if FMCsettings.TalentButtons.Direction == nil then FMCsettings.TalentButtons.Direction = "Upward" end
+	-- animation
+	if FMCsettings.TalentAnimation == nil then FMCsettings.TalentAnimation = {} end
+	if FMCsettings.TalentAnimation.Visible == nil then FMCsettings.TalentAnimation.Visible = true end
+	if FMCsettings.TalentAnimation.Style == nil then FMCsettings.TalentAnimation.Style = "Banner" end
+	if FMCsettings.TalentAnimation.Banner == nil then FMCsettings.TalentAnimation.Banner = {} end
+	if FMCsettings.TalentAnimation.Banner.Background == nil then FMCsettings.TalentAnimation.Banner.Background = VDWtranslate.Global.CLASS end
+	if FMCsettings.TalentAnimation.Banner.AttachedToCastbar == nil then FMCsettings.TalentAnimation.Banner.AttachedToCastbar = false end
+	if FMCsettings.TalentAnimation.Banner.Size == nil then FMCsettings.TalentAnimation.Banner.Size = {W = 400, H = 400} end
+	if FMCsettings.TalentAnimation.Banner.Position == nil then FMCsettings.TalentAnimation.Banner.Position = {X = 160, Y = 240} end
+	-- removing saved variables
+	if FMCsettings.Animation then FMCsettings.Animation = nil end
+	if FMCprofilesLayout then FMCprofilesLayout = nil end
+	if FMCsettings.LastLocation then FMCsettings.LastLocation = nil end
+	if FMCdata then FMCdata = nil end
 end
--- events time --
+-- events time
 local function EventsTime(self, event, arg1, arg2, arg3, arg4)
 	if event == "PLAYER_LOGIN" then
 		if UnitLevel("player") >= 10 and C_SpecializationInfo.GetSpecialization() ~= 5 then
-			CreateGlobalVariables()
+			VDW.CreateSlashMinmap("FMC", "FMC_Options", "Funky Mojo Changer Options", "fmcOptions", "fmc", "funkymojochanger", Color.Main, Color.High)
+			for i = 1, GetNumSpecializations(), 1 do
+				local specId, name, _, icon, role = C_SpecializationInfo.GetSpecializationInfo(i)
+				FMC["specId"..i] = specId
+				FMC["specName"..i] = name
+				FMC["specIcon"..i] = icon
+				FMC["specRole"..i] = role
+			end
 			FirstTimeSavedVariables()
-			FMCdata.FirstLogin = false
-			FMCdata.FirstSpec = false
-		elseif UnitLevel("player") == 10 and C_SpecializationInfo.GetSpecialization() == 5 then
-			if FMCdata.FirstLogin then
-				DEFAULT_CHAT_FRAME:AddMessage(C.Main:WrapTextInColorCode(prefixChat.." FMC is not working, you need to choose a specialization."))
-				FMCdata.FirstLogin = false
-			end
-		elseif UnitLevel("player") < 10 then
-			if FMCdata.FirstLogin then
-				DEFAULT_CHAT_FRAME:AddMessage(C.Main:WrapTextInColorCode(prefixChat.." FMC is not working, you need to be above level 10 and you need to choose a specialization."))
-				FMCdata.FirstLogin = false
-			end
-		end
-	elseif event == "PLAYER_LEVEL_UP" then
-		if arg == 10 then
-			if C_SpecializationInfo.GetSpecialization() == 5 then
-				DEFAULT_CHAT_FRAME:AddMessage(C.Main:WrapTextInColorCode(prefixChat.." FMC is not working, you need to choose a specialization."))
-			end
-		end
-	elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
-		if UnitLevel("player") >= 10 and C_SpecializationInfo.GetSpecialization() ~= 5 then
-			if FMCdata.FirstSpec then
-				DEFAULT_CHAT_FRAME:AddMessage(C.Main:WrapTextInColorCode(prefixChat.." Launching FMC, please wait..."))
-				CreateGlobalVariables()
-				FirstTimeSavedVariables()
-			end
 		end
 	end
 end

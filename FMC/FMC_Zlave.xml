@@ -4,14 +4,12 @@
 		<Scripts>
 			<OnLoad>
 				self:RegisterEvent("PLAYER_LOGIN")
-				self:RegisterEvent("ADDON_LOADED")
 				self:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
 				self:RegisterEvent("PLAYER_LOOT_SPEC_UPDATED")
 				self:RegisterEvent("UNIT_SPELLCAST_START")
 				self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 				self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
-				self:RegisterEvent("EQUIPMENT_SETS_CHANGED")
-				self:RegisterEvent("PLAYER_LEVEL_UP")
+				self:RegisterEvent("ADDON_LOADED")
 			</OnLoad>
 		</Scripts>
 	</Frame>
