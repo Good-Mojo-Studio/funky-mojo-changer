@@ -167,6 +167,8 @@ local function CheckTalents3()
 						if heroSpecID then
 							local subTreeInfo = C_Traits.GetSubTreeInfo(fv, heroSpecID)
 							FMC.HeroName = subTreeInfo.name
+						else
+							FMC.HeroName = VDWtranslate.Global.HERO_NOT_SELECTED
 						end
 					end
 				end
@@ -186,6 +188,8 @@ local function CheckTalents3()
 						if heroSpecID then
 							local subTreeInfo = C_Traits.GetSubTreeInfo(fv, heroSpecID)
 							FMC.HeroName = subTreeInfo.name
+						else
+							FMC.HeroName = VDWtranslate.Global.HERO_NOT_SELECTED
 						end
 					end
 				end
@@ -205,6 +209,8 @@ local function CheckTalents3()
 						if heroSpecID then
 							local subTreeInfo = C_Traits.GetSubTreeInfo(fv, heroSpecID)
 							FMC.HeroName = subTreeInfo.name
+						else
+							FMC.HeroName = VDWtranslate.Global.HERO_NOT_SELECTED
 						end
 					end
 				end
@@ -228,6 +234,8 @@ local function CheckTalents4()
 						if heroSpecID then
 							local subTreeInfo = C_Traits.GetSubTreeInfo(fv, heroSpecID)
 							FMC.HeroName = subTreeInfo.name
+						else
+							FMC.HeroName = VDWtranslate.Global.HERO_NOT_SELECTED
 						end
 					end
 				end
@@ -247,6 +255,8 @@ local function CheckTalents4()
 						if heroSpecID then
 							local subTreeInfo = C_Traits.GetSubTreeInfo(fv, heroSpecID)
 							FMC.HeroName = subTreeInfo.name
+						else
+							FMC.HeroName = VDWtranslate.Global.HERO_NOT_SELECTED
 						end
 					end
 				end
@@ -266,6 +276,8 @@ local function CheckTalents4()
 						if heroSpecID then
 							local subTreeInfo = C_Traits.GetSubTreeInfo(fv, heroSpecID)
 							FMC.HeroName = subTreeInfo.name
+						else
+							FMC.HeroName = VDWtranslate.Global.HERO_NOT_SELECTED
 						end
 					end
 				end
@@ -285,6 +297,8 @@ local function CheckTalents4()
 						if heroSpecID then
 							local subTreeInfo = C_Traits.GetSubTreeInfo(fv, heroSpecID)
 							FMC.HeroName = subTreeInfo.name
+						else
+							FMC.HeroName = VDWtranslate.Global.HERO_NOT_SELECTED
 						end
 					end
 				end
@@ -428,7 +442,13 @@ local function EventsTime(self, event, arg1, arg2, arg3, arg4)
 					ShowHideTalentsPopOut4()
 					CheckTalents4()
 				end
+			else
+				FMC.TalentsName = VDWtranslate.Global.TALENT_BUTTONS_NOT_SHOWN
+				FMC.HeroName = VDWtranslate.Global.TALENT_BUTTONS_NOT_SHOWN
 			end
+		else
+			FMC.TalentsName = VDWtranslate.Global.TALENT_BUTTONS_LOW_LVL
+			FMC.HeroName = VDWtranslate.Global.TALENT_BUTTONS_LOW_LVL
 		end
 	elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
 		if UnitLevel("player") >= 10 and C_SpecializationInfo.GetSpecialization() ~= 5 then
@@ -440,6 +460,9 @@ local function EventsTime(self, event, arg1, arg2, arg3, arg4)
 					ShowHideTalentsPopOut4()
 					CheckTalents4()
 				end
+			else
+				FMC.TalentsName = VDWtranslate.Global.TALENT_BUTTONS_NOT_SHOWN
+				FMC.HeroName = VDWtranslate.Global.TALENT_BUTTONS_NOT_SHOWN
 			end
 		end
 	elseif event == "UNIT_SPELLCAST_START" and arg1 == "player" and arg3 == 384255 then
@@ -468,6 +491,9 @@ local function EventsTime(self, event, arg1, arg2, arg3, arg4)
 					end
 				end)
 				StopAnimation()
+			else
+				FMC.TalentsName = VDWtranslate.Global.TALENT_BUTTONS_NOT_SHOWN
+				FMC.HeroName = VDWtranslate.Global.TALENT_BUTTONS_NOT_SHOWN
 			end
 		end
 	end

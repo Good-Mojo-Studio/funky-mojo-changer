@@ -21,9 +21,8 @@ fmcOptions.Panel4.Box4.Title:SetText(VDWtranslate.Global.IMPORTANT_NOTES)
 for i = 1, 4, 1 do
 	VDW.CreateOptionsBox(fmcOptions.Panel4, i, Color.Main, Color.High)
 end
--- create edit box
-VDW.CreateEditBox(fmcOptions.Panel4, 1, 1, Color.Main)
--- enter
+-- Box 1, EditBox 1, profile save
+VDW.CreateEditBox(fmcOptions.Panel4, 1, 1, Color.High)
 fmcOptions.Panel4.Box1.EditBox1.WritingLine:HookScript("OnEnter", function(self)
 	VDW.Tooltip_Show(self, prefixTip, VDWtranslate.Global.P_TIP_CREATE, Color.Main, "Left")
 end)
@@ -103,9 +102,9 @@ for i = 2, 3, 1 do
 		counter = 0
 	end
 end
--- Box 4, important notes
+-- Box 4, Notes
 VDW.CreateImportantNotesProfiles("FMC", fmcOptions.Panel4, 4, Color.Main, Color.High)
--- Show the option panel --
+-- Show the option panel
 fmcOptions.Panel4:HookScript("OnShow", function(self)
 	for i = 1, 3, 1 do
 		fmcOptions["Tab"..i].Text:SetTextColor(0.4, 0.4, 0.4, 1)

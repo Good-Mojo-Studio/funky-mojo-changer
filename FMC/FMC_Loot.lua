@@ -125,7 +125,11 @@ local function EventsTime(self, event, arg1, arg2, arg3, arg4)
 				elseif GetNumSpecializations() == 4 then
 					CheckLootSpec4()
 				end
+			else
+				FMC.LootSpecName = VDWtranslate.Global.LOOT_BUTTONS_NOT_SHOWN
 			end
+		else
+			FMC.LootSpecName = VDWtranslate.Global.LOOT_BUTTONS_LOW_LVL
 		end
 	elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
 		if UnitLevel("player") >= 10 and C_SpecializationInfo.GetSpecialization() ~= 5 then
@@ -135,6 +139,8 @@ local function EventsTime(self, event, arg1, arg2, arg3, arg4)
 				elseif GetNumSpecializations() == 4 then
 					CheckLootSpec4()
 				end
+			else
+				FMC.LootSpecName = VDWtranslate.Global.LOOT_BUTTONS_NOT_SHOWN
 			end
 		end
 	elseif event == "PLAYER_LOOT_SPEC_UPDATED" then
@@ -145,6 +151,8 @@ local function EventsTime(self, event, arg1, arg2, arg3, arg4)
 				elseif GetNumSpecializations() == 4 then
 					CheckLootSpec4()
 				end
+			else
+				FMC.LootSpecName = VDWtranslate.Global.LOOT_BUTTONS_NOT_SHOWN
 			end
 		end
 	end

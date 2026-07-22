@@ -53,7 +53,7 @@ local function StopMoving(self)
 end
 fmcFrameFX1:SetScript("OnDragStart", fmcFrameFX1.StartMoving)
 fmcFrameFX1:SetScript("OnDragStop", function(self) StopMoving(self) end)
--- runes enable - disable --
+-- runes enable - disable
 local function runesEnable()
 	fmcFrameFX2RuneTopLeft:SetAlpha(1)
 	fmcFrameFX2RuneBottomRight:SetAlpha(1)
@@ -306,7 +306,7 @@ for i = 4, 5, 1 do
 end
 fmcOptions.Panel3.Box4.Notes:SetText("|A:"..C_AddOns.GetAddOnMetadata("FMC", "IconAtlas")..":16:16|a"..Color.High:WrapTextInColorCode(VDWtranslate.Global.NOTE.." 1: ")..VDWtranslate.Global.NOTES_HIDE_SHOW_BUTTONS.."|n|n|A:"..C_AddOns.GetAddOnMetadata("FMC", "IconAtlas")..":16:16|a"..Color.High:WrapTextInColorCode(VDWtranslate.Global.NOTE.." 2: ")..VDWtranslate.Global.NOTES_DIRECTION_BUTTONS)
 fmcOptions.Panel3.Box5.Notes:SetText("|A:"..C_AddOns.GetAddOnMetadata("FMC", "IconAtlas")..":16:16|a"..Color.High:WrapTextInColorCode(VDWtranslate.Global.NOTE.." 1: ")..VDWtranslate.Global.NOTES_CHANGE_TALENTS)
--- Checking the Saved Variables --
+-- Check Saved Variables
 local function CheckSavedVariables()
 	fmcOptions.Panel3.Box1.PopOut1.Text:SetText(visibilityByValue[FMCsettings.TalentButtons.Visible] or VDWtranslate.Global.HIDE)
 	if FMCsettings.TalentButtons.Visible then
@@ -329,7 +329,11 @@ local function CheckSavedVariables()
 	fmcOptions.Panel3.Box2.PopOut2.Text:SetText(animationStyleByValue[FMCsettings.TalentAnimation.Style] or VDWtranslate.Global.HIDE)
 	if FMCsettings.TalentAnimation.Style == "Banner" then
 		if FMCsettings.TalentAnimation.Visible then
-			fmcOptions.Panel3.Box3:Show()
+			if FMCsettings.TalentButtons.Visible then
+				fmcOptions.Panel3.Box3:Show()
+			else
+				fmcOptions.Panel3.Box3:Hide()
+			end
 			fmcFrameFX1:SetAlpha(1)
 			runesDisable()
 		end
@@ -346,7 +350,7 @@ local function CheckSavedVariables()
 	fmcOptions.Panel3.Box3.Slider1.Slider:SetValue(FMCsettings.TalentAnimation.Banner.Size.W)
 	fmcOptions.Panel3.Box3.Slider2.Slider:SetValue(FMCsettings.TalentAnimation.Banner.Size.H)
 end
--- Show the option panel --
+-- show the option panel
 fmcOptions.Panel3:HookScript("OnShow", function(self)
 	for i = 1, 2, 1 do
 		fmcOptions["Tab"..i].Text:SetTextColor(0.4, 0.4, 0.4, 1)
@@ -358,7 +362,7 @@ fmcOptions.Panel3:HookScript("OnShow", function(self)
 	CheckSavedVariables()
 	fmcFrameFX1:EnableMouse(true)
 end)
--- Hide the option panel
+-- hide the option panel
 fmcOptions.Panel3:HookScript("OnHide", function(self)
 	fmcFrameFX1:SetAlpha(0)
 	fmcFrameFX1:EnableMouse(false)

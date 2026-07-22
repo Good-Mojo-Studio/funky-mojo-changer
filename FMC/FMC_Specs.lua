@@ -238,7 +238,11 @@ local function EventsTime(self, event, arg1, arg2, arg3, arg4)
 				elseif GetNumSpecializations() == 4 then
 					Buttons3bgTool()
 				end
+			else
+				FMC.SpecName = VDWtranslate.Global.SPECIALIZATION_BUTTONS_NOT_SHOWN
 			end
+		else
+			FMC.SpecName = VDWtranslate.Global.SPECIALIZATION_BUTTONS_LOW_LVL
 		end
 	elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
 		if UnitLevel("player") >= 10 and C_SpecializationInfo.GetSpecialization() ~= 5 then
@@ -248,6 +252,8 @@ local function EventsTime(self, event, arg1, arg2, arg3, arg4)
 				elseif GetNumSpecializations() == 4 then
 					Buttons3bgTool()
 				end
+			else
+				FMC.SpecName = VDWtranslate.Global.SPECIALIZATION_BUTTONS_NOT_SHOWN
 			end
 		end
 	elseif event == "UNIT_SPELLCAST_START" and arg1 == "player" and arg3 == 200749 then
