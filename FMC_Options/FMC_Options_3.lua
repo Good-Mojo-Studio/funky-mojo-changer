@@ -36,14 +36,6 @@ local bannerBackgroungByValue = {}
 for _, option in ipairs(bannerBackgroung) do
 	bannerBackgroungByValue[option.value] = option.text
 end
-local bannerLock = {
-	{value = true, text = VDWtranslate.Global.LOCKED},
-	{value = false, text = VDWtranslate.Global.UNLOCKED},
-}
-local bannerLockByValue = {}
-for _, option in ipairs(bannerLock) do
-	bannerLockByValue[option.value] = option.text
-end
 -- moving the banner
 fmcFrameFX1:RegisterForDrag("RightButton")
 local function StopMoving(self)
@@ -228,62 +220,33 @@ for i = 1, 2, 1 do
 	end
 end
 -- Box 3, PopOut 1-2 lock, style banner
-for i = 1, 2, 1 do
-	VDW.CreateOptionsPopOut(fmcOptions.Panel3, 3, i, Color.Main, Color.High)
-	if i == 1 then
-		fmcOptions.Panel3.Box3["PopOut"..i].Title:SetText(VDWtranslate.Global.LOCKING)
-		fmcOptions.Panel3.Box3["PopOut"..i]:HookScript("OnEnter", function(self)
-			VDW.Tooltip_Show(self, prefixTip, VDWtranslate.Global.LOCKING_TIP_BANNER, Color.Main, "Left")
-		end)
-		for k, v in pairs(bannerLock) do
-			counter = counter + 1
-			VDW.CreateOptionsPopOutButtons(fmcOptions.Panel3, 3, i, k, v, Color.Main)
-			fmcOptions.Panel3.Box3["PopOut"..i]["Choice"..k]:HookScript("OnClick", function(self, button, down)
-				if button == "LeftButton" and down == false then
-					FMCsettings.TalentAnimation.Banner.AttachedToCastbar = v.value
-					FMC.AnimationSettings()
-					fmcOptions.Panel3.Box3["PopOut"..i].Text:SetText(self.Text:GetText())
-					fmcOptions.Panel3.Box3["PopOut"..i].Choice1:Hide()
-				end
-			end)
-			local w = fmcOptions.Panel3.Box3["PopOut"..i]["Choice"..k].Text:GetStringWidth()
-			if w > maxW then maxW = w end
+VDW.CreateOptionsPopOut(fmcOptions.Panel3, 3, 2, Color.Main, Color.High)
+fmcOptions.Panel3.Box3.PopOut2.Title:SetText(VDWtranslate.Global.STYLE)
+fmcOptions.Panel3.Box3.PopOut2:HookScript("OnEnter", function(self)
+	local parent = self:GetParent()
+	local word = parent.Title:GetText()
+	VDW.Tooltip_Show(self, prefixTip, string.format(VDWtranslate.Global.STYLE_TIP, word), Color.Main, "Left")
+end)
+for k, v in pairs(bannerBackgroung) do
+	counter = counter + 1
+	VDW.CreateOptionsPopOutButtons(fmcOptions.Panel3, 3, 2, k, v, Color.Main)
+	fmcOptions.Panel3.Box3.PopOut2["Choice"..k]:HookScript("OnClick", function(self, button, down)
+		if button == "LeftButton" and down == false then
+			FMCsettings.TalentAnimation.Banner.Background = v.value
+			FMC.AnimationSettings()
+			fmcOptions.Panel3.Box3.PopOut2.Text:SetText(self.Text:GetText())
+			fmcOptions.Panel3.Box3.PopOut2.Choice1:Hide()
 		end
-		finalW = math.ceil(maxW + 24)
-		for c = 1, counter, 1 do
-			fmcOptions.Panel3.Box3["PopOut"..i]["Choice"..c]:SetWidth(finalW)
-		end
-		maxW = 160
-		counter = 0
-	else
-		fmcOptions.Panel3.Box3["PopOut"..i].Title:SetText(VDWtranslate.Global.STYLE)
-		fmcOptions.Panel3.Box3["PopOut"..i]:HookScript("OnEnter", function(self)
-			local parent = self:GetParent()
-			local word = parent.Title:GetText()
-			VDW.Tooltip_Show(self, prefixTip, string.format(VDWtranslate.Global.STYLE_TIP, word), Color.Main, "Left")
-		end)
-		for k, v in pairs(bannerBackgroung) do
-			counter = counter + 1
-			VDW.CreateOptionsPopOutButtons(fmcOptions.Panel3, 3, i, k, v, Color.Main)
-			fmcOptions.Panel3.Box3["PopOut"..i]["Choice"..k]:HookScript("OnClick", function(self, button, down)
-				if button == "LeftButton" and down == false then
-					FMCsettings.TalentAnimation.Banner.Background = v.value
-					FMC.AnimationSettings()
-					fmcOptions.Panel3.Box3["PopOut"..i].Text:SetText(self.Text:GetText())
-					fmcOptions.Panel3.Box3["PopOut"..i].Choice1:Hide()
-				end
-			end)
-			local w = fmcOptions.Panel3.Box3["PopOut"..i]["Choice"..k].Text:GetStringWidth()
-			if w > maxW then maxW = w end
-		end
-		finalW = math.ceil(maxW + 24)
-		for c = 1, counter, 1 do
-			fmcOptions.Panel3.Box3["PopOut"..i]["Choice"..c]:SetWidth(finalW)
-		end
-		maxW = 160
-		counter = 0
-	end
+	end)
+	local w = fmcOptions.Panel3.Box3.PopOut2["Choice"..k].Text:GetStringWidth()
+	if w > maxW then maxW = w end
 end
+finalW = math.ceil(maxW + 24)
+for c = 1, counter, 1 do
+	fmcOptions.Panel3.Box3.PopOut2["Choice"..c]:SetWidth(finalW)
+end
+maxW = 160
+counter = 0
 -- Box 3, Slider 1-2, width, height, banner
 for i = 1, 2, 1 do
 	VDW.CreateOptionsSlider("FMC", fmcOptions.Panel3, 3, i, 120, 440, 120, 440, Color.Main, Color.High)
@@ -345,7 +308,6 @@ local function CheckSavedVariables()
 		end
 	end
 	-- banner
-	fmcOptions.Panel3.Box3.PopOut1.Text:SetText(bannerLockByValue[FMCsettings.TalentAnimation.Banner.AttachedToCastbar] or VDWtranslate.Global.HIDE)
 	fmcOptions.Panel3.Box3.PopOut2.Text:SetText(bannerBackgroungByValue[FMCsettings.TalentAnimation.Banner.Background] or VDWtranslate.Global.HIDE)
 	fmcOptions.Panel3.Box3.Slider1.Slider:SetValue(FMCsettings.TalentAnimation.Banner.Size.W)
 	fmcOptions.Panel3.Box3.Slider2.Slider:SetValue(FMCsettings.TalentAnimation.Banner.Size.H)

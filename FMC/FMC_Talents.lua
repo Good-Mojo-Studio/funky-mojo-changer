@@ -1,20 +1,51 @@
--- some variables
+-- some aliases
 local Color = VDW.GetAddonColors("FMC")
 local prefixTip = VDW.Prefix("FMC")
+-- some variables
 local maxW = 160
 local finalW = 0
 local counter = 0
 local duration = 0
-
+local CastbarOverlay = false
 local configID = 0
 local specID = 0
 local loadoutIndex = 0
--- create buttons
+local function CheckLoadPlayerSpellsFrame()
+	if not PlayerSpellsFrame then
+		PlayerSpellsFrame_LoadUI()
+		fmcWarning:ClearAllPoints()
+		fmcWarning:SetPoint("TOP", PlayerSpellsFrame, "BOTTOM", 0, 20)
+		PlayerSpellsFrame.TalentsFrame:HookScript("OnShow", function(self)
+			local FrameSlectionID = PlayerSpellsFrame.TalentsFrame.LoadSystem.lastValidSelectionID
+			local TrueSelectionID = C_ClassTalents.GetLastSelectedSavedConfigID(FMC["specId"..GetSpecialization()])
+			if TrueSelectionID ~= nil then
+				if FrameSlectionID ~= TrueSelectionID then
+					local configInfo = C_Traits.GetConfigInfo(TrueSelectionID)
+					fmcWarning:Show()
+					fmcWarning.Box1.Notes:SetText(string.format("|A:"..C_AddOns.GetAddOnMetadata("FMC", "IconAtlas")..":16:16|a "..VDWtranslate.Global.TALENTS_NOT_SAME, Color.High:WrapTextInColorCode(configInfo.name)))
+					--self:SetConfigID(TrueSelectionID, true)
+				end
+			end
+		end)
+		PlayerSpellsFrame.TalentsFrame:HookScript("OnHide", function(self)
+			if fmcWarning:IsShown() then fmcWarning:Hide() end
+		end)
+	end
+end
+-- Create frame warning
+VDW.CreateOptionsPanel(fmcWarning, VDW.Background.FMC, Color.Main, Color.High, 0, "FMC")
+VDW.CreateOptionsBox(fmcWarning, 1, Color.Main, Color.High)
+fmcWarning.Box1.Title:SetText(VDWtranslate.Global.IMPORTANT_NOTES)
+VDW.CreateImportantNotes(fmcWarning, 1, Color.Main)
+fmcWarning.ExitButton:HookScript("OnEnter", function(self)
+	VDW.Tooltip_Show(self, prefixTip, VDWtranslate.Global.CLOSE_THIS_PANEL, Color.Main, "Left")
+end)
+-- Create buttons
 local function CreateButtons()
 -- stoping the movement
 	local function StopMoving(self, i)
-		FMCsettings["TalentButtons"]["Position"]["X"] = Round(self:GetLeft())
-		FMCsettings["TalentButtons"]["Position"]["Y"] = Round(self:GetBottom())
+		FMCsettings.TalentButtons.Position.X = Round(self:GetLeft())
+		FMCsettings.TalentButtons.Position.Y = Round(self:GetBottom())
 		self:StopMovingOrSizing()
 	end
 -- creating button
@@ -43,11 +74,11 @@ local function CreateButtons()
 						end
 						_G["fmcPopOutTalents"..i.."Button"..fk]:SetScript("OnShow", function(self)
 							self:GetParent():SetNormalAtlas("charactercreate-customize-dropdownbox-hover")
-							PlaySound(855, "Master")
+							PlaySound(SOUNDKIT.IG_MINIMAP_OPEN, "Master")
 						end)
 						_G["fmcPopOutTalents"..i.."Button"..fk]:SetScript("OnHide", function(self)
 							self:GetParent():SetNormalAtlas("charactercreate-customize-dropdownbox-open")
-							PlaySound(855, "Master")
+							PlaySound(SOUNDKIT.IG_MINIMAP_CLOSE, "Master")
 						end)
 					else
 						if FMCsettings["TalentButtons"]["Direction"] == "Upward" then
@@ -66,8 +97,10 @@ local function CreateButtons()
 								DEFAULT_CHAT_FRAME:AddMessage(Color.Main:WrapTextInColorCode(VDW.PrefixChat("FMC").." "..VDWtranslate.Global.MOVING_LOCKDOWN))
 								UIErrorsFrame:AddExternalWarningMessage(VDW.PrefixError("FMC").." "..VDWtranslate.Global.MOVING_LOCKDOWN)
 							else
-								C_ClassTalents.UpdateLastSelectedSavedConfigID(FMC["specId"..i], fv)
-								C_ClassTalents.SwitchToLoadoutByIndex(fk)
+								C_ClassTalents.LoadConfig(fv, true)
+								configID = fv
+								specID = FMC["specId"..i]
+								loadoutIndex = fk
 							end
 							_G["fmcPopOutTalents"..i.."Button1"]:Hide()
 						end
@@ -103,8 +136,8 @@ local function CreateButtons()
 		_G["fmcPopOutTalents"..i]:SetScript("OnDragStop", function(self) StopMoving(self, i) end)
 	end
 end
--- show & hide talent pop out 3 specs
-local function ShowHideTalentsPopOut3()
+-- Show-hide talent popout button
+local function ShowHideTalentsPopOut()
 	for i = 1, GetNumSpecializations(), 1 do
 		_G["fmcPopOutTalents"..i]:ClearAllPoints()
 		_G["fmcPopOutTalents"..i]:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", FMCsettings["TalentButtons"]["Position"]["X"], FMCsettings["TalentButtons"]["Position"]["Y"])
@@ -113,113 +146,35 @@ local function ShowHideTalentsPopOut3()
 		fmcPopOutTalents1:Show()
 		fmcPopOutTalents2:Hide()
 		fmcPopOutTalents3:Hide()
+		if fmcPopOutTalents4 then fmcPopOutTalents4:Hide() end
 	elseif GetSpecialization() == 2 then
 		fmcPopOutTalents1:Hide()
 		fmcPopOutTalents2:Show()
 		fmcPopOutTalents3:Hide()
+		if fmcPopOutTalents4 then fmcPopOutTalents4:Hide() end
 	elseif GetSpecialization() == 3 then
 		fmcPopOutTalents1:Hide()
 		fmcPopOutTalents2:Hide()
 		fmcPopOutTalents3:Show()
-	end
-end
--- show & hide talent pop out 4 specs
-local function ShowHideTalentsPopOut4()
-	for i = 1, GetNumSpecializations(), 1 do
-		_G["fmcPopOutTalents"..i]:ClearAllPoints()
-		_G["fmcPopOutTalents"..i]:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", FMCsettings["TalentButtons"]["Position"]["X"], FMCsettings["TalentButtons"]["Position"]["Y"])
-	end
-	if GetSpecialization() == 1 then
-		fmcPopOutTalents1:Show()
-		fmcPopOutTalents2:Hide()
-		fmcPopOutTalents3:Hide()
-		fmcPopOutTalents4:Hide()
-	elseif GetSpecialization() == 2 then
-		fmcPopOutTalents1:Hide()
-		fmcPopOutTalents2:Show()
-		fmcPopOutTalents3:Hide()
-		fmcPopOutTalents4:Hide()
-	elseif GetSpecialization() == 3 then
-		fmcPopOutTalents1:Hide()
-		fmcPopOutTalents2:Hide()
-		fmcPopOutTalents3:Show()
-		fmcPopOutTalents4:Hide()
+		if fmcPopOutTalents4 then fmcPopOutTalents4:Hide() end
 	elseif GetSpecialization() == 4 then
 		fmcPopOutTalents1:Hide()
 		fmcPopOutTalents2:Hide()
 		fmcPopOutTalents3:Hide()
-		fmcPopOutTalents4:Show()
+		if fmcPopOutTalents4 then fmcPopOutTalents4:Show() end
 	end
 end
--- check talents button 3 specs
-local function CheckTalents3()
-	if GetSpecialization() == 1 then
-		local chkTalentID = C_ClassTalents.GetLastSelectedSavedConfigID(FMC.specId1)
-		if chkTalentID == nil then
-			fmcPopOutTalents1.Text:SetText("Starter Build")
-		else
-			for fk, fv in pairs(C_ClassTalents.GetConfigIDsBySpecID(FMC.specId1)) do
-				for sk, sv in pairs (C_Traits.GetConfigInfo(fv)) do
-					if fv == chkTalentID and sk == "name" then
-						fmcPopOutTalents1.Text:SetText(fk..". "..sv)
-						FMC.TalentsName = sv
-						local heroSpecID = C_ClassTalents.GetActiveHeroTalentSpec()
-						if heroSpecID then
-							local subTreeInfo = C_Traits.GetSubTreeInfo(fv, heroSpecID)
-							FMC.HeroName = subTreeInfo.name
-						else
-							FMC.HeroName = VDWtranslate.Global.HERO_NOT_SELECTED
-						end
-					end
-				end
-			end
-		end
-	elseif GetSpecialization() == 2 then
-		local chkTalentID = C_ClassTalents.GetLastSelectedSavedConfigID(FMC.specId2)
-		if chkTalentID == nil then
-			fmcPopOutTalents2.Text:SetText("Starter Build")
-		else
-			for fk, fv in pairs(C_ClassTalents.GetConfigIDsBySpecID(FMC.specId2)) do
-				for sk, sv in pairs (C_Traits.GetConfigInfo(fv)) do
-					if fv == chkTalentID and sk == "name" then
-						fmcPopOutTalents2.Text:SetText(fk..". "..sv)
-						FMC.TalentsName = sv
-						local heroSpecID = C_ClassTalents.GetActiveHeroTalentSpec()
-						if heroSpecID then
-							local subTreeInfo = C_Traits.GetSubTreeInfo(fv, heroSpecID)
-							FMC.HeroName = subTreeInfo.name
-						else
-							FMC.HeroName = VDWtranslate.Global.HERO_NOT_SELECTED
-						end
-					end
-				end
-			end
-		end
-	elseif GetSpecialization() == 3 then
-		local chkTalentID = C_ClassTalents.GetLastSelectedSavedConfigID(FMC.specId3)
-		if chkTalentID == nil then
-			fmcPopOutTalents3.Text:SetText("Starter Build")
-		else
-			for fk, fv in pairs(C_ClassTalents.GetConfigIDsBySpecID(FMC.specId3)) do
-				for sk, sv in pairs (C_Traits.GetConfigInfo(fv)) do
-					if fv == chkTalentID and sk == "name" then
-						fmcPopOutTalents3.Text:SetText(fk..". "..sv)
-						FMC.TalentsName = sv
-						local heroSpecID = C_ClassTalents.GetActiveHeroTalentSpec()
-						if heroSpecID then
-							local subTreeInfo = C_Traits.GetSubTreeInfo(fv, heroSpecID)
-							FMC.HeroName = subTreeInfo.name
-						else
-							FMC.HeroName = VDWtranslate.Global.HERO_NOT_SELECTED
-						end
-					end
-				end
-			end
-		end
+-- Before checking
+local function BeforeCheckingTalentsChanged()
+	if CastbarOverlay then
+		C_ClassTalents.UpdateLastSelectedSavedConfigID(FMC["specId"..GetSpecialization()], PlayerSpellsFrame.TalentsFrame.LoadSystem.lastValidSelectionID)
+		CastbarOverlay = false
+	else
+		C_ClassTalents.UpdateLastSelectedSavedConfigID(FMC["specId"..GetSpecialization()], configID)
 	end
 end
--- check talents button 4 specs
-local function CheckTalents4()
+-- Check talents
+local function CheckTalents()
 	if GetSpecialization() == 1 then
 		local chkTalentID = C_ClassTalents.GetLastSelectedSavedConfigID(FMC.specId1)
 		if chkTalentID == nil then
@@ -374,13 +329,8 @@ function FMC.AnimationSettings()
 		if FMCsettings.TalentAnimation.Style == "Banner" then
 			fmcFrameFX1:Show()
 			fmcFrameFX2:Hide()
-			if FMCsettings.TalentAnimation.Banner.AttachedToCastbar then
-				fmcFrameFX1:ClearAllPoints()
-				fmcFrameFX1:SetPoint("CENTER", PlayerCastingBarFrame, "CENTER", 0, 0)
-			else
-				fmcFrameFX1:ClearAllPoints()
-				fmcFrameFX1:SetPoint("BOTTOMLEFT", UIParent, "BOTTOMLEFT", FMCsettings.TalentAnimation.Banner.Position.X, FMCsettings.TalentAnimation.Banner.Position.Y)
-			end
+			fmcFrameFX1:ClearAllPoints()
+			fmcFrameFX1:SetPoint("CENTER", PlayerCastingBarFrame, "CENTER", 0, 0)
 			fmcFrameFX1:SetSize(FMCsettings.TalentAnimation.Banner.Size.W, FMCsettings.TalentAnimation.Banner.Size.H)
 			if FMCsettings.TalentAnimation.Banner.Background == "Class" then
 				ChoosingBackground1(fmcFrameFX1Background)
@@ -433,15 +383,11 @@ local function EventsTime(self, event, arg1, arg2, arg3, arg4)
 	if event == "PLAYER_LOGIN" then
 		if UnitLevel("player") >= 10 and C_SpecializationInfo.GetSpecialization() ~= 5 then
 			if FMCsettings.TalentButtons.Visible then
+				CheckLoadPlayerSpellsFrame()
 				FMC.AnimationSettings()
 				CreateButtons()
-				if GetNumSpecializations() == 3 then
-					ShowHideTalentsPopOut3()
-					CheckTalents3()
-				elseif GetNumSpecializations() == 4 then
-					ShowHideTalentsPopOut4()
-					CheckTalents4()
-				end
+				ShowHideTalentsPopOut()
+				CheckTalents()
 			else
 				FMC.TalentsName = VDWtranslate.Global.TALENT_BUTTONS_NOT_SHOWN
 				FMC.HeroName = VDWtranslate.Global.TALENT_BUTTONS_NOT_SHOWN
@@ -453,20 +399,19 @@ local function EventsTime(self, event, arg1, arg2, arg3, arg4)
 	elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
 		if UnitLevel("player") >= 10 and C_SpecializationInfo.GetSpecialization() ~= 5 then
 			if FMCsettings.TalentButtons.Visible then
-				if GetNumSpecializations() == 3 then
-					ShowHideTalentsPopOut3()
-					CheckTalents3()
-				elseif GetNumSpecializations() == 4 then
-					ShowHideTalentsPopOut4()
-					CheckTalents4()
-				end
+				ShowHideTalentsPopOut()
+				CheckTalents()
 			else
 				FMC.TalentsName = VDWtranslate.Global.TALENT_BUTTONS_NOT_SHOWN
 				FMC.HeroName = VDWtranslate.Global.TALENT_BUTTONS_NOT_SHOWN
 			end
+		else
+			FMC.TalentsName = VDWtranslate.Global.TALENT_BUTTONS_LOW_LVL
+			FMC.HeroName = VDWtranslate.Global.TALENT_BUTTONS_LOW_LVL
 		end
 	elseif event == "UNIT_SPELLCAST_START" and arg1 == "player" and arg3 == 384255 then
 		if UnitLevel("player") >= 10 and C_SpecializationInfo.GetSpecialization() ~= 5 then
+			if OverlayPlayerCastingBarFrame.showCastbar then CastbarOverlay = true end
 			if FMCsettings.TalentButtons.Visible and FMCsettings.TalentAnimation.Visible then
 				duration = UnitCastingDuration(arg1)
 				PlayAnimation()
@@ -482,19 +427,17 @@ local function EventsTime(self, event, arg1, arg2, arg3, arg4)
 		if UnitLevel("player") >= 10 and C_SpecializationInfo.GetSpecialization() ~= 5 then
 			if FMCsettings.TalentButtons.Visible then
 				C_Timer.After(0.5, function()
-					if GetNumSpecializations() == 3 then
-						ShowHideTalentsPopOut3()
-						CheckTalents3()
-					elseif GetNumSpecializations() == 4 then
-						ShowHideTalentsPopOut4()
-						CheckTalents4()
-					end
+					BeforeCheckingTalentsChanged()
+					CheckTalents()
 				end)
-				StopAnimation()
+				if FMCsettings.TalentAnimation.Visible then StopAnimation() end
 			else
 				FMC.TalentsName = VDWtranslate.Global.TALENT_BUTTONS_NOT_SHOWN
 				FMC.HeroName = VDWtranslate.Global.TALENT_BUTTONS_NOT_SHOWN
 			end
+		else
+			FMC.TalentsName = VDWtranslate.Global.TALENT_BUTTONS_LOW_LVL
+			FMC.HeroName = VDWtranslate.Global.TALENT_BUTTONS_LOW_LVL
 		end
 	end
 end

@@ -5,7 +5,8 @@ local Color = VDW.GetAddonColors("FMC")
 local function FirstTimeSavedVariables()
 	if FMCprofiles == nil then FMCprofiles = {} end
 	if FMCsettings == nil then FMCsettings = {} end
-	-- specialization
+	-- Settings
+	-- Specialization
 	if FMCsettings.SpecButtons == nil then FMCsettings.SpecButtons = {} end
 	if FMCsettings.SpecButtons.Visible == nil then FMCsettings.SpecButtons.Visible = true end
 	if FMCsettings.SpecButtons.Size == nil then FMCsettings.SpecButtons.Size = 64 end
@@ -31,11 +32,11 @@ local function FirstTimeSavedVariables()
 	if FMCsettings.TalentAnimation.Visible == nil then FMCsettings.TalentAnimation.Visible = true end
 	if FMCsettings.TalentAnimation.Style == nil then FMCsettings.TalentAnimation.Style = "Banner" end
 	if FMCsettings.TalentAnimation.Banner == nil then FMCsettings.TalentAnimation.Banner = {} end
-	if FMCsettings.TalentAnimation.Banner.Background == nil then FMCsettings.TalentAnimation.Banner.Background = VDWtranslate.Global.CLASS end
-	if FMCsettings.TalentAnimation.Banner.AttachedToCastbar == nil then FMCsettings.TalentAnimation.Banner.AttachedToCastbar = false end
+	if FMCsettings.TalentAnimation.Banner.Background == nil then FMCsettings.TalentAnimation.Banner.Background = "Class" end
 	if FMCsettings.TalentAnimation.Banner.Size == nil then FMCsettings.TalentAnimation.Banner.Size = {W = 400, H = 400} end
-	if FMCsettings.TalentAnimation.Banner.Position == nil then FMCsettings.TalentAnimation.Banner.Position = {X = 160, Y = 240} end
 	-- removing saved variables
+	if FMCsettings.TalentAnimation.Banner.AttachedToCastbar then FMCsettings.TalentAnimation.Banner.AttachedToCastbar = nil end
+	if FMCsettings.TalentAnimation.Banner.Position then FMCsettings.TalentAnimation.Banner.Position = nil end
 	if FMCsettings.Animation then FMCsettings.Animation = nil end
 	if FMCprofilesLayout then FMCprofilesLayout = nil end
 	if FMCsettings.LastLocation then FMCsettings.LastLocation = nil end
@@ -46,6 +47,7 @@ local function EventsTime(self, event, arg1, arg2, arg3, arg4)
 	if event == "PLAYER_LOGIN" then
 		if UnitLevel("player") >= 10 and C_SpecializationInfo.GetSpecialization() ~= 5 then
 			VDW.CreateSlashMinmap("FMC", "FMC_Options", "Funky Mojo Changer Options", "fmcOptions", "fmc", "funkymojochanger", Color.Main, Color.High)
+			FirstTimeSavedVariables()
 			for i = 1, GetNumSpecializations(), 1 do
 				local specId, name, _, icon, role = C_SpecializationInfo.GetSpecializationInfo(i)
 				FMC["specId"..i] = specId
@@ -53,7 +55,6 @@ local function EventsTime(self, event, arg1, arg2, arg3, arg4)
 				FMC["specIcon"..i] = icon
 				FMC["specRole"..i] = role
 			end
-			FirstTimeSavedVariables()
 		end
 	end
 end

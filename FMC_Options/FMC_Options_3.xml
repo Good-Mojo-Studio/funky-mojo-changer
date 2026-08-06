@@ -24,9 +24,6 @@
 			</Frame>
 <!-- Options Box 2 visibility style animation -->
 			<Frame parentKey="Box2" inherits="vdwOptionsBox">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" x ="8" y="-64"/>
-				</Anchors>
 				<Frames>
 <!-- Pop Out 1 visibility -->
 					<Button parentKey="PopOut1" inherits="vdwPopOut">
@@ -44,20 +41,11 @@
 			</Frame>
 <!-- Options Box 3 lock style banner -->
 			<Frame parentKey="Box3" inherits="vdwOptionsBox">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativePoint="TOPLEFT" x ="8" y="-64"/>
-				</Anchors>
 				<Frames>
-<!-- Pop Out 1 lock -->
-					<Button parentKey="PopOut1" inherits="vdwPopOut">
-						<Anchors>
-							<Anchor point="TOPLEFT" relativePoint="TOPLEFT" x="4" y="-40"/>
-						</Anchors>
-					</Button>
 <!-- Pop Out 2 style -->
 					<Button parentKey="PopOut2" inherits="vdwPopOut">
 						<Anchors>
-							<Anchor point="LEFT" relativeKey="$parent.PopOut1" relativePoint="RIGHT" x="8" y="0"/>
+							<Anchor point="TOP" relativePoint="TOP" x="0" y="-40"/>
 						</Anchors>
 					</Button>
 <!--Slider 1, width -->	

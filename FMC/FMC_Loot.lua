@@ -1,15 +1,15 @@
--- some variables
+-- some aliases
 local Color = VDW.GetAddonColors("FMC")
 local prefixTip = VDW.Prefix("FMC")
 -- create buttons
 local function CreateButtons()
--- stoping the movement
+	-- stoping the movement
 	local function StopMoving(self, i)
 		FMCsettings["LootButtons"]["Button"..i]["Position"]["X"] = Round(self:GetLeft())
 		FMCsettings["LootButtons"]["Button"..i]["Position"]["Y"] = Round(self:GetBottom())
 		self:StopMovingOrSizing()
 	end
--- creating button
+	-- creating button
 	for i = 1, (GetNumSpecializations() + 1), 1 do
 		local btn = CreateFrame("Button", "fmcButtonLoot"..i, UIParent, "fmcButtonLoot")
 		_G["fmcButtonLoot"..i]:ClearAllPoints()
@@ -17,6 +17,9 @@ local function CreateButtons()
 		_G["fmcButtonLoot"..i]:SetSize(FMCsettings["LootButtons"]["Size"], FMCsettings["LootButtons"]["Size"])
 		_G["fmcButtonLoot"..i].Border:SetVertexColor(VDW.PlayerClassColor:GetRGB())
 		_G["fmcButtonLoot"..i]:Show()
+		_G["fmcButtonLoot"..i]:RegisterForDrag("RightButton")
+		_G["fmcButtonLoot"..i]:SetScript("OnDragStart", _G["fmcButtonLoot"..i].StartMoving)
+		_G["fmcButtonLoot"..i]:SetScript("OnDragStop", function(self) StopMoving(self, i) end)
 		_G["fmcButtonLoot"..i]:SetScript("OnLeave", function(self) VDW.Tooltip_Hide() end)
 		if i == 1 then
 			_G["fmcButtonLoot"..i]:SetScript("OnEnter", function (self)
@@ -41,10 +44,6 @@ local function CreateButtons()
 				end
 			end)
 		end
--- moving the buttons
-		_G["fmcButtonLoot"..i]:RegisterForDrag("RightButton")
-		_G["fmcButtonLoot"..i]:SetScript("OnDragStart", _G["fmcButtonLoot"..i].StartMoving)
-		_G["fmcButtonLoot"..i]:SetScript("OnDragStop", function(self) StopMoving(self, i) end)
 	end
 end
 -- check loot specialization 3 specs
@@ -76,41 +75,41 @@ local function CheckLootSpec3()
 	end
 end
 -- check loot specialization 4 specs
-local function CheckLootSpec4()
+local function CheckLootSpec()
 	if GetLootSpecialization() == 0 then
 		fmcButtonLoot1.Background:SetDesaturated(false)
 		fmcButtonLoot2.Background:SetDesaturated(true)
 		fmcButtonLoot3.Background:SetDesaturated(true)
 		fmcButtonLoot4.Background:SetDesaturated(true)
-		fmcButtonLoot5.Background:SetDesaturated(true)
+		if fmcButtonLoot5 then fmcButtonLoot5.Background:SetDesaturated(true) end
 		FMC.LootSpecName = "Current Specialization"
 	elseif GetLootSpecialization() == FMC.specId1 then
 		fmcButtonLoot1.Background:SetDesaturated(true)
 		fmcButtonLoot2.Background:SetDesaturated(false)
 		fmcButtonLoot3.Background:SetDesaturated(true)
 		fmcButtonLoot4.Background:SetDesaturated(true)
-		fmcButtonLoot5.Background:SetDesaturated(true)
+		if fmcButtonLoot5 then fmcButtonLoot5.Background:SetDesaturated(true) end
 		FMC.LootSpecName = FMC.specName1
 	elseif GetLootSpecialization() == FMC.specId2 then
 		fmcButtonLoot1.Background:SetDesaturated(true)
 		fmcButtonLoot2.Background:SetDesaturated(true)
 		fmcButtonLoot3.Background:SetDesaturated(false)
 		fmcButtonLoot4.Background:SetDesaturated(true)
-		fmcButtonLoot5.Background:SetDesaturated(true)
+		if fmcButtonLoot5 then fmcButtonLoot5.Background:SetDesaturated(true) end
 		FMC.LootSpecName = FMC.specName2
 	elseif GetLootSpecialization() == FMC.specId3 then
 		fmcButtonLoot1.Background:SetDesaturated(true)
 		fmcButtonLoot2.Background:SetDesaturated(true)
 		fmcButtonLoot3.Background:SetDesaturated(true)
 		fmcButtonLoot4.Background:SetDesaturated(false)
-		fmcButtonLoot5.Background:SetDesaturated(true)
+		if fmcButtonLoot5 then fmcButtonLoot5.Background:SetDesaturated(true) end
 		FMC.LootSpecName = FMC.specName3
 	elseif GetLootSpecialization() == FMC.specId4 then
 		fmcButtonLoot1.Background:SetDesaturated(true)
 		fmcButtonLoot2.Background:SetDesaturated(true)
 		fmcButtonLoot3.Background:SetDesaturated(true)
 		fmcButtonLoot4.Background:SetDesaturated(true)
-		fmcButtonLoot5.Background:SetDesaturated(false)
+		if fmcButtonLoot5 then fmcButtonLoot5.Background:SetDesaturated(false) end
 		FMC.LootSpecName = FMC.specName4
 	end
 end
@@ -120,11 +119,7 @@ local function EventsTime(self, event, arg1, arg2, arg3, arg4)
 		if UnitLevel("player") >= 10 and C_SpecializationInfo.GetSpecialization() ~= 5 then
 			if FMCsettings.LootButtons.Visible then
 				CreateButtons()
-				if GetNumSpecializations() == 3 then
-					CheckLootSpec3()
-				elseif GetNumSpecializations() == 4 then
-					CheckLootSpec4()
-				end
+				CheckLootSpec()
 			else
 				FMC.LootSpecName = VDWtranslate.Global.LOOT_BUTTONS_NOT_SHOWN
 			end
@@ -134,26 +129,22 @@ local function EventsTime(self, event, arg1, arg2, arg3, arg4)
 	elseif event == "PLAYER_SPECIALIZATION_CHANGED" then
 		if UnitLevel("player") >= 10 and C_SpecializationInfo.GetSpecialization() ~= 5 then
 			if FMCsettings.LootButtons.Visible then
-				if GetNumSpecializations() == 3 then
-					CheckLootSpec3()
-				elseif GetNumSpecializations() == 4 then
-					CheckLootSpec4()
-				end
+				CheckLootSpec()
 			else
 				FMC.LootSpecName = VDWtranslate.Global.LOOT_BUTTONS_NOT_SHOWN
 			end
+		else
+			FMC.LootSpecName = VDWtranslate.Global.LOOT_BUTTONS_LOW_LVL
 		end
 	elseif event == "PLAYER_LOOT_SPEC_UPDATED" then
 		if UnitLevel("player") >= 10 and C_SpecializationInfo.GetSpecialization() ~= 5 then
 			if FMCsettings.LootButtons.Visible then
-				if GetNumSpecializations() == 3 then
-					CheckLootSpec3()
-				elseif GetNumSpecializations() == 4 then
-					CheckLootSpec4()
-				end
+				CheckLootSpec()
 			else
 				FMC.LootSpecName = VDWtranslate.Global.LOOT_BUTTONS_NOT_SHOWN
 			end
+		else
+			FMC.LootSpecName = VDWtranslate.Global.LOOT_BUTTONS_LOW_LVL
 		end
 	end
 end

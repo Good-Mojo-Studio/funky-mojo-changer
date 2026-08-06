@@ -1,4 +1,45 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/ https://raw.githubusercontent.com/Gethe/wow-ui-source/live/Interface/AddOns/Blizzard_SharedXML/UI.xsd">
+<!-- Warning Panel-->
+	<Frame name="fmcWarning" inherits="vdwOptionsPanel" parent="UIParent">
+		<Size x="480" y="264"/>
+		<Frames>
+<!-- exite button -->
+			<Button parentKey="ExitButton" registerForClicks="AnyUp" frameLevel="256">
+				<Size x="16" y="16"/>
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-4" y="-4"/>
+				</Anchors>
+				<NormalTexture atlas="communities-icon-redx" desaturated="false" alpha="0.6"/>
+				<PushedTexture atlas="communities-icon-redx" desaturated="true" alpha="0.4"/>
+				<Scripts>
+					<OnLeave>
+						VDW.Tooltip_Hide()
+					</OnLeave>
+					<OnClick>
+						if button == "LeftButton" and down == false then
+							self:GetParent():Hide()
+						end
+					</OnClick>
+				</Scripts>
+			</Button>
+<!-- Note box -->
+			<Frame parentKey="Box1" inherits="vdwOptionsBox">
+				<Size x="276" y="176"/>
+				<Anchors>
+					<Anchor point="TOP" relativePoint="TOP" x ="0" y="-64"/>
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<FontString parentKey="Notes" font="vdw_NFshadow_13" justifyV="MIDDLE" justifyH="CENTER">
+							<Anchors>
+								<Anchor point="TOP" relativePoint="TOP" x="0" y="-32"/>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+		</Frames>
+	</Frame>
 <!-- Animation 1 -->
 	<Frame name="fmcFrameFX1" parent="UIParent" frameStrata="BACKGROUND" frameLevel="0" hidden="true" movable="true" clampedToScreen="true" dontSavePosition="true" alpha="0">
 		<Layers>

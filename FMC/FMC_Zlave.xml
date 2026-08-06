@@ -10,6 +10,7 @@
 				self:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
 				self:RegisterEvent("UNIT_SPELLCAST_INTERRUPTED")
 				self:RegisterEvent("ADDON_LOADED")
+				self:RegisterEvent("TRAIT_CONFIG_UPDATED")
 			</OnLoad>
 		</Scripts>
 	</Frame>
