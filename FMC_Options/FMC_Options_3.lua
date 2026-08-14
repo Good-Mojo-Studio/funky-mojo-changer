@@ -30,7 +30,6 @@ for _, option in ipairs(animationStyle) do
 end
 local bannerBackgroung = {
 	{value = "Class", text = VDWtranslate.Global.CLASS},
-	{value = "ClassArtifact", text = VDWtranslate.Global.CLASS_ARTIFACT},
 }
 local bannerBackgroungByValue = {}
 for _, option in ipairs(bannerBackgroung) do

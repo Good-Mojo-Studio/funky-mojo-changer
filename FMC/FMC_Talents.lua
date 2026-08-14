@@ -23,7 +23,6 @@ local function CheckLoadPlayerSpellsFrame()
 					local configInfo = C_Traits.GetConfigInfo(TrueSelectionID)
 					fmcWarning:Show()
 					fmcWarning.Box1.Notes:SetText(string.format("|A:"..C_AddOns.GetAddOnMetadata("FMC", "IconAtlas")..":16:16|a "..VDWtranslate.Global.TALENTS_NOT_SAME, Color.High:WrapTextInColorCode(configInfo.name)))
-					--self:SetConfigID(TrueSelectionID, true)
 				end
 			end
 		end)
@@ -293,36 +292,6 @@ local function ChoosingBackground1(self)
 		self:SetAlpha(1)
 	end
 end
-local function ChoosingBackground2(self)
-	if VDW.PlayerClassID == 1 then --Warrior
-		self:SetAtlas("Artifacts-Warrior-BG-rune")
-	elseif VDW.PlayerClassID == 2 then --Paladin
-		self:SetAtlas("Artifacts-Paladin-BG-rune")
-	elseif VDW.PlayerClassID == 3 then --Hunter
-		self:SetAtlas("Artifacts-Hunter-BG-rune")
-	elseif VDW.PlayerClassID == 4 then --Rogue
-		self:SetAtlas("Artifacts-Rogue-BG-rune")
-	elseif VDW.PlayerClassID == 5 then --Priest
-		self:SetAtlas("Artifacts-Priest-BG-rune")
-	elseif VDW.PlayerClassID == 6 then --Death Kight
-		self:SetAtlas("Artifacts-DeathKnightFrost-BG-Rune")
-	elseif VDW.PlayerClassID == 7 then --Shaman
-		self:SetAtlas("Artifacts-Shaman-BG-rune")
-	elseif VDW.PlayerClassID == 8 then --Mage
-		self:SetAtlas("Artifacts-MageArcane-BG-rune")
-	elseif VDW.PlayerClassID == 9 then --Warlock
-		self:SetAtlas("Artifacts-Warlock-BG-rune")
-	elseif VDW.PlayerClassID == 10 then --Monk
-		self:SetAtlas("Artifacts-Monk-BG-rune")
-	elseif VDW.PlayerClassID == 11 then --Druid
-		self:SetAtlas("Artifacts-Druid-BG-rune")
-	elseif VDW.PlayerClassID == 12 then --Demon Hunter
-		self:SetAtlas("Artifacts-DemonHunter-BG-rune")
-	elseif VDW.PlayerClassID == 13 then --Evoker
-		self:SetTexture("Interface\\AddOns\\VDW\\media\\banners\\Dracthyr_Crest.png")
-		self:SetAlpha(0.25)
-	end
-end
 -- position and background of banner
 function FMC.AnimationSettings()
 	if FMCsettings.TalentAnimation.Visible then
@@ -334,8 +303,6 @@ function FMC.AnimationSettings()
 			fmcFrameFX1:SetSize(FMCsettings.TalentAnimation.Banner.Size.W, FMCsettings.TalentAnimation.Banner.Size.H)
 			if FMCsettings.TalentAnimation.Banner.Background == "Class" then
 				ChoosingBackground1(fmcFrameFX1Background)
-			elseif FMCsettings.TalentAnimation.Banner.Background == "ClassArtifact" then
-				ChoosingBackground2(fmcFrameFX1Background)
 			end
 		elseif FMCsettings.TalentAnimation.Style == "Runes" then
 			fmcFrameFX1:Hide()

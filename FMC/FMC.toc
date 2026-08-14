@@ -1,8 +1,8 @@
-## Interface: 120007
+## Interface: 120100
 ## IconAtlas: AzeriteArmor-Notification-Neck
 ## Title: Funky |cFFF2CF72Mojo|r Changer
 ## Notes: |cFFD79128Change your |cFFF2CF72Specialization|r with a |cFFF2CF72Funky|r Style !|r
-## Version: 2.02.03
+## Version: 2.02.04
 ## Group: VDWS
 ## Dependencies: VDW
 ## DefaultState: enabled
